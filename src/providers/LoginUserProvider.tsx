@@ -21,9 +21,5 @@ export function LoginUserProvider(props: { children: ReactNode }) {
       setLoginUser,
     };
   }, [loginUser, setLoginUser]);
-  return (
-    <LoginUserContext.Provider value={value}>
-      {children}
-    </LoginUserContext.Provider>
-  );
+  return <LoginUserContext.Provider value={value}>{children}</LoginUserContext.Provider>;
 }
