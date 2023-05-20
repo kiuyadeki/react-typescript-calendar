@@ -26,13 +26,7 @@ export const Header: FC = memo(() => {
           md: 5,
         }}
       >
-        <Flex
-          as="a"
-          align="center"
-          mr={8}
-          _hover={{ cursor: 'pointer' }}
-          onClick={onClickHome}
-        >
+        <Flex as="a" align="center" mr={8} _hover={{ cursor: 'pointer' }} onClick={onClickHome}>
           <Heading
             as="h1"
             fontSize={{
