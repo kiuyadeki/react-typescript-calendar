@@ -1,3 +1,4 @@
+const webpack = require('webpack');
 const path = require("path");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
@@ -7,6 +8,8 @@ const devMode = process.env.NODE_ENV !== "production";
 // const ESLintPlugin = require("eslint-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
 const enabledSourceMap = process.env.NODE_ENV !== "production";
+const dotenv  = require('dotenv');
+const env = dotenv.config().parsed;
 
 module.exports = {
   mode: "development",
@@ -121,6 +124,14 @@ module.exports = {
     //   extensions: [".js"],
     //   exclude: "node_modules",
     // }),
+    new webpack.DefinePlugin({
+      "process.env.REACT_APP_FIREBASE_API_KEY": JSON.stringify(process.env.REACT_APP_FIREBASE_API_KEY),
+      "process.env.REACT_APP_FIREBASE_AUTH_DOMAIN": JSON.stringify(process.env.REACT_APP_FIREBASE_AUTH_DOMAIN),
+      "process.env.REACT_APP_FIREBASE_PROJECT_ID": JSON.stringify(process.env.REACT_APP_FIREBASE_PROJECT_ID),
+      "process.env.REACT_APP_FIREBASE_STORAGE_BUCKET": JSON.stringify(process.env.REACT_APP_FIREBASE_STORAGE_BUCKET),
+      "process.env.REACT_APP_FIREBASE_MESSAGE_SENDER_ID": JSON.stringify(process.env.REACT_APP_FIREBASE_MESSAGE_SENDER_ID),
+      "process.env.REACT_APP_FIREBASE_APP_ID": JSON.stringify(process.env.REACT_APP_FIREBASE_APP_ID),
+    }),    
     new MiniCssExtractPlugin({
       filename: "./[name]-[contenthash].css",
     }),

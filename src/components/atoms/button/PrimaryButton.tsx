@@ -20,6 +20,7 @@ export const PrimaryButton: FC<Props> = memo((props) => {
       isDisabled={disabled || loading}
       isLoading={loading}
       onClick={onClick}
+      type="submit"
     >
       {children}
     </Button>

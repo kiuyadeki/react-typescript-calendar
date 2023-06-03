@@ -30,23 +30,11 @@ export const UserCard: FC<Props> = memo((props) => {
       onClick={() => onClick(id)}
     >
       <Stack textAlign="center">
-        <Image
-          borderRadius="full"
-          boxSize="160px"
-          src={imageUrl}
-          alt="profile"
-          m="auto"
-        />
-        <Text
-          fontSize="lg"
-          fontWeight="bold"
-        >
+        <Image borderRadius="full" boxSize="160px" src={imageUrl} alt="profile" m="auto" />
+        <Text fontSize="lg" fontWeight="bold">
           {userName}
         </Text>
-        <Text
-          fontSize="sm"
-          color="gray"
-        >
+        <Text fontSize="sm" color="gray">
           {fullName}
         </Text>
       </Stack>
