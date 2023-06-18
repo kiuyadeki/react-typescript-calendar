@@ -1,12 +1,37 @@
-import { Box, Divider, Flex, FormLabel, Heading, Input, FormControl, Stack, Button } from '@chakra-ui/react';
-import { FC, memo, useState } from 'react';
+import {
+  Box, Divider, Flex, Heading, Input, Stack, Text,
+} from '@chakra-ui/react';
+import {
+  ChangeEvent, FC, FormEvent, memo, useState,
+} from 'react';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { PrimaryButton } from '../atoms/button/PrimaryButton';
+import { useAuth } from '../../hooks/useAuth';
+import { auth } from '../../firebase';
 
 export const SignUp: FC = memo(() => {
-  const [show, setShow] = useState(false);
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const { loading } = useAuth();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const onChangeUserId = (e: ChangeEvent<HTMLInputElement>) => setEmail(e.target.value);
+  const onChangePassword = (e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value);
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log('登録');
+    const form = event.target as HTMLFormElement;
+    const emailElement = form.elements.namedItem('email') as HTMLInputElement;
+    const passwordElement = form.elements.namedItem('password') as HTMLInputElement;
+    if (emailElement && passwordElement) {
+      createUserWithEmailAndPassword(auth, emailElement.value, passwordElement.value)
+        .then((userCredential) => {
+          console.log(userCredential);
+        })
+        .catch((error) => {
+          alert(error.message);
+        });
+    }
   };
+
   return (
     <Flex align="center" justify="center" height="100vh">
       <Box bg="white" w="sm" p={4} borderRadius="md" shadow="md">
@@ -14,22 +39,20 @@ export const SignUp: FC = memo(() => {
           ユーザー登録
         </Heading>
         <Divider my={4} />
-        <Box px={10} pb={8}>
-          <form onSubmit={handleSubmit}>
-            <FormControl py={2} mb={4}>
-              <FormLabel htmlFor="email">Email</FormLabel>
-              <Input id="email" placeholder="メールアドレス" />
-            </FormControl>
-            <FormControl py={2}>
-              <FormLabel htmlFor="password">パスワード</FormLabel>
-              <Input id="password" type={show ? 'text' : 'password'} placeholder="パスワード" />
-            </FormControl>
-            <Stack align="center" mt={5}>
-              <Button type="submit" colorScheme="teal" size="md" w="100%">
-                登録
-              </Button>
-            </Stack>
-          </form>
+        <Box onSubmit={handleSubmit} as="form" px={10} pb={8}>
+          <Stack spacing={1} pt={4}>
+            <Text>Email</Text>
+            <Input name="email" placeholder="ユーザーID" value={email} onChange={onChangeUserId} />
+          </Stack>
+          <Stack spacing={1} py={4} mb={3}>
+            <Text>パスワード</Text>
+            <Input name="password" placeholder="パスワード" value={password} onChange={onChangePassword} />
+          </Stack>
+          <Stack>
+            <PrimaryButton disabled={email === ''} loading={loading} onClick={() => null}>
+              新規登録
+            </PrimaryButton>
+          </Stack>
         </Box>
       </Box>
     </Flex>

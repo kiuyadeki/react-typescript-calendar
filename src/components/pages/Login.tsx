@@ -1,39 +1,13 @@
-import {
-  Box, Divider, Flex, Heading, Input, Stack, Text,
-} from '@chakra-ui/react';
-import {
-  ChangeEvent, FC, FormEvent, memo, useState,
-} from 'react';
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { PrimaryButton } from '../atoms/button/PrimaryButton';
-import { useAuth } from '../../hooks/useAuth';
-import { auth } from '../../firebase';
+import { Box, Divider, Flex, FormLabel, Heading, Input, FormControl, Stack, Button, Link as ChakraLink } from '@chakra-ui/react';
+import React, { FC, memo, useState } from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 
 export const Login: FC = memo(() => {
-  const { login, loading } = useAuth();
-  const [userId, setUserId] = useState('');
-  const [password, setPassword] = useState('');
-
-  const onChangeUserId = (e: ChangeEvent<HTMLInputElement>) => setUserId(e.target.value);
-  const onChangePassword = (e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value);
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const [show, setShow] = useState(false);
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const form = event.target as HTMLFormElement;
-    const userIdElement = form.elements.namedItem('userId') as HTMLInputElement;
-    const passwordElement = form.elements.namedItem('password') as HTMLInputElement;
-    if (userIdElement && passwordElement) {
-      createUserWithEmailAndPassword(auth, userIdElement.value, passwordElement.value)
-        .then((userCredential) => {
-          console.log(userCredential);
-        })
-        .catch((error) => {
-          alert(error.message);
-        });
-    }
+    console.log('登録');
   };
-
-  const onClickLogin = () => login(userId);
-
   return (
     <Flex align="center" justify="center" height="100vh">
       <Box bg="white" w="sm" p={4} borderRadius="md" shadow="md">
@@ -42,22 +16,22 @@ export const Login: FC = memo(() => {
         </Heading>
         <Divider my={4} />
         <Box onSubmit={handleSubmit} as="form" px={10} pb={8}>
-          <Stack spacing={1} pt={4}>
-            <Text>ユーザーID</Text>
-            <Input name="userId" placeholder="ユーザーID" value={userId} onChange={onChangeUserId} />
-          </Stack>
-          <Stack spacing={1} py={4} mb={3}>
-            <Text>パスワード</Text>
-            <Input name="password" placeholder="パスワード" value={password} onChange={onChangePassword} />
-          </Stack>
-          <Stack>
-            <PrimaryButton disabled={userId === 'aaa'} loading={false} onClick={() => null}>
+          <FormControl py={2} mb={4}>
+            <FormLabel htmlFor="email">Email</FormLabel>
+            <Input id="email" placeholder="メールアドレス" />
+          </FormControl>
+          <FormControl py={2}>
+            <FormLabel htmlFor="password">パスワード</FormLabel>
+            <Input id="password" type={show ? 'text' : 'password'} placeholder="パスワード" />
+          </FormControl>
+          <Stack align="center" mt={5}>
+            <Button type="submit" colorScheme="teal" size="md" w="100%">
               ログイン
-            </PrimaryButton>
-            <PrimaryButton disabled onClick={onClickLogin}>
-              新規登録
-            </PrimaryButton>
+            </Button>
           </Stack>
+          <Flex justifyContent="flex-end" mt={2}>
+            <ChakraLink as={RouterLink} to="/signup" color="black.500" fontSize="sm">ユーザ登録はこちら</ChakraLink>
+          </Flex>
         </Box>
       </Box>
     </Flex>
