@@ -1,7 +1,5 @@
 import {
-  Alert,
-  AlertIcon,
-  Box, Divider, Flex, Heading, Input, Stack, Text,
+  Alert, AlertIcon, Box, Divider, Flex, Heading, Input, SlideFade, Stack, Text,
 } from '@chakra-ui/react';
 import {
   ChangeEvent, FC, FormEvent, memo, useState,
@@ -17,6 +15,7 @@ export const SignUp: FC = memo(() => {
   const { loading } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
   const onChangeUserId = (e: ChangeEvent<HTMLInputElement>) => setEmail(e.target.value);
   const onChangePassword = (e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value);
@@ -33,7 +32,19 @@ export const SignUp: FC = memo(() => {
           navigation('/thanks');
           console.log(userCredential);
         })
-        .catch((error) => {
+        .catch((error: { code: string }) => {
+          let message: string;
+          switch (error.code) {
+            case 'auth/email-already-in-use':
+              message = 'このメールアドレスは既に登録されています。';
+              break;
+            case 'auth/invalid-email':
+              message = '無効なメールアドレスです。';
+              break;
+            default:
+              message = '入力情報に誤りがあります。';
+          }
+          setErrorMessage(message);
           setShow(true);
         });
     }
@@ -42,7 +53,7 @@ export const SignUp: FC = memo(() => {
   return (
     <Flex align="center" justify="center" height="100vh" position="relative">
       <Box bg="white" w="sm" p={4} borderRadius="md" shadow="md" position="relative">
-        {show && (
+        <SlideFade in={show} offsetY="20px">
           <Alert
             status="error"
             textAlign="center"
@@ -53,9 +64,9 @@ export const SignUp: FC = memo(() => {
             borderRadius="md"
           >
             <AlertIcon />
-            入力情報に誤りがあります。
+            {errorMessage}
           </Alert>
-        )}
+        </SlideFade>
         <Heading as="h1" size="lg" textAlign="center">
           ユーザー登録
         </Heading>
