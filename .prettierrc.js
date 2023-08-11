@@ -4,8 +4,8 @@ module.exports = {
   tabWidth: 2,
   semi: true,
   endOfLine: "lf",
-  jsxSingleQuote: true,
+  jsxSingleQuote: false,
   bracketSpacing: true,
   arrowParens: "avoid",
-  singleAttributePerLine: true,
+  proseWrap: "always"
 };

@@ -15,13 +15,11 @@ export const UserManagement: FC = memo(() => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { onSelectUser, selectedUser } = useSelectUser();
   const { loginUser } = useLoginUser();
-  console.log(loginUser);
 
   useEffect(() => getUsers(), []);
 
   const onClickUser = useCallback(
     (id: number) => {
-      console.log(id);
       onSelectUser({
         id,
         users,
@@ -58,12 +56,7 @@ export const UserManagement: FC = memo(() => {
           ))}
         </Wrap>
       )}
-      <UserDetailModal
-        user={selectedUser}
-        isOpen={isOpen}
-        isAdmin={loginUser?.isAdmin}
-        onClose={onClose}
-      />
+      <UserDetailModal user={selectedUser} isOpen={isOpen} isAdmin={loginUser?.isAdmin} onClose={onClose} />
     </div>
   );
 });
