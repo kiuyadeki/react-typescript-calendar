@@ -4,7 +4,7 @@ import {
 import {
   ChangeEvent, FC, FormEvent, memo, useState,
 } from 'react';
-import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
+import { createUserWithEmailAndPassword, sendEmailVerification, sendSignInLinkToEmail } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import { PrimaryButton } from '../atoms/button/PrimaryButton';
 import { useAuth } from '../../hooks/useAuth';
@@ -46,42 +46,35 @@ export const SignUp: FC = memo(() => {
     }
   };
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const form = event.target as HTMLFormElement;
     const emailElement = form.elements.namedItem('email') as HTMLInputElement;
     const passwordElement = form.elements.namedItem('password') as HTMLInputElement;
     setShow(false);
-    if (emailElement && passwordElement) {
-      createUserWithEmailAndPassword(auth, emailElement.value, passwordElement.value)
-        .then((userCredential) => {
-          const user = userCredential.user;
-          if (user) {
-            sendEmailVerification(user)
-            .then(() => {
-              console.log('Verification email sent!');
-            })
-            .catch((error) => {
-              console.error('Error sending verification email:', error.message);
-            })
-          }
-          navigation('/thanks');
-        })
-        .catch((error: { code: string }) => {
-          let message: string;
-          switch (error.code) {
-            case 'auth/email-already-in-use':
-              message = 'このメールアドレスは既に登録されています。';
-              break;
-            case 'auth/invalid-email':
-              message = '無効なメールアドレスです。';
-              break;
-            default:
-              message = '入力情報に誤りがあります。';
-          }
-          setErrorMessage(message);
-          setShow(true);
-        });
+    if (emailElement) {
+      const email = emailElement.value;
+      const actionCodeSettings = {
+        url: 'https://react-typescript-calendar-9c6g.vercel.app?email=' + email,
+        handleCodeInApp: true,
+      };
+
+      try {
+        await sendSignInLinkToEmail(auth, email, actionCodeSettings);
+        console.log('SignIn Link sent!');
+        window.localStorage.setItem('emailForSignIn', email);
+      } catch (error: any) {
+        let message: string;
+        switch (error.code) {
+          case 'auth/invalid-email':
+            message = '無効なメールアドレスです。';
+            break;
+          default:
+            message = 'メールの送信中にエラーが発生しました。';
+        }
+        setErrorMessage(message);
+        setShow(true);
+      }
     }
   };
 
@@ -107,17 +100,13 @@ export const SignUp: FC = memo(() => {
         </Heading>
         <Divider my={4} />
         <Box onSubmit={handleSubmit} as="form" px={10} pb={8}>
-          <Stack spacing={1} pt={4}>
+          <Stack spacing={1} pt={4} py={4} mb={3}>
             <Text>Email</Text>
-            <Input name="email" placeholder="ユーザーID" value={email} onChange={onChangeUserId} />
-          </Stack>
-          <Stack spacing={1} py={4} mb={3}>
-            <Text>パスワード</Text>
-            <Input name="password" placeholder="パスワード" value={password} onChange={onChangePassword} />
+            <Input name="email" placeholder="info@email.com" value={email} onChange={onChangeUserId} />
           </Stack>
           <Stack>
             <PrimaryButton disabled={email === ''} loading={loading} onClick={() => null}>
-              新規登録
+              メールを送信する
             </PrimaryButton>
           </Stack>
         </Box>
