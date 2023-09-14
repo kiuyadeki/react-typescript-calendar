@@ -31,7 +31,9 @@ export const Login: FC = memo(() => {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
-      await signInWithEmailAndPassword(auth, loginEmail, loginPassword);
+      const userCredential = await signInWithEmailAndPassword(auth, loginEmail, loginPassword);
+      const user = userCredential.user;
+      console.log("is email verified?", user.emailVerified);
       setLoginEmail('');
       setLoginPassword('');
     } catch (error) {

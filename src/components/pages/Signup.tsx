@@ -105,7 +105,7 @@ export const SignUp: FC = memo(() => {
         <Box onSubmit={handleSubmit} as="form" px={10} pb={8}>
           <Stack spacing={1} pt={4}>
             <Text>Email</Text>
-            <Input name="email" placeholder="info@email.com" value={email} onChange={onChangeUserId} />
+            <Input name="email" autoComplete="email" placeholder="info@email.com" value={email} onChange={onChangeUserId} />
           </Stack>
           <Stack spacing={1} py={4} mb={3}>
             <Text>パスワード</Text>
