@@ -17,31 +17,6 @@ export const SignUp: FC = memo(() => {
   const onChangePassword = (e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value);
   const navigation = useNavigate();
 
-  const signUpWithEmailAndPassword = async (enteredEmail: string, enteredPassword: string) => {
-    try {
-      const userCredential = await createUserWithEmailAndPassword(auth, enteredEmail, enteredPassword);
-      const user = userCredential.user;
-      await sendEmailVerification(user);
-      console.log("email sent");
-    } catch {
-      (error: { code: string }) => {
-        let message: string;
-        switch (error.code) {
-          case "auth/email-already-in-use":
-            message = "このメールアドレスは既に登録されています。";
-            break;
-          case "auth/invalid-email":
-            message = "無効なメールアドレスです。";
-            break;
-          default:
-            message = "入力情報に誤りがあります。";
-        }
-        setErrorMessage(message);
-        setShow(true);
-      };
-    }
-  };
-
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const form = event.target as HTMLFormElement;
