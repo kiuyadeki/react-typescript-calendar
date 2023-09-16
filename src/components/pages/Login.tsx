@@ -15,7 +15,7 @@ import {
 import React, {
   ChangeEvent, FC, memo, useState,
 } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../../firebase';
 
@@ -27,15 +27,34 @@ export const Login: FC = memo(() => {
   const onChangeLoginPassword = (e: ChangeEvent<HTMLInputElement>) => {
     setLoginPassword(e.target.value);
   };
+  const navigation = useNavigate();
+
+  auth.onAuthStateChanged((user) => {
+    if (!user) {
+      console.log("サインインしていない状態");
+    } else {
+      console.log("サインイン済み");
+    }
+  });
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
       const userCredential = await signInWithEmailAndPassword(auth, loginEmail, loginPassword);
       const user = userCredential.user;
-      console.log("is email verified?", user.emailVerified);
+
+      const checkEmailVerification = async () => {
+        if (user) {
+          await user.reload();
+          console.log(user);
+          console.log("is email verified?", user.emailVerified);
+        }
+      }
+      await checkEmailVerification();
       setLoginEmail('');
       setLoginPassword('');
+      navigation("/logout/");
+
     } catch (error) {
       setShow(true);
     }
