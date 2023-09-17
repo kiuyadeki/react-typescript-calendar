@@ -1,6 +1,6 @@
-import { FC, memo } from 'react';
-import { auth } from '../../firebase';
-import { Box, Button, Flex } from '@chakra-ui/react';
+import { FC, memo } from "react";
+import { auth } from "../../firebase";
+import { Box, Button, Flex } from "@chakra-ui/react";
 
 export const Logout: FC = memo(() => {
   const handleLogout = async () => {
@@ -10,7 +10,7 @@ export const Logout: FC = memo(() => {
     } catch (error) {
       console.error("Error signing out:", error);
     }
-  }
+  };
 
   return (
     <Box>
@@ -20,5 +20,5 @@ export const Logout: FC = memo(() => {
         </Box>
       </Flex>
     </Box>
-  )
+  );
 });

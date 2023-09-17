@@ -1,9 +1,9 @@
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import { useCallback, useState } from 'react';
-import { User } from '../types/api/user';
-import { useMessage } from './useMessage';
-import { useLoginUser } from './useLoginUser';
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { useCallback, useState } from "react";
+import { User } from "../types/user";
+import { useMessage } from "./useMessage";
+import { useLoginUser } from "./useLoginUser";
 
 export const useAuth = () => {
   const navigate = useNavigate();
@@ -16,7 +16,7 @@ export const useAuth = () => {
       setLoading(true);
       axios
         .get<User>(`https://jsonplaceholder.typicode.com/users/${id}`)
-        .then((res) => {
+        .then(res => {
           if (res.data) {
             const isAdmin = res.data.id === 10;
             setLoginUser({
@@ -24,26 +24,26 @@ export const useAuth = () => {
               isAdmin,
             });
             showMessage({
-              title: 'ログインしました',
-              status: 'success',
+              title: "ログインしました",
+              status: "success",
             });
-            navigate('/home');
+            navigate("/home");
           } else {
             showMessage({
-              title: 'ユーザが見つかりません',
-              status: 'error',
+              title: "ユーザが見つかりません",
+              status: "error",
             });
           }
         })
         .catch(() => {
           showMessage({
-            title: 'ログインできません',
-            status: 'error',
+            title: "ログインできません",
+            status: "error",
           });
           setLoading(false);
         });
     },
-    [navigate, showMessage, setLoginUser],
+    [navigate, showMessage, setLoginUser]
   );
   return {
     login,

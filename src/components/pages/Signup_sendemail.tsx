@@ -1,20 +1,16 @@
-import {
-  Alert, AlertIcon, Box, Divider, Flex, Heading, Input, SlideFade, Stack, Text,
-} from '@chakra-ui/react';
-import {
-  ChangeEvent, FC, FormEvent, memo, useState,
-} from 'react';
-import { createUserWithEmailAndPassword, sendEmailVerification, sendSignInLinkToEmail } from 'firebase/auth';
-import { useNavigate } from 'react-router-dom';
-import { PrimaryButton } from '../atoms/button/PrimaryButton';
-import { useAuth } from '../../hooks/useAuth';
-import { auth } from '../../firebase';
+import { Alert, AlertIcon, Box, Divider, Flex, Heading, Input, SlideFade, Stack, Text } from "@chakra-ui/react";
+import { ChangeEvent, FC, FormEvent, memo, useState } from "react";
+import { createUserWithEmailAndPassword, sendEmailVerification, sendSignInLinkToEmail } from "firebase/auth";
+import { useNavigate } from "react-router-dom";
+import { PrimaryButton } from "../parts/PrimaryButton";
+import { useAuth } from "../../hooks/useAuth";
+import { auth } from "../../firebase";
 
 export const SignUp: FC = memo(() => {
   const [show, setShow] = useState(false);
   const { loading } = useAuth();
-  const [email, setEmail] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
+  const [email, setEmail] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   const onChangeUserId = (e: ChangeEvent<HTMLInputElement>) => setEmail(e.target.value);
   const navigation = useNavigate();
@@ -22,27 +18,27 @@ export const SignUp: FC = memo(() => {
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const form = event.target as HTMLFormElement;
-    const emailElement = form.elements.namedItem('email') as HTMLInputElement;
+    const emailElement = form.elements.namedItem("email") as HTMLInputElement;
     setShow(false);
     if (emailElement) {
       const email = emailElement.value;
       const actionCodeSettings = {
-        url: 'https://react-typescript-calendar-9c6g.vercel.app?email=' + email,
+        url: "https://react-typescript-calendar-9c6g.vercel.app?email=" + email,
         handleCodeInApp: true,
       };
 
       try {
         await sendSignInLinkToEmail(auth, email, actionCodeSettings);
-        console.log('SignIn Link sent!');
-        window.localStorage.setItem('emailForSignIn', email);
+        console.log("SignIn Link sent!");
+        window.localStorage.setItem("emailForSignIn", email);
       } catch (error: any) {
         let message: string;
         switch (error.code) {
-          case 'auth/invalid-email':
-            message = '無効なメールアドレスです。';
+          case "auth/invalid-email":
+            message = "無効なメールアドレスです。";
             break;
           default:
-            message = 'メールの送信中にエラーが発生しました。';
+            message = "メールの送信中にエラーが発生しました。";
         }
         setErrorMessage(message);
         setShow(true);
@@ -77,7 +73,7 @@ export const SignUp: FC = memo(() => {
             <Input name="email" placeholder="info@email.com" value={email} onChange={onChangeUserId} />
           </Stack>
           <Stack>
-            <PrimaryButton disabled={email === ''} loading={loading} onClick={() => null}>
+            <PrimaryButton disabled={email === ""} loading={loading} onClick={() => null}>
               メールを送信する
             </PrimaryButton>
           </Stack>

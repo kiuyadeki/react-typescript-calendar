@@ -10,12 +10,10 @@ import {
   ModalHeader,
   ModalOverlay,
   Stack,
-} from '@chakra-ui/react';
-import {
-  ChangeEvent, FC, memo, useEffect, useState,
-} from 'react';
-import { User } from '../../../../types/api/user';
-import { PrimaryButton } from '../../../atoms/button/PrimaryButton';
+} from "@chakra-ui/react";
+import { ChangeEvent, FC, memo, useEffect, useState } from "react";
+import { User } from "../../types/user";
+import { PrimaryButton } from "../parts/PrimaryButton";
 
 type Props = {
   user: User | null;
@@ -24,21 +22,19 @@ type Props = {
   onClose: () => void;
 };
 
-export const UserDetailModal: FC<Props> = memo((props) => {
-  const {
-    user, isOpen, isAdmin = false, onClose,
-  } = props;
+export const UserDetailModal: FC<Props> = memo(props => {
+  const { user, isOpen, isAdmin = false, onClose } = props;
 
-  const [username, setUsername] = useState('');
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
+  const [username, setUsername] = useState("");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
 
   useEffect(() => {
-    setUsername(user?.username ?? '');
-    setName(user?.name ?? '');
-    setEmail(user?.email ?? '');
-    setPhone(user?.phone ?? '');
+    setUsername(user?.username ?? "");
+    setName(user?.name ?? "");
+    setEmail(user?.email ?? "");
+    setPhone(user?.phone ?? "");
   }, [user]);
 
   const onChangeUsername = (e: ChangeEvent<HTMLInputElement>) => setUsername(e.target.value);

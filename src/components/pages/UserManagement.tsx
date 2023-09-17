@@ -4,9 +4,9 @@ import {
 import {
   FC, memo, useCallback, useEffect,
 } from 'react';
-import { UserCard } from './organisms/user/UserCard';
+import { UserCard } from '../templates/UserCard';
 import { useAllUsers } from '../../hooks/useAllUsers';
-import { UserDetailModal } from './organisms/user/UserDetailModal';
+import { UserDetailModal } from '../templates/UserDetailModal';
 import { useSelectUser } from '../../hooks/useSelectUser';
 import { useLoginUser } from '../../hooks/useLoginUser';
 
