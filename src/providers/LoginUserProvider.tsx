@@ -1,7 +1,5 @@
-import {
-  Dispatch, ReactNode, SetStateAction, createContext, useMemo, useState,
-} from 'react';
-import { User } from '../types/api/user';
+import { Dispatch, ReactNode, SetStateAction, createContext, useMemo, useState } from "react";
+import { User } from "../types/user";
 
 type LoginUser = User & { isAdmin: boolean };
 

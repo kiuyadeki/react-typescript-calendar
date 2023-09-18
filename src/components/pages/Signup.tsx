@@ -2,7 +2,7 @@ import { Alert, AlertIcon, Box, Divider, Flex, Heading, Input, SlideFade, Stack,
 import { ChangeEvent, FC, FormEvent, memo, useState } from "react";
 import { createUserWithEmailAndPassword, sendEmailVerification, sendSignInLinkToEmail } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
-import { PrimaryButton } from "../atoms/button/PrimaryButton";
+import { PrimaryButton } from "../parts/PrimaryButton";
 import { useAuth } from "../../hooks/useAuth";
 import { auth } from "../../firebase";
 
@@ -80,7 +80,13 @@ export const SignUp: FC = memo(() => {
         <Box onSubmit={handleSubmit} as="form" px={10} pb={8}>
           <Stack spacing={1} pt={4}>
             <Text>Email</Text>
-            <Input name="email" autoComplete="email" placeholder="info@email.com" value={email} onChange={onChangeUserId} />
+            <Input
+              name="email"
+              autoComplete="email"
+              placeholder="info@email.com"
+              value={email}
+              onChange={onChangeUserId}
+            />
           </Stack>
           <Stack spacing={1} py={4} mb={3}>
             <Text>パスワード</Text>

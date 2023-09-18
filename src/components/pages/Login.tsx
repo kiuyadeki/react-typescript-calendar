@@ -11,25 +11,23 @@ import {
   Link as ChakraLink,
   Alert,
   AlertIcon,
-} from '@chakra-ui/react';
-import React, {
-  ChangeEvent, FC, memo, useState,
-} from 'react';
-import { Link as RouterLink, useNavigate } from 'react-router-dom';
-import { signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
-import { auth } from '../../firebase';
+} from "@chakra-ui/react";
+import React, { ChangeEvent, FC, memo, useState } from "react";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
+import { signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
+import { auth } from "../../firebase";
 
 export const Login: FC = memo(() => {
   const [show, setShow] = useState(false);
-  const [loginEmail, setLoginEmail] = useState('');
-  const [loginPassword, setLoginPassword] = useState('');
+  const [loginEmail, setLoginEmail] = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
   const onChangeLoginEmail = (e: ChangeEvent<HTMLInputElement>) => setLoginEmail(e.target.value);
   const onChangeLoginPassword = (e: ChangeEvent<HTMLInputElement>) => {
     setLoginPassword(e.target.value);
   };
   const navigation = useNavigate();
 
-  auth.onAuthStateChanged((user) => {
+  auth.onAuthStateChanged(user => {
     if (!user) {
       console.log("サインインしていない状態");
     } else {
@@ -49,12 +47,11 @@ export const Login: FC = memo(() => {
           console.log(user);
           console.log("is email verified?", user.emailVerified);
         }
-      }
+      };
       await checkEmailVerification();
-      setLoginEmail('');
-      setLoginPassword('');
+      setLoginEmail("");
+      setLoginPassword("");
       navigation("/logout/");
-
     } catch (error) {
       setShow(true);
     }
@@ -97,7 +94,7 @@ export const Login: FC = memo(() => {
               <FormLabel htmlFor="password">パスワード</FormLabel>
               <Input
                 id="password"
-                type={show ? 'text' : 'password'}
+                type={show ? "text" : "password"}
                 placeholder="パスワード"
                 value={loginPassword}
                 onChange={onChangeLoginPassword}
@@ -105,7 +102,7 @@ export const Login: FC = memo(() => {
             </FormControl>
             <Stack align="center" mt={5}>
               <Button
-                isDisabled={loginEmail === '' || loginPassword === ''}
+                isDisabled={loginEmail === "" || loginPassword === ""}
                 type="submit"
                 colorScheme="teal"
                 size="md"

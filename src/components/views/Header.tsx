@@ -1,18 +1,16 @@
-import {
-  Box, Flex, Heading, Link, useDisclosure,
-} from '@chakra-ui/react';
-import { FC, memo, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { MenuIconButton } from '../../../atoms/button/MenuIconButton';
-import { MenuDrawer } from '../../../molecules/MenuDrawer';
+import { Box, Flex, Heading, Link, useDisclosure } from "@chakra-ui/react";
+import { FC, memo, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
+import { MenuIconButton } from "../parts/MenuIconButton";
+import { MenuDrawer } from "../templates/MenuDrawer";
 
 export const Header: FC = memo(() => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const navigate = useNavigate();
 
-  const onClickHome = useCallback(() => navigate('/home'), []);
-  const onClickUserManagement = useCallback(() => navigate('/home/user_management'), []);
-  const onClickSetting = useCallback(() => navigate('/home/setting'), []);
+  const onClickHome = useCallback(() => navigate("/home"), []);
+  const onClickUserManagement = useCallback(() => navigate("/home/user_management"), []);
+  const onClickSetting = useCallback(() => navigate("/home/setting"), []);
   return (
     <>
       <Flex
@@ -26,12 +24,12 @@ export const Header: FC = memo(() => {
           md: 5,
         }}
       >
-        <Flex as="a" align="center" mr={8} _hover={{ cursor: 'pointer' }} onClick={onClickHome}>
+        <Flex as="a" align="center" mr={8} _hover={{ cursor: "pointer" }} onClick={onClickHome}>
           <Heading
             as="h1"
             fontSize={{
-              base: 'md',
-              md: 'lg',
+              base: "md",
+              md: "lg",
             }}
           >
             ユーザー管理アプリ
@@ -42,8 +40,8 @@ export const Header: FC = memo(() => {
           fontSize="sm"
           flexGrow={2}
           display={{
-            base: 'none',
-            md: 'flex',
+            base: "none",
+            md: "flex",
           }}
         >
           <Box pr={4}>
