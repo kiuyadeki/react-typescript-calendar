@@ -1,6 +1,6 @@
 import { FC, memo } from "react";
 import { Route, Routes } from "react-router-dom";
-import { Layout } from "../components/layout/Layout";
+import { Layout } from "../components/views/Layout";
 import { Login } from "../components/pages/Login";
 import { Page404 } from "../components/pages/Page404";
 import { homeRoutes } from "./HomeRoutes";
