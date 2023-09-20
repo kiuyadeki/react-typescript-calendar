@@ -8,11 +8,13 @@ import { SignUp } from "../components/pages/Signup";
 import { Thanks } from "../components/pages/Thanks";
 import { EmailVerified } from "../components/pages/EmailVerified";
 import { Logout } from "../components/pages/Logout";
+import { ResetPassword } from '../components/pages/ResetPassword';
 
 export const Router: FC = memo(() => (
   <Routes>
     <Route path="" element={<Login />} />
     <Route path="/signup" element={<SignUp />} />
+    <Route path="/reset-password" element={<ResetPassword />} />
     <Route path="/thanks" element={<Thanks />} />
     <Route path="/logout" element={<Logout />} />
     <Route path="/verified" element={<EmailVerified />} />

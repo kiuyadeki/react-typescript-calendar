@@ -14,17 +14,13 @@ import {
 } from "@chakra-ui/react";
 import React, { ChangeEvent, FC, memo, useState } from "react";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
-import { signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
+import { sendPasswordResetEmail, onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../firebase";
 
-export const Login: FC = memo(() => {
+export const ResetPassword: FC = memo(() => {
   const [show, setShow] = useState(false);
   const [loginEmail, setLoginEmail] = useState("");
-  const [loginPassword, setLoginPassword] = useState("");
   const onChangeLoginEmail = (e: ChangeEvent<HTMLInputElement>) => setLoginEmail(e.target.value);
-  const onChangeLoginPassword = (e: ChangeEvent<HTMLInputElement>) => {
-    setLoginPassword(e.target.value);
-  };
   const navigation = useNavigate();
 
   auth.onAuthStateChanged(user => {
@@ -37,24 +33,20 @@ export const Login: FC = memo(() => {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    try {
-      const userCredential = await signInWithEmailAndPassword(auth, loginEmail, loginPassword);
-      const user = userCredential.user;
-
-      const checkEmailVerification = async () => {
-        if (user) {
-          await user.reload();
-          console.log(user);
-          console.log("is email verified?", user.emailVerified);
-        }
-      };
-      await checkEmailVerification();
-      setLoginEmail("");
-      setLoginPassword("");
-      navigation("/logout/");
-    } catch (error) {
-      setShow(true);
+    const actionCodeSettings = {
+      url: '/login',
+      handleCodeInApp: false,
     }
+    sendPasswordResetEmail(auth, loginEmail)
+    .then((resp) => {
+      console.log('送信成功');
+      setLoginEmail("");
+      navigation("/logout/");
+    })
+    .catch((error) => {
+      console.log(error.message);
+      setShow(true);
+    })
   };
 
   const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -82,7 +74,7 @@ export const Login: FC = memo(() => {
           )}
 
           <Heading as="h1" size="lg" textAlign="center">
-            ログイン
+            パスワード再設定
           </Heading>
           <Divider my={4} />
           <Box onSubmit={onSubmit} as="form" px={10} pb={8}>
@@ -90,35 +82,17 @@ export const Login: FC = memo(() => {
               <FormLabel htmlFor="email">Email</FormLabel>
               <Input id="email" placeholder="info@email.com" value={loginEmail} onChange={onChangeLoginEmail} />
             </FormControl>
-            <FormControl py={2}>
-              <FormLabel htmlFor="password">パスワード</FormLabel>
-              <Input
-                id="password"
-                type={show ? "text" : "password"}
-                placeholder="パスワード"
-                value={loginPassword}
-                onChange={onChangeLoginPassword}
-              />
-            </FormControl>
             <Stack align="center" mt={5}>
               <Button
-                isDisabled={loginEmail === "" || loginPassword === ""}
+                isDisabled={loginEmail === ""}
                 type="submit"
                 colorScheme="teal"
                 size="md"
                 w="100%"
               >
-                ログイン
+                再設定用のリンクを送信
               </Button>
             </Stack>
-            <Flex flexDirection="column" alignItems="flex-end" rowGap={1} mt={2}>
-              <ChakraLink as={RouterLink} to="/signup/" color="black.500" fontSize="sm">
-                ユーザ登録はこちら
-              </ChakraLink>
-              <ChakraLink as={RouterLink} to="/reset-password/" color="black.500" fontSize="sm">
-                パスワードを忘れた方はこちら
-              </ChakraLink>
-            </Flex>
           </Box>
         </Box>
       </Flex>

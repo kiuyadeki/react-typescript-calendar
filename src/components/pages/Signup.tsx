@@ -1,7 +1,7 @@
-import { Alert, AlertIcon, Box, Divider, Flex, Heading, Input, SlideFade, Stack, Text } from "@chakra-ui/react";
+import { Alert, AlertIcon, Box, Divider, Flex, Heading, Input, SlideFade, Stack, Text, Link as ChakraLink } from "@chakra-ui/react";
 import { ChangeEvent, FC, FormEvent, memo, useState } from "react";
 import { createUserWithEmailAndPassword, sendEmailVerification, sendSignInLinkToEmail } from "firebase/auth";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link as RouterLink } from "react-router-dom";
 import { PrimaryButton } from "../parts/PrimaryButton";
 import { useAuth } from "../../hooks/useAuth";
 import { auth } from "../../firebase";
@@ -100,6 +100,11 @@ export const SignUp: FC = memo(() => {
               新規登録
             </PrimaryButton>
           </Stack>
+          <Flex justifyContent="flex-end" mt={2}>
+              <ChakraLink as={RouterLink} to="/" color="black.500" fontSize="sm">
+                登録済みの方はこちら
+              </ChakraLink>
+            </Flex>
         </Box>
       </Box>
     </Flex>
