@@ -14,7 +14,7 @@ import {
 } from "@chakra-ui/react";
 import React, { ChangeEvent, FC, memo, useState } from "react";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
-import { sendPasswordResetEmail, onAuthStateChanged } from "firebase/auth";
+import { sendPasswordResetEmail } from "firebase/auth";
 import { auth } from "../../firebase";
 
 export const ResetPassword: FC = memo(() => {
@@ -22,14 +22,6 @@ export const ResetPassword: FC = memo(() => {
   const [loginEmail, setLoginEmail] = useState("");
   const onChangeLoginEmail = (e: ChangeEvent<HTMLInputElement>) => setLoginEmail(e.target.value);
   const navigation = useNavigate();
-
-  auth.onAuthStateChanged(user => {
-    if (!user) {
-      console.log("サインインしていない状態");
-    } else {
-      console.log("サインイン済み");
-    }
-  });
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();

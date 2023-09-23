@@ -3,12 +3,10 @@ import { ChangeEvent, FC, FormEvent, memo, useState } from "react";
 import { createUserWithEmailAndPassword, sendEmailVerification, sendSignInLinkToEmail } from "firebase/auth";
 import { useNavigate, Link as RouterLink } from "react-router-dom";
 import { PrimaryButton } from "../parts/PrimaryButton";
-import { useAuth } from "../../hooks/useAuth";
 import { auth } from "../../firebase";
 
 export const SignUp: FC = memo(() => {
   const [show, setShow] = useState(false);
-  const { loading } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -36,7 +34,7 @@ export const SignUp: FC = memo(() => {
                 console.error("Error sending verification email:", error.message);
               });
           }
-          navigation("/thanks");
+          navigation("/auth/thanks");
         })
         .catch((error: { code: string }) => {
           let message: string;
@@ -96,12 +94,12 @@ export const SignUp: FC = memo(() => {
             </Text>
           </Stack>
           <Stack>
-            <PrimaryButton disabled={email === ""} loading={loading} onClick={() => null}>
+            <PrimaryButton disabled={email === ""} onClick={() => null}>
               新規登録
             </PrimaryButton>
           </Stack>
           <Flex justifyContent="flex-end" mt={2}>
-              <ChakraLink as={RouterLink} to="/" color="black.500" fontSize="sm">
+              <ChakraLink as={RouterLink} to="/auth/" color="black.500" fontSize="sm">
                 登録済みの方はこちら
               </ChakraLink>
             </Flex>
