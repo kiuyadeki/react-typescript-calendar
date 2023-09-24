@@ -1,12 +1,14 @@
 import { FC, memo } from "react";
 import { auth } from "../../firebase";
 import { Box, Button, Flex } from "@chakra-ui/react";
+import { useNavigate } from 'react-router-dom';
 
 export const Logout: FC = memo(() => {
+  const navigation = useNavigate();
   const handleLogout = async () => {
     try {
       await auth.signOut();
-      console.log("sign out");
+      navigation('/auth/');
     } catch (error) {
       console.error("Error signing out:", error);
     }

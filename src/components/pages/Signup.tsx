@@ -4,6 +4,7 @@ import { createUserWithEmailAndPassword, sendEmailVerification, sendSignInLinkTo
 import { useNavigate, Link as RouterLink } from "react-router-dom";
 import { PrimaryButton } from "../parts/PrimaryButton";
 import { auth } from "../../firebase";
+import { FormFrame } from '../parts/FormFrame';
 
 export const SignUp: FC = memo(() => {
   const [show, setShow] = useState(false);
@@ -55,8 +56,7 @@ export const SignUp: FC = memo(() => {
   };
 
   return (
-    <Flex align="center" justify="center" height="100vh" position="relative">
-      <Box bg="white" w="sm" p={4} borderRadius="md" shadow="md" position="relative">
+      <FormFrame>
         <SlideFade in={show} offsetY="20px">
           <Alert
             status="error"
@@ -104,7 +104,6 @@ export const SignUp: FC = memo(() => {
               </ChakraLink>
             </Flex>
         </Box>
-      </Box>
-    </Flex>
+      </FormFrame>
   );
 });

@@ -33,7 +33,7 @@ export const ResetPassword: FC = memo(() => {
     .then((resp) => {
       console.log('送信成功');
       setLoginEmail("");
-      navigation("/logout/");
+      navigation("/auth/logout/");
     })
     .catch((error) => {
       console.log(error.message);

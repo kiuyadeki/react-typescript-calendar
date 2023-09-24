@@ -1,6 +1,9 @@
 import { Flex, Box } from '@chakra-ui/react'
+import { FC, memo } from 'react';
+import { RequiredChildren } from '../../types/RequiredChildren';
 
-export const FormFrame = ({children}: any) => {
+export const FormFrame: FC<RequiredChildren> = memo((props) => {
+  const { children } = props
   return (
     <Box>
     <Flex align="center" justify="center" height="100vh" position="relative">
@@ -10,4 +13,4 @@ export const FormFrame = ({children}: any) => {
     </Flex>
   </Box>
   )
-}
+});
