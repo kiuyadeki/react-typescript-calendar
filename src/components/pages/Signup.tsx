@@ -1,20 +1,28 @@
 import { Alert, AlertIcon, Box, Divider, Flex, Heading, Input, SlideFade, Stack, Text, Link as ChakraLink } from "@chakra-ui/react";
-import { ChangeEvent, FC, FormEvent, memo, useState } from "react";
+import { ChangeEvent, FC, FormEvent, memo, useEffect, useState } from "react";
 import { createUserWithEmailAndPassword, sendEmailVerification, sendSignInLinkToEmail } from "firebase/auth";
 import { useNavigate, Link as RouterLink } from "react-router-dom";
 import { PrimaryButton } from "../parts/PrimaryButton";
 import { auth } from "../../firebase";
 import { FormFrame } from '../parts/FormFrame';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { LoadingPage } from '../parts/LoadingPage';
 
 export const SignUp: FC = memo(() => {
   const [show, setShow] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-
   const onChangeUserId = (e: ChangeEvent<HTMLInputElement>) => setEmail(e.target.value);
   const onChangePassword = (e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value);
   const navigation = useNavigate();
+  const [user, loading, error] = useAuthState(auth);
+
+  useEffect(() => {
+    if (user && user.emailVerified) {
+      navigation("/dashboard/");
+    }
+  }, [user, navigation]);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -56,6 +64,10 @@ export const SignUp: FC = memo(() => {
   };
 
   return (
+    <>
+      {loading ? (
+        <LoadingPage />
+      ) : (
       <FormFrame>
         <SlideFade in={show} offsetY="20px">
           <Alert
@@ -105,5 +117,7 @@ export const SignUp: FC = memo(() => {
             </Flex>
         </Box>
       </FormFrame>
+      )}
+    </>
   );
 });
