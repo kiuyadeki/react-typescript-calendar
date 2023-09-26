@@ -12,6 +12,7 @@ import {
   Alert,
   AlertIcon,
   Spinner,
+  SlideFade,
 } from "@chakra-ui/react";
 import React, { ChangeEvent, FC, memo, useEffect, useState } from "react";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
@@ -81,7 +82,7 @@ export const Login: FC = memo(() => {
         <LoadingPage />
       ) : (
         <FormFrame>
-          {show && (
+          <SlideFade in={show} offsetY="20px">
             <Alert
               status="error"
               textAlign="center"
@@ -94,8 +95,7 @@ export const Login: FC = memo(() => {
               <AlertIcon />
               {errorMessage}
             </Alert>
-          )}
-
+          </SlideFade>
           <Heading as="h1" size="lg" textAlign="center">
             ログイン
           </Heading>
