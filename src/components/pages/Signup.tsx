@@ -1,21 +1,28 @@
 import { Alert, AlertIcon, Box, Divider, Flex, Heading, Input, SlideFade, Stack, Text, Link as ChakraLink } from "@chakra-ui/react";
-import { ChangeEvent, FC, FormEvent, memo, useState } from "react";
+import { ChangeEvent, FC, FormEvent, memo, useEffect, useState } from "react";
 import { createUserWithEmailAndPassword, sendEmailVerification, sendSignInLinkToEmail } from "firebase/auth";
 import { useNavigate, Link as RouterLink } from "react-router-dom";
 import { PrimaryButton } from "../parts/PrimaryButton";
-import { useAuth } from "../../hooks/useAuth";
 import { auth } from "../../firebase";
+import { FormFrame } from '../parts/FormFrame';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { LoadingPage } from '../parts/LoadingPage';
 
 export const SignUp: FC = memo(() => {
   const [show, setShow] = useState(false);
-  const { loading } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-
   const onChangeUserId = (e: ChangeEvent<HTMLInputElement>) => setEmail(e.target.value);
   const onChangePassword = (e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value);
   const navigation = useNavigate();
+  const [user, loading, error] = useAuthState(auth);
+
+  useEffect(() => {
+    if (user && user.emailVerified) {
+      navigation("/dashboard/");
+    }
+  }, [user, navigation]);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -36,7 +43,7 @@ export const SignUp: FC = memo(() => {
                 console.error("Error sending verification email:", error.message);
               });
           }
-          navigation("/thanks");
+          navigation("/auth/thanks");
         })
         .catch((error: { code: string }) => {
           let message: string;
@@ -57,8 +64,11 @@ export const SignUp: FC = memo(() => {
   };
 
   return (
-    <Flex align="center" justify="center" height="100vh" position="relative">
-      <Box bg="white" w="sm" p={4} borderRadius="md" shadow="md" position="relative">
+    <>
+      {loading ? (
+        <LoadingPage />
+      ) : (
+      <FormFrame>
         <SlideFade in={show} offsetY="20px">
           <Alert
             status="error"
@@ -96,17 +106,18 @@ export const SignUp: FC = memo(() => {
             </Text>
           </Stack>
           <Stack>
-            <PrimaryButton disabled={email === ""} loading={loading} onClick={() => null}>
+            <PrimaryButton disabled={email === ""} onClick={() => null}>
               新規登録
             </PrimaryButton>
           </Stack>
           <Flex justifyContent="flex-end" mt={2}>
-              <ChakraLink as={RouterLink} to="/" color="black.500" fontSize="sm">
+              <ChakraLink as={RouterLink} to="/auth/" color="black.500" fontSize="sm">
                 登録済みの方はこちら
               </ChakraLink>
             </Flex>
         </Box>
-      </Box>
-    </Flex>
+      </FormFrame>
+      )}
+    </>
   );
 });

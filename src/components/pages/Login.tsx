@@ -11,48 +11,61 @@ import {
   Link as ChakraLink,
   Alert,
   AlertIcon,
+  Spinner,
 } from "@chakra-ui/react";
-import React, { ChangeEvent, FC, memo, useState } from "react";
+import React, { ChangeEvent, FC, memo, useEffect, useState } from "react";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
-import { signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
+import { signInWithEmailAndPassword, onAuthStateChanged, User } from "firebase/auth";
 import { auth } from "../../firebase";
+import { FormFrame } from "../parts/FormFrame";
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { LoadingPage } from '../parts/LoadingPage';
 
 export const Login: FC = memo(() => {
   const [show, setShow] = useState(false);
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("ログイン時にエラーが発生しました。");
   const onChangeLoginEmail = (e: ChangeEvent<HTMLInputElement>) => setLoginEmail(e.target.value);
   const onChangeLoginPassword = (e: ChangeEvent<HTMLInputElement>) => {
     setLoginPassword(e.target.value);
   };
   const navigation = useNavigate();
+  const [user, loading, error] = useAuthState(auth);
 
-  auth.onAuthStateChanged(user => {
-    if (!user) {
-      console.log("サインインしていない状態");
-    } else {
-      console.log("サインイン済み");
+  useEffect(() => {
+    if (user && user.emailVerified) {
+      navigation("/dashboard/");
     }
-  });
-
+  }, [user, navigation]);
+  
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
       const userCredential = await signInWithEmailAndPassword(auth, loginEmail, loginPassword);
       const user = userCredential.user;
-
-      const checkEmailVerification = async () => {
-        if (user) {
-          await user.reload();
-          console.log(user);
-          console.log("is email verified?", user.emailVerified);
+      if (user) {
+        await user.reload();
+        if(!user.emailVerified) {
+          throw new Error(`メールアドレスが認証されていません。
+          メールアドレスに送信されたリンクをクリックしてください。`);
         }
-      };
-      await checkEmailVerification();
+      }
       setLoginEmail("");
       setLoginPassword("");
-      navigation("/logout/");
-    } catch (error) {
+      navigation("/auth/logout/");
+    } catch (error: any) {
+      if ('code' in error && error.code === "auth/user-not-found") {
+        setErrorMessage('ユーザーが見つかりません')
+      } else if ('code' in error && error.code === "auth/invalid-email") {
+        setErrorMessage('不正な形式のメールアドレスです')
+      } else if ('code' in error && error.code === "auth/user-disabled") {
+        setErrorMessage('このユーザーは無効にされています')
+      } else if ('code' in error && error.code === "auth/wrong-password") {
+        setErrorMessage('パスワードが間違っています')
+      } else if (error instanceof Error) {
+        setErrorMessage(error.message);
+      }
       setShow(true);
     }
   };
@@ -63,9 +76,11 @@ export const Login: FC = memo(() => {
   };
 
   return (
-    <Box>
-      <Flex align="center" justify="center" height="100vh" position="relative">
-        <Box bg="white" w="sm" p={4} borderRadius="md" shadow="md" position="relative">
+    <>
+      {loading ? (
+        <LoadingPage />
+      ) : (
+        <FormFrame>
           {show && (
             <Alert
               status="error"
@@ -77,7 +92,7 @@ export const Login: FC = memo(() => {
               borderRadius="md"
             >
               <AlertIcon />
-              There was an error processing your request
+              {errorMessage}
             </Alert>
           )}
 
@@ -88,7 +103,7 @@ export const Login: FC = memo(() => {
           <Box onSubmit={onSubmit} as="form" px={10} pb={8}>
             <FormControl py={2} mb={4}>
               <FormLabel htmlFor="email">Email</FormLabel>
-              <Input id="email" placeholder="info@email.com" value={loginEmail} onChange={onChangeLoginEmail} />
+              <Input id="email" placeholder="info@email.com" autoComplete='email' value={loginEmail} onChange={onChangeLoginEmail} />
             </FormControl>
             <FormControl py={2}>
               <FormLabel htmlFor="password">パスワード</FormLabel>
@@ -97,6 +112,7 @@ export const Login: FC = memo(() => {
                 type={show ? "text" : "password"}
                 placeholder="パスワード"
                 value={loginPassword}
+                autoComplete='password'
                 onChange={onChangeLoginPassword}
               />
             </FormControl>
@@ -111,17 +127,17 @@ export const Login: FC = memo(() => {
                 ログイン
               </Button>
             </Stack>
-            <Flex flexDirection="column" alignItems="flex-end" rowGap={1} mt={2}>
-              <ChakraLink as={RouterLink} to="/signup/" color="black.500" fontSize="sm">
+            <Flex flexDirection="column" alignItems="flex-end" rowGap={1} mt={8}>
+              <ChakraLink as={RouterLink} to="/auth/signup/" color="black.500" fontSize="sm">
                 ユーザ登録はこちら
               </ChakraLink>
-              <ChakraLink as={RouterLink} to="/reset-password/" color="black.500" fontSize="sm">
+              <ChakraLink as={RouterLink} to="/auth/reset-password/" color="black.500" fontSize="sm">
                 パスワードを忘れた方はこちら
               </ChakraLink>
             </Flex>
           </Box>
-        </Box>
-      </Flex>
-    </Box>
+        </FormFrame>
+      )}
+    </>
   );
 });
