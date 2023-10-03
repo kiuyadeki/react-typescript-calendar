@@ -5,8 +5,9 @@ import { useNavigate, Link as RouterLink } from "react-router-dom";
 import { PrimaryButton } from "../parts/PrimaryButton";
 import { auth } from "../../firebase";
 import { FormFrame } from '../parts/FormFrame';
-import { useAuthState } from 'react-firebase-hooks/auth';
 import { LoadingPage } from '../parts/LoadingPage';
+import { useRecoilValue } from 'recoil';
+import { loadingState, userState } from '../../recoil/AuthState';
 
 export const SignUp: FC = memo(() => {
   const [show, setShow] = useState(false);
@@ -16,7 +17,8 @@ export const SignUp: FC = memo(() => {
   const onChangeUserId = (e: ChangeEvent<HTMLInputElement>) => setEmail(e.target.value);
   const onChangePassword = (e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value);
   const navigation = useNavigate();
-  const [user, loading, error] = useAuthState(auth);
+  const user = useRecoilValue(userState);
+  const loading = useRecoilValue(loadingState)
 
   useEffect(() => {
     if (user && user.emailVerified) {
