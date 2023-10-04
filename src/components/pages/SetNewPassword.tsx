@@ -11,7 +11,6 @@ import {
   Link as ChakraLink,
   Alert,
   AlertIcon,
-  Spinner,
   SlideFade,
 } from "@chakra-ui/react";
 import React, { ChangeEvent, FC, memo, useEffect, useState } from "react";
@@ -23,39 +22,18 @@ import { LoadingPage } from '../parts/LoadingPage';
 import { useRecoilValue } from 'recoil';
 import { loadingState, userState } from '../../recoil/AuthState';
 
-export const Login: FC = memo(() => {
+export const SetNewPassword: FC = memo(() => {
   const [show, setShow] = useState(false);
-  const [loginEmail, setLoginEmail] = useState("");
-  const [loginPassword, setLoginPassword] = useState("");
+  const [newPassword, setNewPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState("ログイン時にエラーが発生しました。");
-  const onChangeLoginEmail = (e: ChangeEvent<HTMLInputElement>) => setLoginEmail(e.target.value);
-  const onChangeLoginPassword = (e: ChangeEvent<HTMLInputElement>) => {
-    setLoginPassword(e.target.value);
-  };
+  const onChangenewPassword = (e: ChangeEvent<HTMLInputElement>) => setNewPassword(e.target.value);
   const navigation = useNavigate();
   const user = useRecoilValue(userState);
   const loading = useRecoilValue(loadingState)
-
-  useEffect(() => {
-    if (user && user.emailVerified) {
-      navigation("/dashboard/");
-    }
-  }, [user, navigation]);
   
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, loginEmail, loginPassword);
-      const user = userCredential.user;
-      if (user) {
-        await user.reload();
-        if(!user.emailVerified) {
-          throw new Error(`メールアドレスが認証されていません。
-          メールアドレスに送信されたリンクをクリックしてください。`);
-        }
-      }
-      setLoginEmail("");
-      setLoginPassword("");
       navigation("/auth/logout/");
     } catch (error: any) {
       if ('code' in error && error.code === "auth/user-not-found") {
@@ -103,24 +81,20 @@ export const Login: FC = memo(() => {
           </Heading>
           <Divider my={4} />
           <Box onSubmit={onSubmit} as="form" px={10} pb={8}>
-            <FormControl py={2} mb={4}>
-              <FormLabel htmlFor="email">Email</FormLabel>
-              <Input id="email" placeholder="info@email.com" autoComplete='email' value={loginEmail} onChange={onChangeLoginEmail} />
-            </FormControl>
             <FormControl py={2}>
               <FormLabel htmlFor="password">パスワード</FormLabel>
               <Input
                 id="password"
                 type={show ? "text" : "password"}
                 placeholder="パスワード"
-                value={loginPassword}
+                value={newPassword}
                 autoComplete='password'
-                onChange={onChangeLoginPassword}
+                onChange={onChangenewPassword}
               />
             </FormControl>
             <Stack align="center" mt={5}>
               <Button
-                isDisabled={loginEmail === "" || loginPassword === ""}
+                isDisabled={newPassword === ""}
                 type="submit"
                 colorScheme="teal"
                 size="md"
@@ -129,14 +103,6 @@ export const Login: FC = memo(() => {
                 ログイン
               </Button>
             </Stack>
-            <Flex flexDirection="column" alignItems="flex-end" rowGap={1} mt={8}>
-              <ChakraLink as={RouterLink} to="/auth/signup/" color="black.500" fontSize="sm">
-                ユーザ登録はこちら
-              </ChakraLink>
-              <ChakraLink as={RouterLink} to="/auth/reset-password/" color="black.500" fontSize="sm">
-                パスワードを忘れた方はこちら
-              </ChakraLink>
-            </Flex>
           </Box>
         </FormFrame>
       )}

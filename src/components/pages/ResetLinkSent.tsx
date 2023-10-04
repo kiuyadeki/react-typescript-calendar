@@ -1,4 +1,4 @@
-import React, { memo, FC } from "react";
+import { memo, FC } from "react";
 import { Box, Heading, Text, Divider, Stack, Flex } from "@chakra-ui/react";
 
 export const ResetLinkSent: FC = memo(() => {

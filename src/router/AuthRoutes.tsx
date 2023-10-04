@@ -1,4 +1,4 @@
-import { EmailVerified } from "../components/pages/EmailVerified";
+import { ActionCodeRoute } from "../components/pages/ActionCodeRoute";
 import { Login } from "../components/pages/Login";
 import { Logout } from "../components/pages/Logout";
 import { Page404 } from "../components/pages/Page404";
@@ -41,7 +41,7 @@ export const authRoutes = [
   {
     path: "verified",
     index: false,
-    element: <EmailVerified />,
+    element: <ActionCodeRoute />,
   },
   {
     path: "*",

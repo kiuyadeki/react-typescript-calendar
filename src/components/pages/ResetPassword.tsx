@@ -18,8 +18,9 @@ import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { sendPasswordResetEmail } from "firebase/auth";
 import { auth } from "../../firebase";
 import { FormFrame } from "../parts/FormFrame";
-import { useAuthState } from 'react-firebase-hooks/auth';
 import { LoadingPage } from '../parts/LoadingPage';
+import { useRecoilValue } from 'recoil';
+import { loadingState, userState } from '../../recoil/AuthState';
 
 export const ResetPassword: FC = memo(() => {
   const [show, setShow] = useState(false);
@@ -27,7 +28,8 @@ export const ResetPassword: FC = memo(() => {
   const [errorMessage, setErrorMessage] = useState("不明なエラーです。メールを送信できませんでした。");
   const onChangeLoginEmail = (e: ChangeEvent<HTMLInputElement>) => setLoginEmail(e.target.value);
   const navigation = useNavigate();
-  const [user, loading, error] = useAuthState(auth);
+  const user = useRecoilValue(userState);
+  const loading = useRecoilValue(loadingState)
 
   useEffect(() => {
     if(user && user.emailVerified) {

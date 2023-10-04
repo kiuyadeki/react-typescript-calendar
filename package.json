@@ -28,6 +28,7 @@
     "react-dom": "^18.2.0",
     "react-firebase-hooks": "^5.1.1",
     "react-router-dom": "^6.8.1",
+    "reactflow": "^11.9.2",
     "recoil": "^0.7.7",
     "styled-components": "^5.3.6"
   },
