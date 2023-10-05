@@ -15,24 +15,44 @@ import {
 } from "@chakra-ui/react";
 import React, { ChangeEvent, FC, memo, useEffect, useState } from "react";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
-import { signInWithEmailAndPassword, onAuthStateChanged, User } from "firebase/auth";
-import { auth } from "../../firebase";
-import { FormFrame } from "../parts/FormFrame";
 import { LoadingPage } from '../parts/LoadingPage';
 import { useRecoilValue } from 'recoil';
 import { loadingState, userState } from '../../recoil/AuthState';
+import { confirmPasswordReset, verifyPasswordResetCode } from 'firebase/auth';
+import { auth } from '../../firebase';
 
-export const SetNewPassword: FC = memo(() => {
+type Props = {
+  actionCode: string | null;
+}
+
+export const SetNewPassword: FC<Props> = memo((props) => {
   const [show, setShow] = useState(false);
   const [newPassword, setNewPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState("ログイン時にエラーが発生しました。");
   const onChangenewPassword = (e: ChangeEvent<HTMLInputElement>) => setNewPassword(e.target.value);
   const navigation = useNavigate();
   const user = useRecoilValue(userState);
-  const loading = useRecoilValue(loadingState)
+  const loading = useRecoilValue(loadingState);
+  const {actionCode} = props;
+
+
   
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    if(actionCode) {
+      verifyPasswordResetCode(auth, actionCode).then((email) => {
+        const accountEmail = email;
+        confirmPasswordReset(auth, actionCode, newPassword).then((resp) => {
+          console.log('password changed');
+        }).catch((error) => {
+          console.log("confirmPasswordReset", error)
+        })
+      }).catch((error) => {
+        console.log("verifyPasswordResetCode", error)
+      })
+    }
+
     try {
       navigation("/auth/logout/");
     } catch (error: any) {
@@ -61,7 +81,7 @@ export const SetNewPassword: FC = memo(() => {
       {loading ? (
         <LoadingPage />
       ) : (
-        <FormFrame>
+        <>
           <SlideFade in={show} offsetY="20px">
             <Alert
               status="error"
@@ -104,7 +124,7 @@ export const SetNewPassword: FC = memo(() => {
               </Button>
             </Stack>
           </Box>
-        </FormFrame>
+        </>
       )}
     </>
   );
