@@ -5,10 +5,13 @@ import { applyActionCode } from "firebase/auth";
 import { auth } from "../../firebase";
 import { FormFrame } from '../parts/FormFrame';
 import { EmailVerified } from './EmailVerified';
+import { SetNewPassword } from './SetNewPassword';
 
 export const ActionCodeRoute: FC = memo(() => {
   const location = useLocation();
   const [currentMode, setCurrentMode] = useState<string | null>(null);
+  const mode = getParameterByName("mode", location.search);
+  const actionCode = getParameterByName("oobCode", location.search);
 
   function getParameterByName(name: string, search: string) {
     const params = new URLSearchParams(search);
@@ -26,16 +29,16 @@ export const ActionCodeRoute: FC = memo(() => {
   }
 
   useEffect(() => {
-    const mode = getParameterByName("mode", location.search);
-    const actionCode = getParameterByName("oobCode", location.search);
+    
     setCurrentMode(mode);
+    console.log(mode);
     if (actionCode) {
       switch (mode) {
         case "resetPassword":
           break;
         case "recoverEmail":
           break;
-        case "verifyEmail":
+        case "verifiedEmail":
           handleVerifyEmail(auth, actionCode);
           break;
         default:
@@ -46,6 +49,7 @@ export const ActionCodeRoute: FC = memo(() => {
   return (
     <FormFrame>
       {currentMode === "verifiedEmail" && <EmailVerified />}
+      {currentMode === "resetPassword" && <SetNewPassword actionCode={actionCode} />}
     </FormFrame>
   );
 });
