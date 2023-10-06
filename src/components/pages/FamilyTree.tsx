@@ -1,43 +1,83 @@
 import { Box, ControlBox } from "@chakra-ui/react";
-import { FC, memo, useCallback } from "react";
-import ReactFlow, { Background, Controls, MiniMap, addEdge, useEdgesState, useNodesState } from "reactflow";
+import { FC, memo, useCallback, useRef } from "react";
+import ReactFlow, { Background, Controls, MiniMap, ReactFlowProvider, addEdge, useEdgesState, useNodesState, useReactFlow } from "reactflow";
 import 'reactflow/dist/style.css';
 
 
-export const FamilyTree: FC = memo(() => {
-  type Connection = {
-    source: string | null;
-    target: string | null;
-    sourceHandle: string | null;
-    targetHandle: string | null;
-  };
-  const initialNodes = [
-    {id: '1', position: {x: 0, y: 0}, data: {label: '1'}},
-    {id: '2', position: {x: 0, y: 100}, data: {label: '2'}},
-  ];
-  const initialEdges = [{id: 'e1-2', source: '1', target: '2'}];
+const initialNodes = [
+  {
+    id: '0',
+    type: 'input',
+    data: { label: 'Node'},
+    position: {x: 0, y: 50},
+  },
+];
 
+let id = 1;
+const getId = () => `${id++}`;
+
+const fitViewOptions = {
+  padding: 3,
+};
+
+type Connection = {
+  source: string | null;
+  target: string | null;
+  sourceHandle: string | null;
+  targetHandle: string | null;
+};
+
+const AddNodeOnEdgeDrop = () => {
+  const reactFlowWrapper = useRef<HTMLElement | null>(null);
+  const connectingNodeId = useRef<string | null>(null);
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+  const { project } = useReactFlow();
+  const onConnect = useCallback((params: Connection) => setEdges((eds) => addEdge(params, eds)), []);
 
-  const onConnect = useCallback((params: Connection) => {
-    return setEdges((eds) => {
-      return addEdge(params, eds);
-    });
-  }, [setEdges]);
+  const onConnectStart = useCallback((_: Event, { nodeId }: {nodeId: string}) => {
+    connectingNodeId.current = nodeId;
+  }, []);
+
+  const onConnectEnd = useCallback(
+    (event: MouseEvent) => {
+      const targetElement = event.target as HTMLElement;
+      const targetIsPane = targetElement?.classList.contains('react-flow__pane');
+      if (targetIsPane && reactFlowWrapper.current) {
+        const { top, left } = reactFlowWrapper.current.getBoundingClientRect();
+        const id = getId();
+        const newNode = {
+          id,
+          position: project({ x: event.clientX - left - 75, y: event.clientY - top}),
+          data: {label: `Node ${id}`},
+        };
+
+        setNodes((nds) => nds.concat(newNode));
+        setEdges((eds) => eds.concat({ id, source: connectingNodeId.current, target: id}));
+      }
+    },
+    [project]
+  );
 
   return (
-    <Box w='100vw' h="100vw">
+    <div className="wrapper" ref={reactFlowWrapper}>
       <ReactFlow
-        nodes={initialNodes}
-        edges={initialEdges}
+        nodes = {nodes}
+        edges = {edges}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
-      >
-        <Controls />
-        <MiniMap />
-      </ReactFlow>
-    </Box>
-  )
+        onConnectStart={onConnectStart}
+        onConnectEnd={onConnectEnd}
+        fitView
+        fitViewOptions={fitViewOptions}
+      />
+    </div>
+  );
+}
+
+export const FamilyTree: FC = memo(() => {
+  <ReactFlowProvider>
+    <AddNodeOnEdgeDrop />
+  </ReactFlowProvider>
 })
