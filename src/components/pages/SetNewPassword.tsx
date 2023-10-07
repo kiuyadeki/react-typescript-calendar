@@ -34,12 +34,9 @@ export const SetNewPassword: FC<Props> = memo((props) => {
   const user = useRecoilValue(userState);
   const loading = useRecoilValue(loadingState);
   const {actionCode} = props;
-
-
   
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
     if(actionCode) {
       verifyPasswordResetCode(auth, actionCode).then((email) => {
         const accountEmail = email;
@@ -49,25 +46,10 @@ export const SetNewPassword: FC<Props> = memo((props) => {
           console.log("confirmPasswordReset", error)
         })
       }).catch((error) => {
-        console.log("verifyPasswordResetCode", error)
-      })
-    }
-
-    try {
-      navigation("/auth/logout/");
-    } catch (error: any) {
-      if ('code' in error && error.code === "auth/user-not-found") {
-        setErrorMessage('ユーザーが見つかりません')
-      } else if ('code' in error && error.code === "auth/invalid-email") {
-        setErrorMessage('不正な形式のメールアドレスです')
-      } else if ('code' in error && error.code === "auth/user-disabled") {
-        setErrorMessage('このユーザーは無効にされています')
-      } else if ('code' in error && error.code === "auth/wrong-password") {
-        setErrorMessage('パスワードが間違っています')
-      } else if (error instanceof Error) {
+        setShow(true);
         setErrorMessage(error.message);
-      }
-      setShow(true);
+        console.log("verifyPasswordResetCode", error.message);
+      })
     }
   };
 
@@ -97,12 +79,12 @@ export const SetNewPassword: FC<Props> = memo((props) => {
             </Alert>
           </SlideFade>
           <Heading as="h1" size="lg" textAlign="center">
-            ログイン
+            パスワード再設定
           </Heading>
           <Divider my={4} />
           <Box onSubmit={onSubmit} as="form" px={10} pb={8}>
             <FormControl py={2}>
-              <FormLabel htmlFor="password">パスワード</FormLabel>
+              <FormLabel htmlFor="password">新しく設定するパスワードを入力してください。</FormLabel>
               <Input
                 id="password"
                 type={show ? "text" : "password"}
