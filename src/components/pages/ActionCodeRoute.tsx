@@ -38,7 +38,7 @@ export const ActionCodeRoute: FC = memo(() => {
           break;
         case "recoverEmail":
           break;
-        case "verifiedEmail":
+        case "verifyEmail":
           handleVerifyEmail(auth, actionCode);
           break;
         default:
@@ -48,7 +48,7 @@ export const ActionCodeRoute: FC = memo(() => {
 
   return (
     <FormFrame>
-      {currentMode === "verifiedEmail" && <EmailVerified />}
+      {currentMode === "verifyEmail" && <EmailVerified />}
       {currentMode === "resetPassword" && <SetNewPassword actionCode={actionCode} />}
     </FormFrame>
   );
