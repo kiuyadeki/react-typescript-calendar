@@ -1,15 +1,18 @@
 import { Box, ControlBox, useDisclosure } from "@chakra-ui/react";
-import { FC, MouseEvent, memo, useCallback, useEffect, useRef } from "react";
-import ReactFlow, { Background, Controls, Edge, HandleType, MiniMap, OnConnectEnd, OnConnectStart, ReactFlowProvider, addEdge, useEdgesState, useNodesState, useReactFlow } from "reactflow";
+import { FC, MouseEvent, memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import ReactFlow, { Background, Controls, Edge, HandleType, MiniMap, Node, OnConnectEnd, OnConnectStart, ReactFlowProvider, addEdge, useEdgesState, useNodesState, useReactFlow } from "reactflow";
 import 'reactflow/dist/style.css';
 import { SelectActionModal } from '../parts/SelectActionModal';
-
+import { personNode } from '../parts/CustomNode';
 
 const initialNodes = [
   {
     id: '0',
-    type: 'input',
-    data: { label: 'Node'},
+    type: 'person',
+    data: { 
+      label: 'Node',
+      date_of_birth: 1997, 
+    },
     position: {x: 0, y: 50},
   },
 ];
@@ -40,15 +43,14 @@ const AddNodeOnEdgeDrop = () => {
   const connectingNodeId = useRef<string | null>(null);
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
-  const { project } = useReactFlow();
+  const [selectedNode, setSelectedNode] = useState<null | any>(null)
+  const nodeTypes = useMemo(() => ( {person: personNode}), []);
   const onConnect = useCallback((params: Connection) => setEdges((eds) => addEdge(params, eds)), []);
 
-  const onConnectStart: OnConnectStart = useCallback((event, { nodeId }) => {
-    connectingNodeId.current = nodeId;
-  }, []);
   const { isOpen, onOpen, onClose} = useDisclosure();
 
-  const handleNodeClick = (event: MouseEvent) => {
+  const handleNodeClick = (node: Node) => {
+    setSelectedNode(node);
     onOpen();
   }
 
@@ -57,27 +59,19 @@ const AddNodeOnEdgeDrop = () => {
   }, [nodes]);
 
 
-  const onConnectEnd: OnConnectEnd = useCallback(
-    (event) => {
-      if ('clientX' in event && 'clientY' in event ) {
-        const targetElement = event.target as HTMLElement;
-        const targetIsPane = targetElement?.classList.contains('react-flow__pane');
-        if (targetIsPane && reactFlowWrapper.current) {
-          const { top, left } = reactFlowWrapper.current.getBoundingClientRect();
-          const id = getId();
-          const newNode = {
-            id,
-            position: project({ x: event.clientX - left - 150, y: event.clientY - top}),
-            data: {label: `Node ${id}`},
-          };
-  
-          setNodes((nds) => nds.concat(newNode));
-          setEdges((eds) => eds.concat({ id, source: connectingNodeId.current as string, target: id} as Edge<any>));
-        }
-      }
-    },
-    [project]
-  );
+  const addParentToSelectedNode = () => {
+    if(selectedNode) {
+      const parentId = getId();
+      const parentNode: Node = {
+        id: parentId,
+        data: { label: `Parent of ${selectedNode.data.label}`},
+        position: { x: selectedNode.position.x, y: selectedNode.position.y - 100},
+      };
+      setNodes(prevNodes => [...prevNodes, parentNode]);
+      const newEdgeId = `edge-${parentId}-${selectedNode.id}`;
+      setEdges(prevEdges => [...prevEdges, { id: newEdgeId, source: parentId, target: selectedNode.id, sourceHandle: 'husband', targetHandle: 'wife' }]);
+    }
+  }
 
   return (
     <>
@@ -85,17 +79,21 @@ const AddNodeOnEdgeDrop = () => {
         <ReactFlow
           nodes = {nodes}
           edges = {edges}
+          nodeTypes={nodeTypes}
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           onConnect={onConnect}
-          onConnectStart={onConnectStart}
-          onConnectEnd={onConnectEnd}
-          onNodeClick={handleNodeClick}
+          onNodeClick={(e, node) => handleNodeClick(node)}
           fitView
           fitViewOptions={fitViewOptions}
         />
       </Box>
-      <SelectActionModal isOpen={isOpen} onClose={onClose} />
+      <SelectActionModal 
+        isOpen={isOpen} 
+        onClose={onClose} 
+        selectedNode={selectedNode} 
+        addParent={addParentToSelectedNode}
+      />
     </>
 
   );

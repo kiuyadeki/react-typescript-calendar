@@ -38,7 +38,7 @@ export const Login: FC = memo(() => {
 
   useEffect(() => {
     if (user && user.emailVerified) {
-      navigation("/dashboard/");
+      navigation("/app/");
     }
   }, [user, navigation]);
   
