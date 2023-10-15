@@ -22,7 +22,7 @@ export const SignUp: FC = memo(() => {
 
   useEffect(() => {
     if (user && user.emailVerified) {
-      navigation("/dashboard/");
+      navigation("/app/");
     }
   }, [user, navigation]);
 
