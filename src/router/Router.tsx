@@ -5,6 +5,7 @@ import { Page404 } from "../components/pages/Page404";
 import { authRoutes } from "./AuthRoutes";
 import { AuthLayout } from "../components/views/AuthLayout";
 import { FamilyTree } from "../components/pages/FamilyTree";
+import { DagreTree } from "../components/pages/Dagre";
 
 export const Router: FC = memo(() => (
   <Routes>
@@ -15,6 +16,7 @@ export const Router: FC = memo(() => (
       ))}
     </Route>
     <Route path="/app/" element={<FamilyTree />}></Route>
+    <Route path="/dagre/" element={<DagreTree />}></Route>
     <Route path="*" element={<Page404 />} />
   </Routes>
 ));
