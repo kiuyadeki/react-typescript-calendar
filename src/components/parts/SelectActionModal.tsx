@@ -7,10 +7,11 @@ type SelectActionModalProps = {
   onClose: () => void;
   selectedNode: any;
   addParent: () => void;
+  addChild: () => void;
 };
 
 export const SelectActionModal: FC<SelectActionModalProps> = memo((props) => {
-  const { isOpen, onClose, selectedNode, addParent } = props;
+  const { isOpen, onClose, selectedNode, addParent, addChild } = props;
   console.table("node", selectedNode);
 
   return (
@@ -23,8 +24,15 @@ export const SelectActionModal: FC<SelectActionModalProps> = memo((props) => {
             <Text>{selectedNode?.data.date_of_birth}</Text>
             <Text>{selectedNode?.id}</Text>
             <Flex wrap="wrap" gap={5}>
-            <Button onClick={addParent}>親を追加</Button>
-            <Button>子を追加</Button>
+            <Button onClick={()=>{
+              addParent();
+              onClose();
+            }}>親を追加</Button>
+            <Button onClick={() =>  {
+              addChild();
+              onClose();
+            }}
+            >子を追加</Button>
             <Button>配偶者を追加</Button>
             </Flex>
           </ModalBody>

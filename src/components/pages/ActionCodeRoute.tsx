@@ -31,7 +31,6 @@ export const ActionCodeRoute: FC = memo(() => {
   useEffect(() => {
     
     setCurrentMode(mode);
-    console.log(mode);
     if (actionCode) {
       switch (mode) {
         case "resetPassword":
