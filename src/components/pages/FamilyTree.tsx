@@ -1,9 +1,10 @@
-import { Box, ControlBox, useDisclosure } from "@chakra-ui/react";
+import { Box, Button, ControlBox, FormControl, FormErrorMessage, FormLabel, Input, useDisclosure } from "@chakra-ui/react";
 import { FC, MouseEvent, memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import ReactFlow, { Background, Connection, ConnectionMode, ConnectionStatus, Controls, Edge, HandleType, MiniMap, Node, OnConnectEnd, OnConnectStart, ReactFlowProvider, addEdge, useEdgesState, useNodesState, useReactFlow } from "reactflow";
 import 'reactflow/dist/style.css';
 import { SelectActionModal } from '../parts/SelectActionModal';
 import { personNode } from '../parts/CustomNode';
+import { useForm } from 'react-hook-form';
 
 const initialNodes = [
   {
@@ -23,6 +24,7 @@ const getId = () => `${id++}`;
 const fitViewOptions = {
   padding: 3,
 };
+const defaultViewport = {x: 0, y: 0, zoom: 5}
 
 const AddNodeOnEdgeDrop = () => {
   const reactFlowWrapper = useRef<HTMLDivElement | null>(null);
@@ -31,13 +33,13 @@ const AddNodeOnEdgeDrop = () => {
   const [selectedNode, setSelectedNode] = useState<null | any>(null)
   const nodeTypes = useMemo(() => ( {person: personNode}), []);
   const onConnect = useCallback((params: Connection) => setEdges((eds) => addEdge(params, eds)), []);
-
+  // modal
   const { isOpen, onOpen, onClose} = useDisclosure();
-
   const handleNodeClick = (node: Node) => {
     setSelectedNode(node);
     onOpen();
   }
+
 
   useEffect(() => {
     console.log(nodes);
@@ -75,15 +77,26 @@ const AddNodeOnEdgeDrop = () => {
     }
   }
 
+  // 配偶者を追加
+  const addSpouseToSelectedNode = () => {
+    if(selectedNode) {
+      const SpouseID = getId();
+      const SpouseNode: Node = {
+        type: 'person',
+        id: SpouseID,
+        data: {label: `Spouse of ${selectedNode.data.label}`},
+        position: {x: selectedNode.position.x + 300, y:selectedNode.position.y}
+      };
+      setNodes(prevNodes => [...prevNodes, SpouseNode]);
+      const NewEdgeId = `edges-${SpouseID}-${selectedNode.id}`;
+      setEdges(prevEdges => [...prevEdges, {id: NewEdgeId, source: selectedNode.id, target: SpouseID, sourceHandle: 'husband', targetHandle: 'wife'}]);
+    }
+  }
+
   const hasEdgeFromHandle = (edges: Edge[], nodeId: string, handleID: string) => {
     return edges.some(edge =>
         (edge.source === nodeId && edge.sourceHandle === handleID) || (edge.target === nodeId && edge.targetHandle === handleID));
   };
-
-  const isEdgeFromChildHandle = hasEdgeFromHandle(edges, '0', 'child');
-  useEffect(() => {
-    console.log(isEdgeFromChildHandle);
-  }, [edges])
 
   return (
     <>
@@ -96,6 +109,7 @@ const AddNodeOnEdgeDrop = () => {
           onEdgesChange={onEdgesChange}
           onConnect={onConnect}
           onNodeClick={(e, node) => handleNodeClick(node)}
+          defaultViewport={defaultViewport}
           fitView
           fitViewOptions={fitViewOptions}
         />
@@ -106,6 +120,7 @@ const AddNodeOnEdgeDrop = () => {
         selectedNode={selectedNode} 
         addParent={addParentToSelectedNode}
         addChild = {addChildToSelectedNode}
+        addSpouse = {addSpouseToSelectedNode}
       />
     </>
 
