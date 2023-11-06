@@ -15,7 +15,7 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { FC, memo, useEffect, useState } from "react";
-import { useForm } from 'react-hook-form';
+import { ProfileEditor } from './ProfileEditor';
 
 type SelectActionModalProps = {
   isOpen: boolean;
@@ -25,10 +25,6 @@ type SelectActionModalProps = {
   addChild: () => void;
   addSpouse: () => void;
 };
-
-type Inputs = {
-  name: string;
-}
 
 export const SelectActionModal: FC<SelectActionModalProps> = memo(props => {
   const { isOpen, onClose, selectedNode, addParent, addChild, addSpouse } = props;
@@ -41,21 +37,6 @@ export const SelectActionModal: FC<SelectActionModalProps> = memo(props => {
     }
   };
 
-  const {
-    handleSubmit, 
-    register, 
-    formState: {errors, isSubmitting},
-  } = useForm<Inputs>();
-
-  const onSubmit = handleSubmit((values) =>  {
-    return new Promise<void>((resolve) =>{
-      setTimeout(() => {
-        console.log(JSON.stringify(values, null, 2));
-        resolve();
-      }, 3000)
-    })
-  });
-
   console.table("node", selectedNode);
 
   return (
@@ -66,22 +47,7 @@ export const SelectActionModal: FC<SelectActionModalProps> = memo(props => {
         <ModalCloseButton />
         <ModalBody>
           {showProfileEditor ? (
-            <form onSubmit={onSubmit}>
-            <FormControl isInvalid={!!errors.name}>
-              <FormLabel htmlFor="name">名字</FormLabel>
-              <Input
-                id="name"
-                placeholder="name"
-                {...register("name", {
-                  required: "This is required",
-                })}
-              ></Input>
-              <FormErrorMessage>{errors.name && errors.name.message}</FormErrorMessage>
-            </FormControl>
-            <Button mt={4} isLoading={isSubmitting} type="submit">
-              submit
-            </Button>
-          </form>
+            <ProfileEditor />
           ) : (
             <>
               <Text>{selectedNode?.data.date_of_birth}</Text>
