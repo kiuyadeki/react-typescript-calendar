@@ -14,16 +14,19 @@ type PersonNodeData = {
   has_spouse: boolean;
 };
 
-export const personNode: FC<NodeProps> = props => {
+type PersonNodeProps = Omit<NodeProps, 'data'> & {
+  data: PersonNodeData;
+};
+export const personNode: FC<PersonNodeProps> = props => {
   const { data } = props;
   return (
-    <Box p={5} bg="white" w="xs" borderRadius="md" shadow={"md"}>
+    <Box px={4} py={2} bg="white" w="200px" borderRadius="md" shadow={"md"}>
       <Handle type="source" position={Position.Bottom} id='parent' />
       <Handle type="target" position={Position.Top} id='child' />
 
       <Handle type="source" position={Position.Right} id='husband' />
       <Handle type="target" position={Position.Left} id='wife' />
-      <Text>{data.label}</Text>
+      <Text fontSize='md'>{data.label}</Text>
     </Box>
   );
 };
