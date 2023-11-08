@@ -1,12 +1,15 @@
 import { Box, Button, FormControl, FormErrorMessage, FormLabel, HStack, Image, Input, Select, Spacer } from "@chakra-ui/react";
-import { FC, memo } from "react";
+import { FC, memo, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { useProfilePictureUpload } from '../../hooks/useProfilePictureChange';
 
 type Inputs = {
   lastName: string;
   firstName: string;
-  profilePicture: string;
+  birthYear: number;
+  birthMonth: number;
+  birthDate: number;
+  profilePicture: any;
 };
 
 export const ProfileEditor: FC = memo(props => {
@@ -15,6 +18,13 @@ export const ProfileEditor: FC = memo(props => {
   const months = Array.from( {length: 12}, (_, i) => i + 1);
   const dates = Array.from( {length: 31}, (_, i) => i + 1);
   const { uploadedImage, handleImageChange } = useProfilePictureUpload();
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const handleButtonClick = () => {
+    if (inputRef.current) {
+      inputRef.current.click();
+    }
+  }
 
   const {
     handleSubmit,
@@ -22,13 +32,14 @@ export const ProfileEditor: FC = memo(props => {
     formState: { errors, isSubmitting },
   } = useForm<Inputs>();
 
-  const onSubmit = handleSubmit(values => {
-    return new Promise<void>(resolve => {
-      setTimeout(() => {
-        console.log(JSON.stringify(values, null, 2));
-        resolve();
-      }, 3000);
-    });
+  const onSubmit = handleSubmit(data => {
+    console.log(data);
+    // return new Promise<void>(resolve => {
+    //   setTimeout(() => {
+    //     console.log(JSON.stringify(data, null, 2));
+    //     resolve();
+    //   }, 0);
+    // });
   });
 
   return (
@@ -42,20 +53,20 @@ export const ProfileEditor: FC = memo(props => {
             {...register("lastName", {
               required: "必須項目です",
             })}
-          ></Input>
+          />
           <FormErrorMessage>{errors.lastName && errors.lastName.message}</FormErrorMessage>
         </FormControl>
 
         <FormControl>
           <FormLabel htmlFor="firstName">名</FormLabel>
-          <Input id="firstName" placeholder="名" {...register("firstName")}></Input>
+          <Input id="firstName" placeholder="名" {...register("firstName")} />
           <FormErrorMessage>{errors.firstName && errors.firstName.message}</FormErrorMessage>
         </FormControl>
       </HStack>
       <FormLabel mt={6}>生年月日</FormLabel>
       <HStack>
         <FormControl>
-          <Select placeholder="年">
+          <Select placeholder="年" {...register("birthYear")}>
             {years.map(year => (
               <option key={year} value={year}>
                 {year}
@@ -64,7 +75,7 @@ export const ProfileEditor: FC = memo(props => {
           </Select>
         </FormControl>
         <FormControl>
-          <Select placeholder="月">
+          <Select placeholder="月" {...register("birthMonth")}>
             {months.map(month => (
               <option key={month} value={month}>
                 {month}
@@ -73,7 +84,7 @@ export const ProfileEditor: FC = memo(props => {
           </Select>
         </FormControl>
         <FormControl>
-          <Select placeholder="日">
+          <Select placeholder="日" {...register("birthDate")}>
             {dates.map(date => (
               <option key={date} value={date}>
                 {date}
@@ -84,7 +95,8 @@ export const ProfileEditor: FC = memo(props => {
       </HStack>
       <FormControl>
         <FormLabel mt={6}>写真</FormLabel>
-        <Input type='file' accept='image/*' {...register('profilePicture')} onChange={handleImageChange}></Input>
+        <Input type='file' accept='image/*' {...register('profilePicture')} ref={inputRef} onChange={handleImageChange} hidden />
+        <Button onClick={handleButtonClick}>Upload File</Button>
         {uploadedImage && (
           <Box>
             <Image src={uploadedImage} />
