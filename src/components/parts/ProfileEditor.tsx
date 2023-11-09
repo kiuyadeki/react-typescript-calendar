@@ -1,4 +1,4 @@
-import { Box, Button, FormControl, FormErrorMessage, FormLabel, HStack, Image, Input, Select, Spacer } from "@chakra-ui/react";
+import { Box, Button, FormControl, FormErrorMessage, FormLabel, HStack, Image, Input, Select } from "@chakra-ui/react";
 import { FC, memo, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { useProfilePictureUpload } from '../../hooks/useProfilePictureChange';
@@ -17,29 +17,28 @@ export const ProfileEditor: FC = memo(props => {
   const years = Array.from({ length: currentYear - 1900 + 1 }, (_, i) => 1900 + i);
   const months = Array.from( {length: 12}, (_, i) => i + 1);
   const dates = Array.from( {length: 31}, (_, i) => i + 1);
-  const { uploadedImage, handleImageChange } = useProfilePictureUpload();
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  const handleButtonClick = () => {
-    if (inputRef.current) {
-      inputRef.current.click();
-    }
-  }
-
   const {
     handleSubmit,
     register,
     formState: { errors, isSubmitting },
+    setValue,
   } = useForm<Inputs>();
+  const { uploadedImage, handleImageChange } = useProfilePictureUpload();
+
+  // ファイルが選択されたときにreact-hook-formの値を更新
+  const onFileInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    handleImageChange(event);
+    const file = event.target.files ? event.target.files[0] : null;
+    setValue('profilePicture', file);
+  };
+
+  const handleButtonClick = () => {
+    document.getElementById('profilePictureInput')?.click();
+  };
+
 
   const onSubmit = handleSubmit(data => {
     console.log(data);
-    // return new Promise<void>(resolve => {
-    //   setTimeout(() => {
-    //     console.log(JSON.stringify(data, null, 2));
-    //     resolve();
-    //   }, 0);
-    // });
   });
 
   return (
@@ -95,7 +94,15 @@ export const ProfileEditor: FC = memo(props => {
       </HStack>
       <FormControl>
         <FormLabel mt={6}>写真</FormLabel>
-        <Input type='file' accept='image/*' {...register('profilePicture')} ref={inputRef} onChange={handleImageChange} hidden />
+        <Input
+          id='profilePictureInput'
+          type='file'
+          accept='image/*'
+          {...register('profilePicture', {
+            onChange: onFileInputChange
+          })}
+          hidden
+        />
         <Button onClick={handleButtonClick}>Upload File</Button>
         {uploadedImage && (
           <Box>
