@@ -37,8 +37,6 @@ export const SelectActionModal: FC<SelectActionModalProps> = memo(props => {
     }
   };
 
-  console.table("node", selectedNode);
-
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
@@ -47,10 +45,12 @@ export const SelectActionModal: FC<SelectActionModalProps> = memo(props => {
         <ModalCloseButton />
         <ModalBody>
           {showProfileEditor ? (
-            <ProfileEditor />
+            <ProfileEditor selectedNode={selectedNode} setShowProfileEditor={setShowProfileEditor} />
           ) : (
             <>
               <Text>{selectedNode?.data.date_of_birth}</Text>
+              <Text>{selectedNode?.data.date_of_death}</Text>
+              <Text>{selectedNode?.data.daaa}</Text>
               <Text>{selectedNode?.id}</Text>
               <Flex wrap="wrap" gap={5}>
                 <Button

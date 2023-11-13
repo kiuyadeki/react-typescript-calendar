@@ -4,7 +4,8 @@ import ReactFlow, { Background, Connection, ConnectionMode, ConnectionStatus, Co
 import 'reactflow/dist/style.css';
 import { SelectActionModal } from '../parts/SelectActionModal';
 import { personNode } from '../parts/CustomNode';
-import { useForm } from 'react-hook-form';
+import { useRecoilValue } from 'recoil';
+import { wholeNodesState } from '../../recoil/WholeNodesState';
 
 const initialNodes = [
   {
@@ -13,6 +14,7 @@ const initialNodes = [
     data: { 
       label: 'Node',
       date_of_birth: 1997, 
+      date_of_death: 3000, 
     },
     position: {x: 0, y: 50},
   },
@@ -27,10 +29,11 @@ const fitViewOptions = {
 const defaultViewport = {x: 0, y: 0, zoom: 5}
 
 const AddNodeOnEdgeDrop = () => {
+  const wholeNodes = useRecoilValue(wholeNodesState);
   const reactFlowWrapper = useRef<HTMLDivElement | null>(null);
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+  const [nodes, setNodes, onNodesChange] = useNodesState(wholeNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
-  const [selectedNode, setSelectedNode] = useState<null | any>(null)
+  const [selectedNode, setSelectedNode] = useState<null | Node>(null)
   const nodeTypes = useMemo(() => ( {person: personNode}), []);
   const onConnect = useCallback((params: Connection) => setEdges((eds) => addEdge(params, eds)), []);
   // modal
@@ -93,10 +96,10 @@ const AddNodeOnEdgeDrop = () => {
     }
   }
 
-  const hasEdgeFromHandle = (edges: Edge[], nodeId: string, handleID: string) => {
-    return edges.some(edge =>
-        (edge.source === nodeId && edge.sourceHandle === handleID) || (edge.target === nodeId && edge.targetHandle === handleID));
-  };
+  // const hasEdgeFromHandle = (edges: Edge[], nodeId: string, handleID: string) => {
+  //   return edges.some(edge =>
+  //       (edge.source === nodeId && edge.sourceHandle === handleID) || (edge.target === nodeId && edge.targetHandle === handleID));
+  // };
 
   return (
     <>
