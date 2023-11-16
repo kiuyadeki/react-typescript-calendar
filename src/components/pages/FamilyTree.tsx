@@ -6,6 +6,9 @@ import { SelectActionModal } from '../parts/SelectActionModal';
 import { personNode } from '../parts/CustomNode';
 import { useRecoilValue } from 'recoil';
 import { wholeNodesState } from '../../recoil/WholeNodesState';
+import { useAddParentToSelectedNode } from '../../hooks/useAddParentToSelectedNode';
+import { useAddChildToSelectedNode } from '../../hooks/useAddChildToSelectedNode';
+import { useAddSpouseToSelectedNode } from '../../hooks/useAddSpouseToSelectedNode';
 
 const initialNodes = [
   {
@@ -43,63 +46,13 @@ const AddNodeOnEdgeDrop = () => {
     onOpen();
   }
 
-
   useEffect(() => {
     console.log(nodes);
   }, [nodes]);
 
-  // 親を追加
-  const addParentToSelectedNode = () => {
-    if(selectedNode) {
-      const parentId = getId();
-      const parentNode: Node = {
-        type: 'person',
-        id: parentId,
-        data: { label: `Parent of ${selectedNode.data.label}`},
-        position: { x: selectedNode.position.x, y: selectedNode.position.y - 100},
-      };
-      setNodes(prevNodes => [...prevNodes, parentNode]);
-      const newEdgeId = `edge-${parentId}-${selectedNode.id}`;
-      setEdges(prevEdges => [...prevEdges, { id: newEdgeId, source: parentId, target: selectedNode.id, sourceHandle: 'parent', targetHandle: 'child' }]);
-    }
-  }
-
-  // 子を追加
-  const addChildToSelectedNode = () => {
-    if(selectedNode) {
-      const childId = getId();
-      const childNode: Node = {
-        type: 'person',
-        id: childId,
-        data: { label: `Child of ${selectedNode.data.label}`},
-        position: {x: selectedNode.position.x, y:selectedNode.position.y + 100},
-      };
-      setNodes(prevNodes => [...prevNodes, childNode]);
-      const NewEdgeId = `edge-${childId}-${selectedNode.id}`;
-      setEdges(prevEdges => [...prevEdges, {id: NewEdgeId, source: selectedNode.id, target: childId, sourceHandle: 'parent', targetHandle: 'child'}]);
-    }
-  }
-
-  // 配偶者を追加
-  const addSpouseToSelectedNode = () => {
-    if(selectedNode) {
-      const SpouseID = getId();
-      const SpouseNode: Node = {
-        type: 'person',
-        id: SpouseID,
-        data: {label: `Spouse of ${selectedNode.data.label}`},
-        position: {x: selectedNode.position.x + 300, y:selectedNode.position.y}
-      };
-      setNodes(prevNodes => [...prevNodes, SpouseNode]);
-      const NewEdgeId = `edges-${SpouseID}-${selectedNode.id}`;
-      setEdges(prevEdges => [...prevEdges, {id: NewEdgeId, source: selectedNode.id, target: SpouseID, sourceHandle: 'husband', targetHandle: 'wife'}]);
-    }
-  }
-
-  // const hasEdgeFromHandle = (edges: Edge[], nodeId: string, handleID: string) => {
-  //   return edges.some(edge =>
-  //       (edge.source === nodeId && edge.sourceHandle === handleID) || (edge.target === nodeId && edge.targetHandle === handleID));
-  // };
+  const addParentToSelectedNode = useAddParentToSelectedNode(setNodes, setEdges, getId, selectedNode);
+  const addChildToSelectedNode = useAddChildToSelectedNode(setNodes, setEdges, getId, selectedNode);
+  const addSpouseToSelectedNode = useAddSpouseToSelectedNode(setNodes, setEdges, getId, selectedNode);
 
   return (
     <>
