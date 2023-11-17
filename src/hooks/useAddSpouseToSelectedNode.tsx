@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction } from "react";
 import { Edge, Node } from "reactflow";
 
 export const useAddSpouseToSelectedNode = (
-  setNodes: Dispatch<SetStateAction<Node[]>>,
+  setWholeNodes: Dispatch<SetStateAction<Node[]>>,
   setEdges: Dispatch<SetStateAction<Edge[]>>,
   getId: () => string,
   selectedNode: null | Node
@@ -16,7 +16,7 @@ export const useAddSpouseToSelectedNode = (
         data: {label: `Spouse of ${selectedNode.data.label}`},
         position: {x: selectedNode.position.x + 300, y:selectedNode.position.y}
       };
-      setNodes(prevNodes => [...prevNodes, SpouseNode]);
+      setWholeNodes(prevNodes => [...prevNodes, SpouseNode]);
       const NewEdgeId = `edges-${SpouseID}-${selectedNode.id}`;
       setEdges(prevEdges => [...prevEdges, {id: NewEdgeId, source: selectedNode.id, target: SpouseID, sourceHandle: 'husband', targetHandle: 'wife'}]);
     }

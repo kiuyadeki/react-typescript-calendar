@@ -45,7 +45,7 @@ export const SelectActionModal: FC<SelectActionModalProps> = memo(props => {
         <ModalCloseButton />
         <ModalBody>
           {showProfileEditor ? (
-            <ProfileEditor selectedNode={selectedNode} setShowProfileEditor={setShowProfileEditor} />
+            <ProfileEditor onClose={onClose} selectedNode={selectedNode} setShowProfileEditor={setShowProfileEditor} />
           ) : (
             <>
               <Text>{selectedNode?.data.date_of_birth}</Text>

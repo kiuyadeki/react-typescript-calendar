@@ -4,10 +4,11 @@ import { Handle, NodeProps, Position } from "reactflow";
 
 type PersonNodeData = {
   label: string;
-  first_name?: string;
-  last_name?: string;
-  date_of_birth?: number;
-  date_of_death?: number;
+  firstName?: string;
+  lastName?: string;
+  birthYear?: number;
+  birthMonth?: number;
+  birthDate?: number;
   gender: string;
   profile_image_filename?: string;
   has_parents: boolean;
@@ -28,10 +29,11 @@ export const personNode: FC<PersonNodeProps> = props => {
       <Handle type="source" position={Position.Right} id='husband' />
       <Handle type="target" position={Position.Left} id='wife' />
       <Text fontSize='md'>{data.label}</Text>
-      <Text fontSize='md'>{data.last_name}</Text>
-      <Text fontSize='md'>{data.first_name}</Text>
-      <Text fontSize='md'>{data.date_of_birth}</Text>
-      <Text fontSize='md'>{data.date_of_death}</Text>
+      <Text fontSize='md'>{data.lastName}</Text>
+      <Text fontSize='md'>{data.firstName}</Text>
+      <Text fontSize='md'>{data.birthYear}</Text>
+      <Text fontSize='md'>{data.birthMonth}</Text>
+      <Text fontSize='md'>{data.birthDate}</Text>
       <Text fontSize='md'>{data.gender}</Text>
       <Text fontSize='md'>{data.profile_image_filename}</Text>
     </Box>

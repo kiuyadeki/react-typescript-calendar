@@ -2,8 +2,8 @@ import { Dispatch, SetStateAction } from 'react';
 import { Edge, Node } from 'reactflow';
 
 export const useAddParentToSelectedNode = (
-  setNodes: Dispatch<SetStateAction<Node[]>>, 
-  setEdges: Dispatch<SetStateAction<Edge[]>>, 
+  setWholeNodes: Dispatch<SetStateAction<Node[]>>,
+  setEdges: Dispatch<SetStateAction<Edge[]>>,
   getId: () => string,
   selectedNode: null | Node,
   ) => {
@@ -16,7 +16,7 @@ export const useAddParentToSelectedNode = (
         data: { label: `Parent of ${selectedNode.data.label}`},
         position: { x: selectedNode.position.x, y: selectedNode.position.y - 100},
       };
-      setNodes(prevNodes => [...prevNodes, parentNode]);
+      setWholeNodes(prevNodes => [...prevNodes, parentNode]);
       const newEdgeId = `edge-${parentId}-${selectedNode.id}`;
       setEdges(prevEdges => [...prevEdges, { id: newEdgeId, source: parentId, target: selectedNode.id, sourceHandle: 'parent', targetHandle: 'child' }]);
     }

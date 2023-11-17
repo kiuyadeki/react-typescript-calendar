@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction } from "react";
 import { Edge, Node } from "reactflow";
 
 export const useAddChildToSelectedNode = (
-  setNodes: Dispatch<SetStateAction<Node[]>>,
+  setWholeNodes: Dispatch<SetStateAction<Node[]>>,
   setEdges: Dispatch<SetStateAction<Edge[]>>,
   getId: () => string,
   selectedNode: null | Node
@@ -16,7 +16,7 @@ export const useAddChildToSelectedNode = (
         data: { label: `Child of ${selectedNode.data.label}` },
         position: { x: selectedNode.position.x, y: selectedNode.position.y + 100 },
       };
-      setNodes(prevNodes => [...prevNodes, childNode]);
+      setWholeNodes(prevNodes => [...prevNodes, childNode]);
       const NewEdgeId = `edge-${childId}-${selectedNode.id}`;
       setEdges(prevEdges => [
         ...prevEdges,

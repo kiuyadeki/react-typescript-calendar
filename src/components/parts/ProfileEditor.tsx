@@ -18,10 +18,11 @@ type Inputs = {
 type ProfileEditorProps = {
   selectedNode: Node | null;
   setShowProfileEditor: (value: boolean) => void;
+  onClose: () => void;
 }
 
 export const ProfileEditor: FC<ProfileEditorProps> = memo(props => {
-  const { selectedNode, setShowProfileEditor } = props;
+  const { selectedNode, setShowProfileEditor, onClose } = props;
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: currentYear - 1900 + 1 }, (_, i) => 1900 + i);
   const months = Array.from( {length: 12}, (_, i) => i + 1);
@@ -49,29 +50,26 @@ export const ProfileEditor: FC<ProfileEditorProps> = memo(props => {
 
   const onSubmit = handleSubmit(data => {
     if (selectedNode) {
-      const nodeIdToUpdate = selectedNode.id;
-
-      const updatedNodes = wholeNodes.map(node => {
-        if (node.id === nodeIdToUpdate) {
-          return {
-            ...node,
-            data: {
-              ...node.data,
-              lastName: data.lastName,
-              firstName: data.firstName,
-              birthYear: data.birthYear,
-              birthMonth: data.birthMonth,
-              birthDate: data.birthDate,
-              profilePicture: data.profilePicture,
-            }
-          }
+      const updatedNode = {
+        ...selectedNode,
+        data: {
+          ...selectedNode.data,
+          lastName: data.lastName,
+          firstName: data.firstName,
+          birthYear: data.birthYear,
+          birthMonth: data.birthMonth,
+          birthDate: data.birthDate,
+          profilePicture: data.profilePicture,
         }
-        return node;
-      });
+      }
 
-      console.log('updated:', updatedNodes);
+      setWholeNodes(prevNodes => prevNodes.map(node => {
+        return node.id === selectedNode.id ? updatedNode : node;
+      }));
+      console.log('selected', selectedNode.id);
     }
     console.log(data);
+    onClose();
     setShowProfileEditor(false);
   });
 
