@@ -1,4 +1,4 @@
-import { Box, Text } from "@chakra-ui/react";
+import { Box, Image, Text } from "@chakra-ui/react";
 import { FC } from "react";
 import { Handle, NodeProps, Position } from "reactflow";
 
@@ -10,7 +10,7 @@ type PersonNodeData = {
   birthMonth?: number;
   birthDate?: number;
   gender: string;
-  profile_image_filename?: string;
+  profilePicture?: File;
   has_parents: boolean;
   has_children: boolean;
   has_spouse: boolean;
@@ -21,6 +21,9 @@ type PersonNodeProps = Omit<NodeProps, 'data'> & {
 };
 export const personNode: FC<PersonNodeProps> = props => {
   const { data } = props;
+  const imageFile = data.profilePicture;
+  const imageURL = imageFile ? URL.createObjectURL(imageFile) : undefined;
+
   return (
     <Box px={4} py={2} bg="white" w="200px" borderRadius="md" shadow={"md"}>
       <Handle type="source" position={Position.Bottom} id='parent' />
@@ -35,7 +38,9 @@ export const personNode: FC<PersonNodeProps> = props => {
       <Text fontSize='md'>{data.birthMonth}</Text>
       <Text fontSize='md'>{data.birthDate}</Text>
       <Text fontSize='md'>{data.gender}</Text>
-      <Text fontSize='md'>{data.profile_image_filename}</Text>
+      <Box>
+        <Image src={imageURL} />
+      </Box>
     </Box>
   );
 };

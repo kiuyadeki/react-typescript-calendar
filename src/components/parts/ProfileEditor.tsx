@@ -68,7 +68,7 @@ export const ProfileEditor: FC<ProfileEditorProps> = memo(props => {
       }));
       console.log('selected', selectedNode.id);
     }
-    console.log(data);
+    console.log(data.profilePicture);
     onClose();
     setShowProfileEditor(false);
   });
@@ -76,14 +76,12 @@ export const ProfileEditor: FC<ProfileEditorProps> = memo(props => {
   return (
     <form onSubmit={onSubmit}>
       <HStack>
-        <FormControl isInvalid={!!errors.lastName}>
+        <FormControl>
           <FormLabel htmlFor="lastName">姓</FormLabel>
           <Input
             id="lastName"
             placeholder="姓"
-            {...register("lastName", {
-              required: "必須項目です",
-            })}
+            {...register("lastName")}
           />
           <FormErrorMessage>{errors.lastName && errors.lastName.message}</FormErrorMessage>
         </FormControl>
