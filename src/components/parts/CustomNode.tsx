@@ -22,7 +22,7 @@ type PersonNodeProps = Omit<NodeProps, 'data'> & {
 export const personNode: FC<PersonNodeProps> = props => {
   const { data } = props;
   const imageFile = data.profilePicture;
-  const imageURL = imageFile ? URL.createObjectURL(imageFile) : undefined;
+  const imageURL = imageFile instanceof File ? URL.createObjectURL(imageFile) : undefined;
 
   return (
     <Box px={4} py={2} bg="white" w="200px" borderRadius="md" shadow={"md"}>

@@ -13,24 +13,33 @@ import { useAddSpouseToSelectedNode } from '../../hooks/useAddSpouseToSelectedNo
 let id = 1;
 const getId = () => `${id++}`;
 const AddNodeOnEdgeDrop = () => {
+  const [wholeNodes, setWholeNodes] = useRecoilState(wholeNodesState);
+  const [selectedNode, setSelectedNode] = useState<null | Node>(null)
+  const [showProfileEditor, setShowProfileEditor] = useState<boolean>(false);
+
+
+  // react flow
+  const reactFlowWrapper = useRef<HTMLDivElement | null>(null);
   const fitViewOptions = {
     padding: 3,
   };
   const defaultViewport = {x: 0, y: 0, zoom: 5}
-  const [wholeNodes, setWholeNodes] = useRecoilState(wholeNodesState);
-
-  const reactFlowWrapper = useRef<HTMLDivElement | null>(null);
-  const [nodes, setNodes, onNodesChange] = useNodesState(wholeNodes);
-
-  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
-  const [selectedNode, setSelectedNode] = useState<null | Node>(null)
   const nodeTypes = useMemo(() => ( {person: personNode}), []);
+  const [nodes, setNodes, onNodesChange] = useNodesState(wholeNodes);
+  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const onConnect = useCallback((params: Connection) => setEdges((eds) => addEdge(params, eds)), []);
+
+
   // modal
   const { isOpen, onOpen, onClose} = useDisclosure();
   const handleNodeClick = (node: Node) => {
     setSelectedNode(node);
     onOpen();
+  }
+
+  const handleCloseModal = () => {
+    setShowProfileEditor(false);
+    onClose();
   }
 
   useEffect(() => {
@@ -67,7 +76,9 @@ const AddNodeOnEdgeDrop = () => {
       </Box>
       <SelectActionModal
         isOpen={isOpen}
-        onClose={onClose}
+        onClose={handleCloseModal}
+        showProfileEditor={showProfileEditor}
+        setShowProfileEditor={setShowProfileEditor}
         selectedNode={selectedNode}
         addParent={addParentToSelectedNode}
         addChild = {addChildToSelectedNode}

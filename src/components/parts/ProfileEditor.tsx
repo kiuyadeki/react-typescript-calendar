@@ -1,5 +1,5 @@
 import { Box, Button, FormControl, FormErrorMessage, FormLabel, HStack, Image, Input, Select } from "@chakra-ui/react";
-import { FC, memo, useRef } from "react";
+import { FC, memo, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { useProfilePictureUpload } from '../../hooks/useProfilePictureChange';
 import { useRecoilState } from 'recoil';
@@ -73,6 +73,12 @@ export const ProfileEditor: FC<ProfileEditorProps> = memo(props => {
     setShowProfileEditor(false);
   });
 
+  useEffect(() => {
+    if(selectedNode) {
+      setValue('lastName', selectedNode.data.lastName);
+    }
+  }, [selectedNode]);
+
   return (
     <form onSubmit={onSubmit}>
       <HStack>
@@ -142,7 +148,7 @@ export const ProfileEditor: FC<ProfileEditorProps> = memo(props => {
       </FormControl>
 
       <Button mt={4} isLoading={isSubmitting} type="submit">
-        submit
+        保存する
       </Button>
     </form>
   );

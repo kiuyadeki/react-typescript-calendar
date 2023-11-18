@@ -14,12 +14,14 @@ import {
   Text,
   useDisclosure,
 } from "@chakra-ui/react";
-import { FC, memo, useEffect, useState } from "react";
+import { Dispatch, FC, SetStateAction, memo, useEffect, useState } from "react";
 import { ProfileEditor } from './ProfileEditor';
 
 type SelectActionModalProps = {
   isOpen: boolean;
   onClose: () => void;
+  showProfileEditor: boolean;
+  setShowProfileEditor: Dispatch<SetStateAction<boolean>>;
   selectedNode: any;
   addParent: () => void;
   addChild: () => void;
@@ -27,8 +29,8 @@ type SelectActionModalProps = {
 };
 
 export const SelectActionModal: FC<SelectActionModalProps> = memo(props => {
-  const { isOpen, onClose, selectedNode, addParent, addChild, addSpouse } = props;
-  const [showProfileEditor, setShowProfileEditor] = useState<boolean>(false);
+  const { isOpen, onClose, showProfileEditor, setShowProfileEditor, selectedNode, addParent, addChild, addSpouse } = props;
+  // const [showProfileEditor, setShowProfileEditor] = useState<boolean>(false);
 
   // 情報を編集
   const displayProfileEditor = () => {
