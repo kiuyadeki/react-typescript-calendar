@@ -9,12 +9,27 @@ export const useAddParentToSelectedNode = (
   ) => {
   const addParentToSelectedNode = () => {
     if(selectedNode) {
+      const hiddenId = getId();
+      const hiddenNode: Node = {
+        type: 'hidden',
+        id: hiddenId,
+        data: {},
+        position: {x: selectedNode.position.x, y: selectedNode.position.y - 100},
+      }
+      const childToHidden: Edge = {
+        id: `edge-${hiddenId}-${selectedNode.id}`,
+        source: hiddenId,
+        target: selectedNode.id,
+        sourceHandle: 'parent',
+        targetHandle: 'child',
+      }
+
       const parentId = getId();
       const parentNode: Node = {
         type: 'person',
         id: parentId,
         data: { label: `Parent of ${selectedNode.data.label}`},
-        position: { x: selectedNode.position.x, y: selectedNode.position.y - 100},
+        position: { x: selectedNode.position.x - 300, y: selectedNode.position.y - 100},
       };
       setWholeNodes(prevNodes => [...prevNodes, parentNode]);
       const newEdgeId = `edge-${parentId}-${selectedNode.id}`;

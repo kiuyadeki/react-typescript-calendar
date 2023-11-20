@@ -9,6 +9,7 @@ import { wholeNodesState } from '../../recoil/WholeNodesState';
 import { useAddParentToSelectedNode } from '../../hooks/useAddParentToSelectedNode';
 import { useAddChildToSelectedNode } from '../../hooks/useAddChildToSelectedNode';
 import { useAddSpouseToSelectedNode } from '../../hooks/useAddSpouseToSelectedNode';
+import { HiddenNode } from '../parts/HiddenNode';
 
 let id = 1;
 const getId = () => `${id++}`;
@@ -24,7 +25,7 @@ const AddNodeOnEdgeDrop = () => {
     padding: 3,
   };
   const defaultViewport = {x: 0, y: 0, zoom: 5}
-  const nodeTypes = useMemo(() => ( {person: personNode}), []);
+  const nodeTypes = useMemo(() => ( {person: personNode, hidden: HiddenNode}), []);
   const [nodes, setNodes, onNodesChange] = useNodesState(wholeNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const onConnect = useCallback((params: Connection) => setEdges((eds) => addEdge(params, eds)), []);
