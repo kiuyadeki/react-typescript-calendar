@@ -20,7 +20,7 @@ export const useAddChildToSelectedNode = (
       const NewEdgeId = `edge-${childId}-${selectedNode.id}`;
       setEdges(prevEdges => [
         ...prevEdges,
-        { id: NewEdgeId, source: selectedNode.id, target: childId, sourceHandle: "parent", targetHandle: "child" },
+        { id: NewEdgeId, source: selectedNode.id, target: childId, sourceHandle: "toChild", targetHandle: "fromMarital" },
       ]);
     }
   };

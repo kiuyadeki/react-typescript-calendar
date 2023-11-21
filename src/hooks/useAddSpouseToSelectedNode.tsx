@@ -18,7 +18,7 @@ export const useAddSpouseToSelectedNode = (
       };
       setWholeNodes(prevNodes => [...prevNodes, SpouseNode]);
       const NewEdgeId = `edges-${SpouseID}-${selectedNode.id}`;
-      setEdges(prevEdges => [...prevEdges, {id: NewEdgeId, source: selectedNode.id, target: SpouseID, sourceHandle: 'husband', targetHandle: 'fromLeft'}]);
+      setEdges(prevEdges => [...prevEdges, {id: NewEdgeId, source: selectedNode.id, target: SpouseID, sourceHandle: 'toRight', targetHandle: 'fromLeft'}]);
     }
   }
 
