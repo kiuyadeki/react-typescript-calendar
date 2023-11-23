@@ -22,6 +22,7 @@ export const useAddParentToSelectedNode = (
         sourceHandle: 'toMarital',
         target: maritalId,
         targetHandle: 'fromChild',
+        type: 'smoothstep',
       }
 
       const leftParentId = getId();
@@ -56,7 +57,6 @@ export const useAddParentToSelectedNode = (
 
       setWholeNodes(prevNodes => [...prevNodes, maritalNode, leftParentNode, rightParentNode]);
       setEdges(prevEdges => [...prevEdges, childToMaritalEdge, maritalToLeftParentEdge, maritalToRightParentEdge]);
-      // setEdges(prevEdges => [...prevEdges, { id: newEdgeId, source: leftParentId, target: selectedNode.id, sourceHandle: 'parent', targetHandle: 'child' }]);
     }
   }
 
