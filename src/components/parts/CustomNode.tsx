@@ -9,7 +9,7 @@ type PersonNodeData = {
   birthYear?: number;
   birthMonth?: number;
   birthDate?: number;
-  gender: string;
+  gender?: string;
   profilePicture?: File;
   has_parents: boolean;
   has_children: boolean;
