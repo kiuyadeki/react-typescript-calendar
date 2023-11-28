@@ -14,12 +14,14 @@ import {
   Text,
   useDisclosure,
 } from "@chakra-ui/react";
-import { FC, memo, useEffect, useState } from "react";
+import { Dispatch, FC, SetStateAction, memo, useEffect, useState } from "react";
 import { ProfileEditor } from './ProfileEditor';
 
 type SelectActionModalProps = {
   isOpen: boolean;
   onClose: () => void;
+  showProfileEditor: boolean;
+  setShowProfileEditor: Dispatch<SetStateAction<boolean>>;
   selectedNode: any;
   addParent: () => void;
   addChild: () => void;
@@ -27,8 +29,8 @@ type SelectActionModalProps = {
 };
 
 export const SelectActionModal: FC<SelectActionModalProps> = memo(props => {
-  const { isOpen, onClose, selectedNode, addParent, addChild, addSpouse } = props;
-  const [showProfileEditor, setShowProfileEditor] = useState<boolean>(false);
+  const { isOpen, onClose, showProfileEditor, setShowProfileEditor, selectedNode, addParent, addChild, addSpouse } = props;
+  // const [showProfileEditor, setShowProfileEditor] = useState<boolean>(false);
 
   // 情報を編集
   const displayProfileEditor = () => {
@@ -36,8 +38,6 @@ export const SelectActionModal: FC<SelectActionModalProps> = memo(props => {
       setShowProfileEditor(true);
     }
   };
-
-  console.table("node", selectedNode);
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -47,10 +47,12 @@ export const SelectActionModal: FC<SelectActionModalProps> = memo(props => {
         <ModalCloseButton />
         <ModalBody>
           {showProfileEditor ? (
-            <ProfileEditor />
+            <ProfileEditor onClose={onClose} selectedNode={selectedNode} setShowProfileEditor={setShowProfileEditor} />
           ) : (
             <>
               <Text>{selectedNode?.data.date_of_birth}</Text>
+              <Text>{selectedNode?.data.date_of_death}</Text>
+              <Text>{selectedNode?.data.daaa}</Text>
               <Text>{selectedNode?.id}</Text>
               <Flex wrap="wrap" gap={5}>
                 <Button
