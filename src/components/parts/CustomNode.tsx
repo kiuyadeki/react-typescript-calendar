@@ -11,9 +11,9 @@ type PersonNodeData = {
   birthDate?: number;
   gender: string;
   profilePicture?: File;
-  has_parents: boolean;
-  has_children: boolean;
-  has_spouse: boolean;
+  parents: [];
+  children: [];
+  spouse: [];
 };
 
 type PersonNodeProps = Omit<NodeProps, 'data'> & {

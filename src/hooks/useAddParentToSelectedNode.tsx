@@ -16,6 +16,7 @@ export const useAddParentToSelectedNode = (
         data: { label: `Marital`},
         position: {x: selectedNode.position.x + 95, y: selectedNode.position.y - 100},
       }
+
       const childToMaritalEdge: Edge = {
         id: `edge-${selectedNode.id}-${maritalId}`,
         source: selectedNode.id,
@@ -29,7 +30,7 @@ export const useAddParentToSelectedNode = (
       const leftParentNode: Node = {
         type: 'person',
         id: leftParentId,
-        data: { label: `Parent of ${selectedNode.data.label}`},
+        data: { label: `Parent of ${selectedNode.data.label}`, children: [selectedNode.id], spouse: [leftParentId + 1]},
         position: { x: selectedNode.position.x - 300, y: selectedNode.position.y - 100},
       };
       const maritalToLeftParentEdge: Edge = {
