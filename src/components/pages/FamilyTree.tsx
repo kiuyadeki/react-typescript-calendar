@@ -1,5 +1,5 @@
 import { Box, useDisclosure } from "@chakra-ui/react";
-import { FC, MouseEvent, memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { FC, memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import ReactFlow, { Background, Connection, ConnectionMode, ConnectionStatus, Controls, Edge, HandleType, MiniMap, Node, OnConnectEnd, OnConnectStart, ReactFlowProvider, addEdge, useEdgesState, useNodesState, useReactFlow } from "reactflow";
 import 'reactflow/dist/style.css';
 import { SelectActionModal } from '../parts/SelectActionModal';
@@ -10,11 +10,13 @@ import { useAddParentToSelectedNode } from '../../hooks/useAddParentToSelectedNo
 import { useAddChildToSelectedNode } from '../../hooks/useAddChildToSelectedNode';
 import { useAddSpouseToSelectedNode } from '../../hooks/useAddSpouseToSelectedNode';
 import { MaritalNode } from '../parts/MaritalNode';
+import { wholeEdgesState } from '../../recoil/WholeEdgesState';
 
 let id = 1;
 const getId = () => `${id++}`;
 const AddNodeOnEdgeDrop = () => {
   const [wholeNodes, setWholeNodes] = useRecoilState(wholeNodesState);
+  const [wholeEdges, setWholeEdges] = useRecoilState(wholeEdgesState);
   const [selectedNode, setSelectedNode] = useState<null | Node>(null)
   const [showProfileEditor, setShowProfileEditor] = useState<boolean>(false);
 
@@ -27,7 +29,7 @@ const AddNodeOnEdgeDrop = () => {
   const defaultViewport = {x: 0, y: 0, zoom: 5}
   const nodeTypes = useMemo(() => ( {person: personNode, marital: MaritalNode}), []);
   const [nodes, setNodes, onNodesChange] = useNodesState(wholeNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(wholeEdges);
   const onConnect = useCallback((params: Connection) => setEdges((eds) => addEdge(params, eds)), []);
 
 
@@ -49,7 +51,11 @@ const AddNodeOnEdgeDrop = () => {
 
   useEffect(() => {
     console.log('nodes', nodes);
-  }, [nodes]);
+  }, ['wholeNodes', nodes]);
+
+  useEffect(() => {
+    setEdges(wholeEdges);
+  }, [wholeEdges]);
 
   useEffect(() => {
     setNodes(wholeNodes)

@@ -9,6 +9,38 @@ export const useAddChildToSelectedNode = (
 ) => {
   const addChildToSelectedNode = () => {
     if (selectedNode) {
+      let willAddedNodes = [];
+      let willAddedEdges = [];
+      const connectedEdges = [];
+
+      if (!selectedNode.data.spouse.length) {
+        const maritalId = getId();
+        const maritalNode: Node = {
+          type: 'marital',
+          id: maritalId,
+          data: { label: `Marital`},
+          position: {x: selectedNode.position.x + 150, y: selectedNode.position.y},
+        }
+  
+        const selectedToMaritalEdge: Edge = {
+          id: `edge-${selectedNode.id}-${maritalId}`,
+          source: selectedNode.id,
+          sourceHandle: 'toMarital',
+          target: maritalId,
+          targetHandle: 'fromChild',
+          type: 'smoothstep',
+        }
+  
+        const SpouseID = getId();
+        const SpouseNode: Node = {
+          type: 'person',
+          id: SpouseID,
+          data: {label: `Spouse of ${selectedNode.data.label}`},
+          position: {x: selectedNode.position.x + 300, y:selectedNode.position.y}
+        };
+      }
+
+
       const childId = getId();
       const childNode: Node = {
         type: "person",
