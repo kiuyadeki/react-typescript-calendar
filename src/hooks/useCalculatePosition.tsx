@@ -1,23 +1,12 @@
 import { Edge, Node } from "reactflow";
-
-interface NodeData {
-  label: string;
-  birthdate?: Date;
-  parentId?: string;
-  spouseId?: string;
-}
-
-interface PositionedNode extends Node {
-  data: NodeData;
-  position: { x: number; y: number };
-}
+import { PersonNodeData } from "../types/PersonNodeData";
 
 function calculatePosition(
-  nodes: PositionedNode[],
+  nodes: PersonNodeData[],
   edges: Edge[],
   nodeId: string,
   level: number = 0,
-  parentNode?: PositionedNode
+  parentNode?: PersonNodeData
 ) {
   // ベースレベルでのノード検索と配置
   const node = nodes.find(n => n.id === nodeId);
