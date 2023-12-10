@@ -9,7 +9,7 @@ import { wholeNodesState } from '../../recoil/WholeNodesState';
 import { useAddParentToSelectedNode } from '../../hooks/useAddParentToSelectedNode';
 import { useAddChildToSelectedNode } from '../../hooks/useAddChildToSelectedNode';
 import { useAddSpouseToSelectedNode } from '../../hooks/useAddSpouseToSelectedNode';
-import { MaritalNode } from '../parts/MaritalNode';
+import { MaritalStatusNode } from '../parts/MaritalStatusNode';
 import { wholeEdgesState } from '../../recoil/WholeEdgesState';
 
 let id = 1;
@@ -27,7 +27,7 @@ const AddNodeOnEdgeDrop = () => {
     padding: 3,
   };
   const defaultViewport = {x: 0, y: 0, zoom: 5}
-  const nodeTypes = useMemo(() => ( {person: personNode, marital: MaritalNode}), []);
+  const nodeTypes = useMemo(() => ( {person: personNode, marital: MaritalStatusNode}), []);
   const [nodes, setNodes, onNodesChange] = useNodesState(wholeNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(wholeEdges);
   const onConnect = useCallback((params: Connection) => setEdges((eds) => addEdge(params, eds)), []);
@@ -51,7 +51,11 @@ const AddNodeOnEdgeDrop = () => {
 
   useEffect(() => {
     console.log('nodes', nodes);
-  }, ['wholeNodes', nodes]);
+  }, [wholeNodes, nodes]);
+
+  useEffect(() => {
+    console.log('edges', edges);
+  }, [wholeEdges, nodes]);
 
   useEffect(() => {
     setEdges(wholeEdges);
@@ -61,9 +65,9 @@ const AddNodeOnEdgeDrop = () => {
     setNodes(wholeNodes)
   }, [wholeNodes]);
 
-  const addParentToSelectedNode = useAddParentToSelectedNode(setWholeNodes, setEdges, getId, selectedNode);
-  const addChildToSelectedNode = useAddChildToSelectedNode(setWholeNodes, setEdges, getId, selectedNode);
-  const addSpouseToSelectedNode = useAddSpouseToSelectedNode(setWholeNodes, setEdges, getId, selectedNode);
+  const addParentToSelectedNode = useAddParentToSelectedNode(setWholeNodes, setWholeEdges, getId, selectedNode);
+  const addChildToSelectedNode = useAddChildToSelectedNode(setWholeNodes, wholeEdges, setWholeEdges, getId, selectedNode);
+  const addSpouseToSelectedNode = useAddSpouseToSelectedNode(setWholeNodes, setWholeEdges, getId, selectedNode);
 
   return (
     <>

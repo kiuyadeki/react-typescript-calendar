@@ -1,9 +1,10 @@
 import { Dispatch, SetStateAction } from "react";
 import { Edge, Node } from "reactflow";
+import { PersonNodeData } from '../types/PersonNodeData';
 
 export const useAddSpouseToSelectedNode = (
   setWholeNodes: Dispatch<SetStateAction<Node[]>>,
-  setEdges: Dispatch<SetStateAction<Edge[]>>,
+  setWholeEdges: Dispatch<SetStateAction<Edge[]>>,
   getId: () => string,
   selectedNode: null | Node
 ) => {
@@ -14,28 +15,39 @@ export const useAddSpouseToSelectedNode = (
         type: 'marital',
         id: maritalId,
         data: { label: `Marital`},
-        position: {x: selectedNode.position.x + 150, y: selectedNode.position.y},
+        position: {x: selectedNode.position.x + 250, y: selectedNode.position.y},
       }
 
       const selectedToMaritalEdge: Edge = {
+        type: 'smoothstep',
         id: `edge-${selectedNode.id}-${maritalId}`,
         source: selectedNode.id,
-        sourceHandle: 'toMarital',
+        sourceHandle: 'toRight',
         target: maritalId,
-        targetHandle: 'fromChild',
-        type: 'smoothstep',
+        targetHandle: 'fromLeft',
       }
 
-      const SpouseID = getId();
-      const SpouseNode: Node = {
+      const spouseID = getId();
+      const SpouseNode: PersonNodeData = {
         type: 'person',
-        id: SpouseID,
-        data: {label: `Spouse of ${selectedNode.data.label}`},
-        position: {x: selectedNode.position.x + 300, y:selectedNode.position.y}
+        id: spouseID,
+        data: {label: `Spouse of ${selectedNode.data.label}`, parents: [], children: [spouseID],  spouse: [selectedNode.id]},
+        position: {x: selectedNode.position.x + 400, y:selectedNode.position.y}
       };
-      setWholeNodes(prevNodes => [...prevNodes, SpouseNode]);
-      const NewEdgeId = `edges-${SpouseID}-${selectedNode.id}`;
-      setEdges(prevEdges => [...prevEdges, {id: NewEdgeId, source: selectedNode.id, target: SpouseID, sourceHandle: 'toRight', targetHandle: 'fromLeft'}]);
+
+      const spouseToMaritalEdge: Edge = {
+        type: 'smoothstep',
+        id: `edge-${spouseID}-${maritalId}`,
+        source: spouseID,
+        sourceHandle: 'toLeft',
+        target: maritalId,
+        targetHandle: 'fromRight',
+      }
+
+      setWholeNodes(prevNodes => [...prevNodes, maritalNode, SpouseNode]);
+      const NewEdgeId = `edges-${spouseID}-${selectedNode.id}`;
+      // setWholeEdges(prevEdges => [...prevEdges, {id: NewEdgeId, source: selectedNode.id, target: spouseID, sourceHandle: 'toRight', targetHandle: 'fromLeft'}]);
+      setWholeEdges(prevEdges => [...prevEdges, selectedToMaritalEdge, spouseToMaritalEdge]);
     }
   }
 

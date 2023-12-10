@@ -3,7 +3,7 @@ import { Edge, Node } from 'reactflow';
 
 export const useAddParentToSelectedNode = (
   setWholeNodes: Dispatch<SetStateAction<Node[]>>,
-  setEdges: Dispatch<SetStateAction<Edge[]>>,
+  setWholeEdges: Dispatch<SetStateAction<Edge[]>>,
   getId: () => string,
   selectedNode: null | Node,
   ) => {
@@ -17,12 +17,12 @@ export const useAddParentToSelectedNode = (
         position: {x: selectedNode.position.x + 95, y: selectedNode.position.y - 100},
       }
 
-      const childToMaritalEdge: Edge = {
-        id: `edge-${selectedNode.id}-${maritalId}`,
-        source: selectedNode.id,
-        sourceHandle: 'toMarital',
-        target: maritalId,
-        targetHandle: 'fromChild',
+      const maritalToChildEdge: Edge = {
+        id: `edge-${maritalId}-${selectedNode.id}`,
+        source: maritalId,
+        sourceHandle: 'toChild',
+        target: selectedNode.id,
+        targetHandle: 'fromMarital',
         type: 'smoothstep',
       }
 
@@ -33,12 +33,13 @@ export const useAddParentToSelectedNode = (
         data: { label: `Parent of ${selectedNode.data.label}`, children: [selectedNode.id], spouse: [leftParentId + 1]},
         position: { x: selectedNode.position.x - 300, y: selectedNode.position.y - 100},
       };
-      const maritalToLeftParentEdge: Edge = {
-        id: `edge-${maritalId}-${leftParentId}`,
-        source: maritalId,
-        sourceHandle: 'toLeft',
-        target: leftParentId,
-        targetHandle: 'fromRight',
+
+      const leftParentToMaritalEdge: Edge = {
+        id: `edge-${leftParentId}-${maritalId}`,
+        source: leftParentId,
+        sourceHandle: 'toRight',
+        target: maritalId,
+        targetHandle: 'fromLeft',
       }
 
       const rightParentId = getId();
@@ -48,16 +49,17 @@ export const useAddParentToSelectedNode = (
         data: { label: `Parent of ${selectedNode.data.label}`, children: [selectedNode.id], spouse: [leftParentId]},
         position: { x: selectedNode.position.x + 300, y: selectedNode.position.y - 100},
       };
-      const maritalToRightParentEdge: Edge = {
-        id: `edge-${maritalId}-${rightParentId}`,
-        source: maritalId,
-        sourceHandle: 'toRight',
-        target: rightParentId,
-        targetHandle: 'fromLeft',
+      
+      const RightParentToMaritalEdge: Edge = {
+        id: `edge-${rightParentId}-${maritalId}`,
+        source: rightParentId,
+        sourceHandle: 'toLeft',
+        target: maritalId,
+        targetHandle: 'fromRight',
       }
 
       setWholeNodes(prevNodes => [...prevNodes, maritalNode, leftParentNode, rightParentNode]);
-      setEdges(prevEdges => [...prevEdges, childToMaritalEdge, maritalToLeftParentEdge, maritalToRightParentEdge]);
+      setWholeEdges(prevEdges => [...prevEdges, maritalToChildEdge, leftParentToMaritalEdge, RightParentToMaritalEdge]);
     }
   }
 

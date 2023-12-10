@@ -27,12 +27,12 @@ export const personNode: FC<PersonNodeProps> = props => {
   return (
     <Box px={4} py={2} bg="white" w="200px" borderRadius="md" shadow={"md"}>
       <Handle type="source" position={Position.Bottom} id='toChild' />
-      <Handle type="target" position={Position.Top} id='fromMarital' />
       <Handle type="source" position={Position.Top} id='toMarital' />
-
       <Handle type="source" position={Position.Right} id='toRight' />
-      <Handle type="target" position={Position.Right} id='fromRight' />
       <Handle type="source" position={Position.Left} id='toLeft' />
+
+      <Handle type="target" position={Position.Top} id='fromMarital' />
+      <Handle type="target" position={Position.Right} id='fromRight' />
       <Handle type="target" position={Position.Left} id='fromLeft' />
       <Text fontSize='md'>{data.label}</Text>
       <Text fontSize='md'>{data.lastName}</Text>

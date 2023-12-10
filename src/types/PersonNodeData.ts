@@ -9,9 +9,9 @@ export interface NodeData {
   birthDate?: number;
   gender?: string;
   profilePicture?: File;
-  parentsId?: string;
-  spouseId?: string;
-  childrenId?: string;
+  parents: (string | number)[];
+  children: (string | number)[];
+  spouse: (string | number)[];
 };
 
 export interface PersonNodeData extends Node {
