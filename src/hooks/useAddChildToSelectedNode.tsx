@@ -18,9 +18,11 @@ export const useAddChildToSelectedNode = (
     if (selectedNode) {
       let willAddedNodes: Node[] = [];
       let willAddedEdges: Edge[] = [];
-      let maritalNodeId = '';
+      let maritalNodeId = "";
+      const updatedNode = {...selectedNode};
 
       if (!selectedNode.data.spouse.length) {
+        console.log("!selectedNode.data.spouse.length", selectedNode.data.spouse.length);
         const maritalId = getId();
         const maritalNode: Node = {
           type: "marital",
@@ -63,31 +65,42 @@ export const useAddChildToSelectedNode = (
         willAddedNodes.push(maritalNode, SpouseNode);
         willAddedEdges.push(selectedToMaritalEdge, spouseToMaritalEdge);
         maritalNodeId = maritalId;
+        updatedNode.data.spouse.push(spouseID);
+
       } else {
         const maritalIdList = outgoingEdges
           .filter(edge => edge.sourceHandle === "toRight" || edge.sourceHandle === "toLeft")
           .map(edge => edge.target);
         maritalNodeId = maritalIdList[0];
+
       }
 
       const childId = getId();
       const childNode: PersonNodeData = {
         type: "person",
         id: childId,
-        data: { label: `Child of ${selectedNode.data.label}`, parents: [selectedNode.id], children: [], spouse: [] },
+        data: {
+          label: `Child of ${selectedNode.data.label}`,
+          parents: [selectedNode.id],
+          children: [],
+          spouse: [],
+        },
         position: { x: selectedNode.position.x + 150, y: selectedNode.position.y + 300 },
       };
-
       const maritalToChildEdge: Edge = {
         id: `edge-${maritalNodeId}-${childId}`,
         source: maritalNodeId,
-        sourceHandle: 'toChild',
+        sourceHandle: "toChild",
         target: childId,
-        targetHandle: 'fromMarital',
-      }
+        targetHandle: "fromMarital",
+      };
 
       willAddedNodes.push(childNode);
       willAddedEdges.push(maritalToChildEdge);
+      updatedNode.data.children.push(childId);
+      setWholeNodes(prevNodes => prevNodes.map(node => {
+        return node.id === selectedNode.id ? updatedNode : node;
+      }))
 
       setWholeNodes(prevNodes => [...prevNodes, ...willAddedNodes]);
       const NewEdgeId = `edge-${childId}-${selectedNode.id}`;

@@ -1,5 +1,6 @@
 import { Dispatch, SetStateAction } from 'react';
 import { Edge, Node } from 'reactflow';
+import { PersonNodeData } from '../types/PersonNodeData';
 
 export const useAddParentToSelectedNode = (
   setWholeNodes: Dispatch<SetStateAction<Node[]>>,
@@ -27,10 +28,14 @@ export const useAddParentToSelectedNode = (
       }
 
       const leftParentId = getId();
-      const leftParentNode: Node = {
+      const leftParentNode: PersonNodeData = {
         type: 'person',
         id: leftParentId,
-        data: { label: `Parent of ${selectedNode.data.label}`, children: [selectedNode.id], spouse: [leftParentId + 1]},
+        data: { 
+          label: `Parent of ${selectedNode.data.label}`, 
+          parents: [],
+          children: [selectedNode.id], 
+          spouse: [leftParentId + 1]},
         position: { x: selectedNode.position.x - 300, y: selectedNode.position.y - 100},
       };
 
@@ -43,10 +48,15 @@ export const useAddParentToSelectedNode = (
       }
 
       const rightParentId = getId();
-      const rightParentNode: Node = {
+      const rightParentNode: PersonNodeData = {
         type: 'person',
         id: rightParentId,
-        data: { label: `Parent of ${selectedNode.data.label}`, children: [selectedNode.id], spouse: [leftParentId]},
+        data: { 
+          label: `Parent of ${selectedNode.data.label}`, 
+          parents: [],
+          children: [selectedNode.id], 
+          spouse: [leftParentId]
+        },
         position: { x: selectedNode.position.x + 300, y: selectedNode.position.y - 100},
       };
       
@@ -57,6 +67,17 @@ export const useAddParentToSelectedNode = (
         target: maritalId,
         targetHandle: 'fromRight',
       }
+
+      const updatedNode = {
+        ...selectedNode,
+        data: {
+          ...selectedNode.data,
+          parents: [leftParentId, rightParentId],
+        }
+      }
+      setWholeNodes(prevNodes => prevNodes.map(node => {
+        return node.id === selectedNode.id ? updatedNode : node;
+      }));
 
       setWholeNodes(prevNodes => [...prevNodes, maritalNode, leftParentNode, rightParentNode]);
       setWholeEdges(prevEdges => [...prevEdges, maritalToChildEdge, leftParentToMaritalEdge, RightParentToMaritalEdge]);

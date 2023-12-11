@@ -44,6 +44,18 @@ export const useAddSpouseToSelectedNode = (
         targetHandle: 'fromRight',
       }
 
+      let updatedNode = {
+        ...selectedNode,
+        data: {
+          ...selectedNode.data,
+          spouse: [spouseID],
+        }
+      };
+
+      setWholeNodes(prevNodes => prevNodes.map(node => {
+        return node.id === selectedNode.id ? updatedNode :node;
+      }));
+
       setWholeNodes(prevNodes => [...prevNodes, maritalNode, SpouseNode]);
       const NewEdgeId = `edges-${spouseID}-${selectedNode.id}`;
       // setWholeEdges(prevEdges => [...prevEdges, {id: NewEdgeId, source: selectedNode.id, target: spouseID, sourceHandle: 'toRight', targetHandle: 'fromLeft'}]);
