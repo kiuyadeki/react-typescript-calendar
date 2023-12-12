@@ -16,13 +16,14 @@ import {
 } from "@chakra-ui/react";
 import { Dispatch, FC, SetStateAction, memo, useEffect, useState } from "react";
 import { ProfileEditor } from './ProfileEditor';
+import { PersonNodeData } from '../../types/PersonNodeData';
 
 type SelectActionModalProps = {
   isOpen: boolean;
   onClose: () => void;
   showProfileEditor: boolean;
   setShowProfileEditor: Dispatch<SetStateAction<boolean>>;
-  selectedNode: any;
+  selectedNode: PersonNodeData | null;
   addParent: () => void;
   addChild: () => void;
   addSpouse: () => void;
@@ -39,6 +40,14 @@ export const SelectActionModal: FC<SelectActionModalProps> = memo(props => {
     }
   };
 
+  let hasParents = false;
+  let hasSpouse = false;
+  if (selectedNode) {
+    hasParents = !!selectedNode.data.parents.length;
+    hasSpouse = !!selectedNode.data.spouse.length;
+    console.log(selectedNode.data.spouse.length, hasSpouse);
+  }
+
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
@@ -50,12 +59,13 @@ export const SelectActionModal: FC<SelectActionModalProps> = memo(props => {
             <ProfileEditor onClose={onClose} selectedNode={selectedNode} setShowProfileEditor={setShowProfileEditor} />
           ) : (
             <>
-              <Text>{selectedNode?.data.date_of_birth}</Text>
-              <Text>{selectedNode?.data.date_of_death}</Text>
-              <Text>{selectedNode?.data.daaa}</Text>
+              <Text>{selectedNode?.data.birthDate}</Text>
+              <Text>{selectedNode?.data.birthMonth}</Text>
+              <Text>{selectedNode?.data.birthYear}</Text>
               <Text>{selectedNode?.id}</Text>
               <Flex wrap="wrap" gap={5}>
                 <Button
+                  isDisabled={hasParents}
                   onClick={() => {
                     addParent();
                     onClose();
@@ -72,6 +82,7 @@ export const SelectActionModal: FC<SelectActionModalProps> = memo(props => {
                   子を追加
                 </Button>
                 <Button
+                  isDisabled={hasSpouse}
                   onClick={() => {
                     addSpouse();
                     onClose();

@@ -11,13 +11,14 @@ import { useAddChildToSelectedNode } from '../../hooks/useAddChildToSelectedNode
 import { useAddSpouseToSelectedNode } from '../../hooks/useAddSpouseToSelectedNode';
 import { MaritalStatusNode } from '../parts/MaritalStatusNode';
 import { wholeEdgesState } from '../../recoil/WholeEdgesState';
+import { PersonNodeData } from '../../types/PersonNodeData';
 
 let id = 1;
 const getId = () => `${id++}`;
 const AddNodeOnEdgeDrop = () => {
   const [wholeNodes, setWholeNodes] = useRecoilState(wholeNodesState);
   const [wholeEdges, setWholeEdges] = useRecoilState(wholeEdgesState);
-  const [selectedNode, setSelectedNode] = useState<null | Node>(null)
+  const [selectedNode, setSelectedNode] = useState<null | PersonNodeData>(null)
   const [showProfileEditor, setShowProfileEditor] = useState<boolean>(false);
 
 
