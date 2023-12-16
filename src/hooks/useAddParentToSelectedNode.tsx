@@ -1,21 +1,21 @@
 import { Dispatch, SetStateAction } from 'react';
 import { Edge, Node } from 'reactflow';
-import { PersonNodeData } from '../types/PersonNodeData';
+import { PersonNodeData, maritalNodeData } from '../types/PersonNodeData';
 
 export const useAddParentToSelectedNode = (
-  setWholeNodes: Dispatch<SetStateAction<Node[]>>,
+  setWholeNodes: Dispatch<SetStateAction<(PersonNodeData | maritalNodeData)[]>>,
   setWholeEdges: Dispatch<SetStateAction<Edge[]>>,
   getId: () => string,
-  selectedNode: null | Node,
+  selectedNode: null | PersonNodeData,
   ) => {
   const addParentToSelectedNode = () => {
     if(selectedNode) {
       const maritalId = getId();
-      const maritalNode: Node = {
+      const maritalNode: maritalNodeData = {
         type: 'marital',
         id: maritalId,
-        data: { label: `Marital`},
-        position: {x: selectedNode.position.x + 95, y: selectedNode.position.y - 100},
+        data: { isDivorced: false},
+        position: {x: selectedNode.position.x, y: selectedNode.position.y - 100},
       }
 
       const maritalToChildEdge: Edge = {

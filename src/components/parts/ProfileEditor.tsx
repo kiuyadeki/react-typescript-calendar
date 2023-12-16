@@ -5,6 +5,7 @@ import { useProfilePictureUpload } from '../../hooks/useProfilePictureChange';
 import { useRecoilState } from 'recoil';
 import { wholeNodesState } from '../../recoil/WholeNodesState';
 import { Node } from 'reactflow';
+import { PersonNodeData } from '../../types/PersonNodeData';
 
 type Inputs = {
   lastName: string;
@@ -16,7 +17,7 @@ type Inputs = {
 };
 
 type ProfileEditorProps = {
-  selectedNode: Node | null;
+  selectedNode: PersonNodeData | null;
   setShowProfileEditor: (value: boolean) => void;
   onClose: () => void;
 }
@@ -72,12 +73,6 @@ export const ProfileEditor: FC<ProfileEditorProps> = memo(props => {
     onClose();
     setShowProfileEditor(false);
   });
-
-  useEffect(() => {
-    if(selectedNode) {
-      setValue('lastName', selectedNode.data.lastName);
-    }
-  }, [selectedNode]);
 
   return (
     <form onSubmit={onSubmit}>

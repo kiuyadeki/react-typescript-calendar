@@ -12,6 +12,7 @@ import { useAddSpouseToSelectedNode } from '../../hooks/useAddSpouseToSelectedNo
 import { MaritalStatusNode } from '../parts/MaritalStatusNode';
 import { wholeEdgesState } from '../../recoil/WholeEdgesState';
 import { PersonNodeData } from '../../types/PersonNodeData';
+import { useCalculateNodesPosition } from '../../hooks/useCalculateNodesPosition';
 
 let id = 1;
 const getId = () => `${id++}`;
@@ -29,15 +30,16 @@ const AddNodeOnEdgeDrop = () => {
   };
   const defaultViewport = {x: 0, y: 0, zoom: 5}
   const nodeTypes = useMemo(() => ( {person: personNode, marital: MaritalStatusNode}), []);
-  const [nodes, setNodes, onNodesChange] = useNodesState(wholeNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(wholeEdges);
+  const [nodes, setNodes, onNodesChange] = useNodesState(wholeNodes as Node[]);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(wholeEdges as Edge[]);
   const onConnect = useCallback((params: Connection) => setEdges((eds) => addEdge(params, eds)), []);
 
 
   // modal
   const { isOpen, onOpen, onClose} = useDisclosure();
-  const handleNodeClick = (node: Node) => {
+  const handleNodeClick = (node: PersonNodeData) => {
     setSelectedNode(node);
+    // useCalculateNodesPosition(wholeNodes);
     onOpen();
   }
 
@@ -56,14 +58,14 @@ const AddNodeOnEdgeDrop = () => {
 
   useEffect(() => {
     console.log('edges', edges);
-  }, [wholeEdges, nodes]);
+  }, [wholeEdges, edges]);
 
   useEffect(() => {
     setEdges(wholeEdges);
   }, [wholeEdges]);
 
   useEffect(() => {
-    setNodes(wholeNodes)
+    setNodes(wholeNodes);
   }, [wholeNodes]);
 
   const addParentToSelectedNode = useAddParentToSelectedNode(setWholeNodes, setWholeEdges, getId, selectedNode);
@@ -80,10 +82,15 @@ const AddNodeOnEdgeDrop = () => {
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           onConnect={onConnect}
-          onNodeClick={(e, node) => handleNodeClick(node)}
+          onNodeClick={(e, node) => {
+            if (node.type === "person") {
+              handleNodeClick(node as PersonNodeData);
+            }
+          }}
           defaultViewport={defaultViewport}
           fitView
           fitViewOptions={fitViewOptions}
+          proOptions={{ hideAttribution: true }}
         />
       </Box>
       <SelectActionModal

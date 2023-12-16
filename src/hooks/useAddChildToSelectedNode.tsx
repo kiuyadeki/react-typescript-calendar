@@ -1,10 +1,10 @@
 import { Dispatch, SetStateAction, useMemo } from "react";
 import { Edge, Node } from "reactflow";
 import useOutgoingEdges from "./useOutgoingEdges";
-import { PersonNodeData } from "../types/PersonNodeData";
+import { PersonNodeData, maritalNodeData } from "../types/PersonNodeData";
 
 export const useAddChildToSelectedNode = (
-  setWholeNodes: Dispatch<SetStateAction<Node[]>>,
+  setWholeNodes: Dispatch<SetStateAction<(PersonNodeData | maritalNodeData)[]>>,
   wholeEdges: Edge[],
   setWholeEdges: Dispatch<SetStateAction<Edge[]>>,
   getId: () => string,
@@ -13,22 +13,20 @@ export const useAddChildToSelectedNode = (
   const outgoingEdges = useOutgoingEdges(wholeEdges, selectedNode ? selectedNode : null);
 
   const addChildToSelectedNode = () => {
-    console.log("outgoingEdges", outgoingEdges);
 
     if (selectedNode) {
-      let willAddedNodes: Node[] = [];
+      let willAddedNodes: (PersonNodeData | maritalNodeData)[] = [];
       let willAddedEdges: Edge[] = [];
       let maritalNodeId = "";
       const updatedNode = {...selectedNode};
 
       if (!selectedNode.data.spouse.length) {
-        console.log("!selectedNode.data.spouse.length", selectedNode.data.spouse.length);
         const maritalId = getId();
-        const maritalNode: Node = {
+        const maritalNode: maritalNodeData = {
           type: "marital",
           id: maritalId,
-          data: { label: `Marital` },
-          position: { x: selectedNode.position.x + 150, y: selectedNode.position.y },
+          data: { isDivorced: false},
+          position: { x: selectedNode.position.x + 200, y: selectedNode.position.y },
         };
 
         const selectedToMaritalEdge: Edge = {
@@ -50,7 +48,7 @@ export const useAddChildToSelectedNode = (
             children: [spouseID + 1],
             spouse: [selectedNode.id],
           },
-          position: { x: selectedNode.position.x + 300, y: selectedNode.position.y },
+          position: { x: selectedNode.position.x + 400, y: selectedNode.position.y },
         };
 
         const spouseToMaritalEdge: Edge = {
@@ -85,7 +83,7 @@ export const useAddChildToSelectedNode = (
           children: [],
           spouse: [],
         },
-        position: { x: selectedNode.position.x + 150, y: selectedNode.position.y + 300 },
+        position: { x: selectedNode.position.x + 200, y: selectedNode.position.y + 300 },
       };
       const maritalToChildEdge: Edge = {
         id: `edge-${maritalNodeId}-${childId}`,
