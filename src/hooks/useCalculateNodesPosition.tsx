@@ -7,9 +7,9 @@ export function useCalculateNodesPosition(wholeNodes: (PersonNodeData | maritalN
 
     if (node.data.children.length) {
       let numberOfDescendant:number = node.data.children.length;
-      node.data.children.map(childId => {
+      node.data.children.forEach(childId => {
         let childNode = wholeNodes.find(node => node.id == childId);
-        console.log(childNode);
+        console.log(node.id, childNode);
       })
     }
   });

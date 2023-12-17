@@ -9,9 +9,9 @@ export interface NodeData {
   birthDate?: number | null | undefined;
   gender?: string | null | undefined;
   profilePicture?: File | null | undefined;
-  parents: (string | number)[];
-  children: (string | number)[];
-  spouse: (string | number)[];
+  parents: (string | number | null)[];
+  children: (string | number | null)[];
+  spouse: (string | number | null)[];
   numberOfDescendant?: number;
   numberOfAncestors?: number;
 };

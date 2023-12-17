@@ -31,7 +31,7 @@ export const useAddSpouseToSelectedNode = (
       const SpouseNode: PersonNodeData = {
         type: 'person',
         id: spouseID,
-        data: {label: `Spouse of ${selectedNode.data.label}`, parents: [], children: [spouseID],  spouse: [selectedNode.id]},
+        data: {label: `Spouse of ${selectedNode.data.label}`, parents: [], children: [],  spouse: []},
         position: {x: selectedNode.position.x + 400, y:selectedNode.position.y}
       };
 

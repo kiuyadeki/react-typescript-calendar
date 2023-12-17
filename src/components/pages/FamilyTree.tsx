@@ -39,7 +39,7 @@ const AddNodeOnEdgeDrop = () => {
   const { isOpen, onOpen, onClose} = useDisclosure();
   const handleNodeClick = (node: PersonNodeData) => {
     setSelectedNode(node);
-    // useCalculateNodesPosition(wholeNodes);
+    useCalculateNodesPosition(wholeNodes);
     onOpen();
   }
 
@@ -69,7 +69,7 @@ const AddNodeOnEdgeDrop = () => {
   }, [wholeNodes]);
 
   const addParentToSelectedNode = useAddParentToSelectedNode(setWholeNodes, setWholeEdges, getId, selectedNode);
-  const addChildToSelectedNode = useAddChildToSelectedNode(setWholeNodes, wholeEdges, setWholeEdges, getId, selectedNode);
+  const addChildToSelectedNode = useAddChildToSelectedNode(wholeNodes, setWholeNodes, wholeEdges, setWholeEdges, getId, selectedNode);
   const addSpouseToSelectedNode = useAddSpouseToSelectedNode(setWholeNodes, setWholeEdges, getId, selectedNode);
 
   return (
