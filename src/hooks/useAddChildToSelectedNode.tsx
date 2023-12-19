@@ -2,6 +2,7 @@ import { Dispatch, SetStateAction, useMemo } from "react";
 import { Edge, Node } from "reactflow";
 import useOutgoingEdges from "./useOutgoingEdges";
 import { PersonNodeData, maritalNodeData } from "../types/PersonNodeData";
+import { InitialPersonNode } from '../components/parts/InitialPersonNode';
 
 export const useAddChildToSelectedNode = (
   wholeNodes: (PersonNodeData | maritalNodeData)[],
@@ -42,11 +43,11 @@ export const useAddChildToSelectedNode = (
 
         const spouseID = getId();
         const SpouseNode: PersonNodeData = {
-          type: "person",
+          ...InitialPersonNode,
           id: spouseID,
           data: {
-            label: `Spouse of ${selectedNode.data.label}`,
-            parents: [],
+            ...InitialPersonNode.data,
+            label: spouseID,
             children: [parseInt(spouseID) + 1],
             spouse: [selectedNode.id],
           },
@@ -80,13 +81,12 @@ export const useAddChildToSelectedNode = (
 
       const childId = getId();
       const childNode: PersonNodeData = {
-        type: "person",
+        ...InitialPersonNode,
         id: childId,
         data: {
-          label: `Child of ${selectedNode.data.label}`,
+          ...InitialPersonNode.data,
+          label: childId,
           parents: [selectedNode.id],
-          children: [],
-          spouse: [],
         },
         position: { x: selectedNode.position.x + 200, y: selectedNode.position.y + 300 },
       };

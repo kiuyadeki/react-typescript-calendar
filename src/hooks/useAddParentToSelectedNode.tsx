@@ -1,6 +1,7 @@
 import { Dispatch, SetStateAction } from 'react';
 import { Edge, Node } from 'reactflow';
 import { PersonNodeData, maritalNodeData } from '../types/PersonNodeData';
+import { InitialPersonNode } from '../components/parts/InitialPersonNode';
 
 export const useAddParentToSelectedNode = (
   setWholeNodes: Dispatch<SetStateAction<(PersonNodeData | maritalNodeData)[]>>,
@@ -29,11 +30,11 @@ export const useAddParentToSelectedNode = (
 
       const leftParentId = getId();
       const leftParentNode: PersonNodeData = {
-        type: 'person',
+        ...InitialPersonNode,
         id: leftParentId,
         data: { 
-          label: `Parent of ${selectedNode.data.label}`, 
-          parents: [],
+          ...InitialPersonNode.data,
+          label: leftParentId, 
           children: [selectedNode.id], 
           spouse: [leftParentId + 1]},
         position: { x: selectedNode.position.x - 300, y: selectedNode.position.y - 100},
@@ -49,11 +50,11 @@ export const useAddParentToSelectedNode = (
 
       const rightParentId = getId();
       const rightParentNode: PersonNodeData = {
-        type: 'person',
+        ...InitialPersonNode,
         id: rightParentId,
         data: { 
-          label: `Parent of ${selectedNode.data.label}`, 
-          parents: [],
+          ...InitialPersonNode.data,
+          label: rightParentId, 
           children: [selectedNode.id], 
           spouse: [leftParentId]
         },

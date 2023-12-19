@@ -12,6 +12,7 @@ export interface NodeData {
   parents: (string | number | null)[];
   children: (string | number | null)[];
   spouse: (string | number | null)[];
+  descendants?: (string | number | null)[];
   numberOfDescendant?: number;
   numberOfAncestors?: number;
 };
