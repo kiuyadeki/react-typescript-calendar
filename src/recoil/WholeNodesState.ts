@@ -16,7 +16,7 @@ const initialNodes:(PersonNodeData | maritalNodeData)[] = [
       parents: [],
       children: [],
       spouse: [],
-      descendants: [],
+      descendants: 0,
     },
     position: {x: 0, y: 0},
   },
