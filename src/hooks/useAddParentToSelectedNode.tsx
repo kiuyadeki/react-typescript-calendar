@@ -36,7 +36,7 @@ export const useAddParentToSelectedNode = (
           ...InitialPersonNode.data,
           label: leftParentId, 
           children: [selectedNode.id], 
-          spouse: [leftParentId + 1]},
+          spouse: [String(parseInt(leftParentId) + 1)]},
         position: { x: selectedNode.position.x - 300, y: selectedNode.position.y - 100},
       };
 

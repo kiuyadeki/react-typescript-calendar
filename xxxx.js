@@ -1,238 +1,143 @@
 const wholeNodes = [
   {
-      "width": 200,
-      "height": 40,
       "id": "0",
       "type": "person",
       "data": {
-          "label": "Node",
-          "birthYear": null,
-          "birthMonth": null,
-          "birthDate": null,
-          "gender": null,
-          "profilePicture": null,
           "parents": [],
-          "children": [
-              "3",
-              "4",
-              "5"
-          ],
-          "spouse": [
-              "2"
-          ],
-          "descendants": 2
+          "children": ["3"],
+          "spouse": ["2"],
+          "descendants": 0
       },
-      "position": {
-          "x": 0,
-          "y": 0
-      },
-      "selected": true,
-      "dragging": false,
-      "positionAbsolute": {
-          "x": 0,
-          "y": 0
-      }
-  },
-  {
-      "type": "marital",
-      "id": "1",
-      "data": {
-          "isDivorced": false
-      },
-      "position": {
-          "x": 200,
-          "y": 0
-      }
   },
   {
       "type": "person",
       "id": "2",
       "data": {
-          "label": "2",
           "parents": [],
-          "children": [
-              "3",
-              "4",
-              "5"
-          ],
-          "spouse": [
-              "0"
-          ],
-          "descendants": 2
+          "children": ["3"],
+          "spouse": ["0"],
+          "descendants": 0
       },
-      "position": {
-          "x": 400,
-          "y": 0
-      }
   },
   {
-      "width": 200,
-      "height": 40,
       "type": "person",
       "id": "3",
       "data": {
-          "label": "3",
-          "parents": [
-              "0"
-          ],
-          "children": [],
-          "spouse": [
-              "11"
-          ],
+          "parents": ["0", "2"],
+          "children": ["6","10","11","17"],
+          "spouse": ["5"],
           "descendants": 0
       },
-      "position": {
-          "x": 156,
-          "y": 216
-      },
-      "selected": true,
-      "positionAbsolute": {
-          "x": 156,
-          "y": 216
-      },
-      "dragging": false
   },
   {
-      "width": 200,
-      "height": 40,
-      "type": "person",
-      "id": "4",
-      "data": {
-          "label": "4",
-          "parents": [
-              "0"
-          ],
-          "children": [],
-          "spouse": [
-              "9"
-          ],
-          "descendants": 0
-      },
-      "position": {
-          "x": -252,
-          "y": 314
-      },
-      "selected": true,
-      "positionAbsolute": {
-          "x": -252,
-          "y": 314
-      },
-      "dragging": false
-  },
-  {
-      "width": 200,
-      "height": 40,
       "type": "person",
       "id": "5",
       "data": {
-          "label": "5",
-          "parents": [
-              "0"
-          ],
-          "children": [],
-          "spouse": [
-              "7"
-          ],
+          "parents": ["8","9"],
+          "children": ["6","10","11","17"],
+          "spouse": ["3"],
           "descendants": 0
       },
-      "position": {
-          "x": 594.7121535181236,
-          "y": 296.5884861407249
-      },
-      "selected": true,
-      "positionAbsolute": {
-          "x": 594.7121535181236,
-          "y": 296.5884861407249
-      },
-      "dragging": false
-  },
-  {
-      "type": "marital",
-      "id": "6",
-      "data": {
-          "isDivorced": false
-      },
-      "position": {
-          "x": 794.7121535181236,
-          "y": 296.5884861407249
-      }
   },
   {
       "type": "person",
-      "id": "7",
+      "id": "6",
       "data": {
-          "label": "7",
-          "parents": [],
-          "children": [],
-          "spouse": [
-              "5"
-          ],
+          "parents": ["3","5"],
+          "children": ["16"],
+          "spouse": ["15"],
           "descendants": 0
       },
-      "position": {
-          "x": 994.7121535181236,
-          "y": 296.5884861407249
-      }
   },
   {
-      "type": "marital",
+      "type": "person",
       "id": "8",
       "data": {
-          "isDivorced": false
+          "parents": [],
+          "children": ["5"],
+          "spouse": ["9"],
+          "descendants": 0
       },
-      "position": {
-          "x": -52,
-          "y": 314
-      }
   },
   {
       "type": "person",
       "id": "9",
       "data": {
-          "label": "9",
           "parents": [],
-          "children": [],
-          "spouse": [
-              "4"
-          ],
+          "children": ["5"],
+          "spouse": ["8"],
           "descendants": 0
       },
-      "position": {
-          "x": 148,
-          "y": 314
-      }
   },
   {
-      "type": "marital",
+      "type": "person",
       "id": "10",
       "data": {
-          "isDivorced": false
+          "parents": ["3","5"],
+          "children": [],
+          "spouse": ["13"],
+          "descendants": 0
       },
-      "position": {
-          "x": 356,
-          "y": 216
-      },
-      "width": 10,
-      "height": 10
   },
   {
       "type": "person",
       "id": "11",
       "data": {
-          "label": "11",
-          "parents": [],
+          "parents": ["5", "3"],
           "children": [],
-          "spouse": [
-              "3"
-          ],
+          "spouse": ["19"],
           "descendants": 0
       },
-      "position": {
-          "x": 556,
-          "y": 216
+  },
+  {
+      "type": "person",
+      "id": "13",
+      "data": {
+          "parents": [],
+          "children": [],
+          "spouse": ["10"],
+          "descendants": 0
       },
-      "width": 200,
-      "height": 40
+  },
+  {
+      "type": "person",
+      "id": "15",
+      "data": {
+          "parents": [],
+          "children": ["16"],
+          "spouse": ["6"],
+          "descendants": 0
+      },
+  },
+  {
+      "type": "person",
+      "id": "16",
+      "data": {
+          "parents": ["6","15"],
+          "children": [],
+          "spouse": [],
+          "descendants": 0
+      },
+  },
+  {
+      "type": "person",
+      "id": "17",
+      "data": {
+          "parents": ["3","5"],
+          "children": [],
+          "spouse": [],
+          "descendants": 0
+      },
+  },
+  {
+      "type": "person",
+      "id": "19",
+      "data": {
+          "parents": [],
+          "children": [],
+          "spouse": ["11"],
+          "descendants": 0
+      },
   }
 ]
 
@@ -245,24 +150,40 @@ function useCalculateNodesPosition(wholeNodes) {
 
     const node = wholeNodes.find(node => node.id === nodeId);
     // nodeがperson型であることを確認
-    if (!node || node.type !== "person" || !('children' in node.data) || !node.data.children.length) return [0];
+    if (!node || node.type !== "person" || !('children' in node.data) || !node.data.children.length) {
+        if (node.data.spouse.length) {
+            return [2];
+        } else {
+            return [1];
+        }
+    }
 
-    let descendantsCount = node.data.children.map(childId => {
+    if (node.data.children.length === 1 && node.data.children[0]) {
+
+    }
+
+    let descendantsCount = node.data.children.map((childId, index, arr) => {
       let count = calculateDescendants(childId, [...ancestors, nodeId]);
       const childNode = wholeNodes.find(n => n.id === childId);
-      let spouseCount = childNode && 'spouse' in childNode.data && childNode.data.spouse ? childNode.data.spouse.length : 0;
-      return count.map(c => c + spouseCount);
+      if (arr.length === 1 && childNode.data.spouse.length === 0) {
+        return [2];
+      }
+    //   let spouseCount = childNode && 'spouse' in childNode.data && childNode.data.spouse ? childNode.data.spouse.length : 0;
+    //   return count.map(c => c + spouseCount); // ??
+      return count;
     });
+    
+    // 各配列の最大値を配列で返す [[1, 5, 10], [1, 4, 3], [9]] => [9, 4, 10];
+    // let maxCounts = descendantsCount.reduce((acc, counts) => {
+        //   counts.forEach((count, index) => {
+            //     acc[index] = Math.max(acc[index] || 0, count);
+    //   });
+    //   return acc;
+    // }, []);
+    let maxCounts = descendantsCount.map(array => array.reduce((a, b) => a + b, 0));
 
-    let maxCounts = descendantsCount.reduce((acc, counts) => {
-      counts.forEach((count, index) => {
-        acc[index] = Math.max(acc[index] || 0, count);
-      });
-      return acc;
-    }, []);
-
-    let spouseCount = 'spouse' in node.data && node.data.spouse ? 1 : 0; // 配偶者がいるかどうかを確認
-    maxCounts.unshift(node.data.children.length + spouseCount);
+    // let spouseCount = 'spouse' in node.data && node.data.spouse ? 1 : 0; // 配偶者がいるかどうかを確認
+    // maxCounts.unshift(node.data.children.length + spouseCount);
     calculatedNodes.set(nodeId, maxCounts);
     return maxCounts;
   };
@@ -270,6 +191,7 @@ function useCalculateNodesPosition(wholeNodes) {
   wholeNodes.forEach(node => {
     if (node.type === "person") {
       const descendantsCounts = calculateDescendants(node.id);
+        console.log(node.id, descendantsCounts);
       const maxDescendants = Math.max(...descendantsCounts);
       if ('descendants' in node.data) node.data.descendants = maxDescendants; // 型ガードを使用
     }
