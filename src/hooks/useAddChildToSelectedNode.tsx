@@ -21,7 +21,7 @@ export const useAddChildToSelectedNode = (
       let willAddedEdges: Edge[] = [];
       let maritalNodeId = "";
       const updatedNode = {...selectedNode};
-      let spouseId:number | null | string = null;
+      let spouseID: string = "";
 
       if (!selectedNode.data.spouse.length) {
         const maritalId = getId();
@@ -41,7 +41,7 @@ export const useAddChildToSelectedNode = (
           targetHandle: "fromLeft",
         };
 
-        const spouseID = getId();
+        spouseID = getId();
         const SpouseNode: PersonNodeData = {
           ...InitialPersonNode,
           id: spouseID,
@@ -74,9 +74,7 @@ export const useAddChildToSelectedNode = (
           .map(edge => edge.target);
         maritalNodeId = maritalIdList[0];
 
-        if (typeof updatedNode.data.spouse[0] === 'string') {
-          spouseId = parseInt(updatedNode.data.spouse[0]);
-        }
+        spouseID = updatedNode.data.spouse[0];
       }
 
       const childId = getId();
@@ -86,7 +84,7 @@ export const useAddChildToSelectedNode = (
         data: {
           ...InitialPersonNode.data,
           label: childId,
-          parents: [selectedNode.id],
+          parents: [selectedNode.id, spouseID],
           children: [],
           spouse: [],
         },
@@ -105,7 +103,7 @@ export const useAddChildToSelectedNode = (
       updatedNode.data.children.push(childId);
 
       setWholeNodes(prevNodes => prevNodes.map(node => {
-        if (parseInt(node.id) === spouseId && node.type === "person") {
+        if (node.id === spouseID && node.type === "person") {
           console.log(node.type);
           const updatedSpouseNode = {...node};
           updatedSpouseNode.data.children.push(childId);

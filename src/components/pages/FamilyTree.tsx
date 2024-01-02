@@ -39,7 +39,6 @@ const AddNodeOnEdgeDrop = () => {
   const { isOpen, onOpen, onClose} = useDisclosure();
   const handleNodeClick = (node: PersonNodeData) => {
     setSelectedNode(node);
-    useCalculateNodesPosition(wholeNodes);
     onOpen();
   }
 
@@ -53,6 +52,7 @@ const AddNodeOnEdgeDrop = () => {
   }, [selectedNode]);
 
   useEffect(() => {
+    useCalculateNodesPosition(wholeNodes);
     console.log('nodes', nodes);
   }, [wholeNodes, nodes]);
 

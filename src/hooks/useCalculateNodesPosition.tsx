@@ -4,32 +4,30 @@ export function useCalculateNodesPosition(wholeNodes: (PersonNodeData | maritalN
   const calculatedNodes = new Map<string, number[]>();
 
   const calculateDescendants = (nodeId: string, ancestors: string[] = []): number[] => {
-    if (calculatedNodes.has(nodeId)) return calculatedNodes.get(nodeId)!; // 非nullアサーション
+    if (calculatedNodes.has(nodeId)) return calculatedNodes.get(nodeId)! || [0]; // 非nullアサーション
     if (ancestors.includes(nodeId)) return [0]; // 自分自身を参照する無限ループを防ぐ
 
     const node = wholeNodes.find(node => node.id === nodeId) as PersonNodeData | undefined;
     if (!node || node.type !== "person" || !node.data.children.length) {
       if (node?.data.spouse.length) {
         return [2]
+      } else {
+        return [1];
       }
-      return [1];
     }
 
-    let descendantsCount = node.data.children.map(childId => calculateDescendants(childId, [...ancestors, nodeId]));
+    let descendantsCount = node.data.children.map((childId, index, arr) => {
+      let count = calculateDescendants(childId, [...ancestors, nodeId]);
+      const childNode = wholeNodes.find(n => n.id === childId);
+      if (arr.length === 1 && childNode?.type === "person" && childNode?.data.spouse.length === 0) {
+        return [2];
+      }
+      return count;
+    });
 
-    // 配偶者を含む子の合計数
-    let spouseCount = node.data.spouse ? node.data.spouse.length : 0;
-    let childrenCount = node.data.children.length + spouseCount; // 子供とその配偶者の数
-    console.log("spousecount",nodeId, childrenCount);
+    console.log(node.id, descendantsCount);
 
-    let maxCounts = descendantsCount.reduce((acc, counts) => {
-      counts.forEach((count, index) => {
-        acc[index] = (acc[index] || 0) + count; // 各世代の子孫の合計を計算
-      });
-      return acc;
-    }, []);
-
-    maxCounts.unshift(childrenCount); // 現ノードの子供の数（配偶者含む）を追加
+    let maxCounts = descendantsCount.map(array => array.reduce((a, b) => a + b, 0));
     calculatedNodes.set(nodeId, maxCounts);
     return maxCounts;
   };
@@ -38,7 +36,8 @@ export function useCalculateNodesPosition(wholeNodes: (PersonNodeData | maritalN
   wholeNodes.forEach(node => {
     if (node.type === "person") {
       const descendantsCounts = calculateDescendants(node.id);
-      const maxDescendants = Math.max(...descendantsCounts); // 最大の子孫数を取得
+      // const maxDescendants = Math.max(...descendantsCounts); // 最大の子孫数を取得
+      const maxDescendants = descendantsCounts.reduce((a, b) => a + b, 0); // 最大の子孫数を取得
       if ('descendants' in node.data) node.data.descendants = maxDescendants; // 型ガード
     }
   });
