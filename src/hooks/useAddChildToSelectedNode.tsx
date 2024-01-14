@@ -91,6 +91,7 @@ export const useAddChildToSelectedNode = (
         position: { x: selectedNode.position.x + 200, y: selectedNode.position.y + 300 },
       };
       const maritalToChildEdge: Edge = {
+        type: 'smoothstep',
         id: `edge-${maritalNodeId}-${childId}`,
         source: maritalNodeId,
         sourceHandle: "toChild",

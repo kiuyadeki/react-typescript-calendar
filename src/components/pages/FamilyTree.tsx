@@ -13,6 +13,7 @@ import { MaritalStatusNode } from '../parts/MaritalStatusNode';
 import { wholeEdgesState } from '../../recoil/WholeEdgesState';
 import { PersonNodeData } from '../../types/PersonNodeData';
 import { useCalculateNodesPosition } from '../../hooks/useCalculateNodesPosition';
+import { useDirectLineage } from '../../hooks/useSetVisibleNodes';
 
 let id = 1;
 const getId = () => `${id++}`;
@@ -41,19 +42,17 @@ const AddNodeOnEdgeDrop = () => {
     setSelectedNode(node);
     onOpen();
   }
-
   const handleCloseModal = () => {
     setShowProfileEditor(false);
     onClose();
   }
 
-  useEffect(() => {
-    console.log('selectedNode', selectedNode?.id);
-  }, [selectedNode]);
+  const { directLineageNodes, directLineageEdges} = useDirectLineage(wholeNodes, wholeEdges, selectedNode);
 
   useEffect(() => {
-    useCalculateNodesPosition(wholeNodes);
+    useCalculateNodesPosition(wholeNodes, selectedNode);
     console.log('nodes', nodes);
+    console.log('directLineageNodes', directLineageNodes);
   }, [wholeNodes, nodes]);
 
   useEffect(() => {

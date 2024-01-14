@@ -20,12 +20,12 @@ export const useAddParentToSelectedNode = (
       }
 
       const maritalToChildEdge: Edge = {
+        type: 'smoothstep',
         id: `edge-${maritalId}-${selectedNode.id}`,
         source: maritalId,
         sourceHandle: 'toChild',
         target: selectedNode.id,
         targetHandle: 'fromMarital',
-        type: 'smoothstep',
       }
 
       const leftParentId = getId();

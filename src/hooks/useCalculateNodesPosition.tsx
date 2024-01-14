@@ -1,6 +1,6 @@
 import { PersonNodeData, maritalNodeData } from "../types/PersonNodeData";
 
-export function useCalculateNodesPosition(wholeNodes: (PersonNodeData | maritalNodeData)[]) {
+export function setDescendants(wholeNodes: (PersonNodeData | maritalNodeData)[]) {
   const calculatedNodes = new Map<string, number[]>();
 
   const calculateDescendants = (nodeId: string, ancestors: string[] = []): number[] => {
@@ -36,12 +36,45 @@ export function useCalculateNodesPosition(wholeNodes: (PersonNodeData | maritalN
   wholeNodes.forEach(node => {
     if (node.type === "person") {
       const descendantsCounts = calculateDescendants(node.id);
-      // const maxDescendants = Math.max(...descendantsCounts); // 最大の子孫数を取得
       const maxDescendants = descendantsCounts.reduce((a, b) => a + b, 0); // 最大の子孫数を取得
       if ('descendants' in node.data) node.data.descendants = maxDescendants; // 型ガード
     }
   });
 }
+
+export function useCalculateNodesPosition(wholeNodes: (PersonNodeData | maritalNodeData)[], selectedNode: PersonNodeData | null) {
+  if(!selectedNode) return;
+
+  setDescendants(wholeNodes);
+
+  const baseX = selectedNode.position.x;
+  const baseY = selectedNode.position.y;
+  const horizontalSpacing = 200;
+  const verticalSpacing = 100;
+
+  const placeNode = (nodeId: string, level: number, offsetX: number) => {
+    const node = wholeNodes.find(n => n.id === nodeId);
+    if (!node || node.type !== 'person') return;
+
+    node.position.x = baseX + offsetX;
+    node.position.y = baseY + level * verticalSpacing;
+
+    let cumulativeOffset = 0;
+    node.data.children.forEach((childId, index) => {
+      const childNode = wholeNodes.find(n => n.id === childId) as PersonNodeData;
+
+      if (childNode) {
+        const childOffset = childNode.data.descendants * horizontalSpacing / 2;
+        placeNode(childId, level + 1, cumulativeOffset - childOffset);
+        cumulativeOffset += (childNode.data.descendants + 1) * horizontalSpacing;
+      }
+    })
+  }
+
+  placeNode(selectedNode.id, 0, 0);
+}
+
+
 
 
 
