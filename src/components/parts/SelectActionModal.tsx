@@ -45,7 +45,6 @@ export const SelectActionModal: FC<SelectActionModalProps> = memo(props => {
   if (selectedNode) {
     hasParents = !!selectedNode.data.parents.length;
     hasSpouse = !!selectedNode.data.spouse.length;
-    console.log(selectedNode.data.spouse.length, hasSpouse);
   }
 
   return (

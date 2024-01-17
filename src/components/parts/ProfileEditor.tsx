@@ -69,7 +69,6 @@ export const ProfileEditor: FC<ProfileEditorProps> = memo(props => {
       }));
       console.log('selected', selectedNode.id);
     }
-    console.log(data.profilePicture);
     onClose();
     setShowProfileEditor(false);
   });

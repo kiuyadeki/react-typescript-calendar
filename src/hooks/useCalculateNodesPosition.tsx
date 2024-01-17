@@ -25,8 +25,6 @@ export function setDescendants(wholeNodes: (PersonNodeData | maritalNodeData)[])
       return count;
     });
 
-    console.log(node.id, descendantsCount);
-
     let maxCounts = descendantsCount.map(array => array.reduce((a, b) => a + b, 0));
     calculatedNodes.set(nodeId, maxCounts);
     return maxCounts;

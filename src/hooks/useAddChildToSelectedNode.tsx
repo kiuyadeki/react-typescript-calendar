@@ -105,7 +105,6 @@ export const useAddChildToSelectedNode = (
 
       setWholeNodes(prevNodes => prevNodes.map(node => {
         if (node.id === spouseID && node.type === "person") {
-          console.log(node.type);
           const updatedSpouseNode = {...node};
           updatedSpouseNode.data.children.push(childId);
           return updatedSpouseNode;
