@@ -7,7 +7,7 @@ export function useDirectLineage(wholeNodes: (PersonNodeData | maritalNodeData)[
     const selectedNodeId = selectedNode?.id;
     if (!selectedNode || selectedNode.type !== 'person') return { directLineageNodes: [], directLineageEdges: [] };
 
-    let lineageNodes: (PersonNodeData | maritalNodeData)[] = [selectedNode];
+    let lineageNodes: (PersonNodeData | maritalNodeData)[] = [];
     let lineageEdges: Edge[] = [];
 
     const findRelatedNodesAndEdges = (nodeId: string, nodes: (PersonNodeData | maritalNodeData)[], edges: Edge[], processedNodes: Set<string>) => {
@@ -15,17 +15,17 @@ export function useDirectLineage(wholeNodes: (PersonNodeData | maritalNodeData)[
         console.log(`processed ${Array.from(processedNodes)}`);
         return;
       }
-    
+
       const node = wholeNodes.find(n => n.id === nodeId);
       if (!node) return;
-    
-      // ノードを処理済みとして記録
-      processedNodes.add(nodeId); 
+
+      processedNodes.add(nodeId);
       nodes.push(node);
 
       if (node.type === 'person') {
         // 配偶者とそのエッジを追加
         node.data.spouse.forEach(spouseId => {
+
           if (!processedNodes.has(spouseId)) {
             const spouseNode = wholeNodes.find(n => n.id === spouseId);
             if (spouseNode) {
@@ -36,7 +36,7 @@ export function useDirectLineage(wholeNodes: (PersonNodeData | maritalNodeData)[
             }
           }
         });
-      
+
         // 親系列を追加
         node.data.parents.forEach(parentId => {
           console.log(typeof(parentId));
@@ -44,7 +44,7 @@ export function useDirectLineage(wholeNodes: (PersonNodeData | maritalNodeData)[
             findRelatedNodesAndEdges(parentId, nodes, edges, processedNodes);
           }
         });
-      
+
         // 子孫系列を追加
         node.data.children.forEach(childId => {
           console.log(typeof(childId));
@@ -53,14 +53,14 @@ export function useDirectLineage(wholeNodes: (PersonNodeData | maritalNodeData)[
           }
         });
       }
-    
+
     };
-    
+
     // useMemo内でのfindRelatedNodesAndEdgesの呼び出し
     if (selectedNodeId) {
       findRelatedNodesAndEdges(selectedNodeId, lineageNodes, lineageEdges, new Set());
     }
-    
+
 
     // 重複を排除
     lineageNodes = Array.from(new Set(lineageNodes));
@@ -71,4 +71,3 @@ export function useDirectLineage(wholeNodes: (PersonNodeData | maritalNodeData)[
 
   return { directLineageNodes, directLineageEdges };
 }
-
