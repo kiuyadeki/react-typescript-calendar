@@ -15,8 +15,6 @@ import { PersonNodeData } from '../../types/PersonNodeData';
 import { useCalculateNodesPosition } from '../../hooks/useCalculateNodesPosition';
 import { useDirectLineage } from '../../hooks/useSetVisibleNodes';
 
-let id = 1;
-const getId = () => `${id++}`;
 const AddNodeOnEdgeDrop = () => {
   const [wholeNodes, setWholeNodes] = useRecoilState(wholeNodesState);
   const [wholeEdges, setWholeEdges] = useRecoilState(wholeEdgesState);
@@ -67,9 +65,9 @@ const AddNodeOnEdgeDrop = () => {
     setNodes(wholeNodes);
   }, [wholeNodes]);
 
-  const addParentToSelectedNode = useAddParentToSelectedNode(setWholeNodes, setWholeEdges, getId, selectedNode);
-  const addChildToSelectedNode = useAddChildToSelectedNode(wholeNodes, setWholeNodes, wholeEdges, setWholeEdges, getId, selectedNode);
-  const addSpouseToSelectedNode = useAddSpouseToSelectedNode(setWholeNodes, setWholeEdges, getId, selectedNode);
+  const addParentToSelectedNode = useAddParentToSelectedNode(setWholeNodes, setWholeEdges, selectedNode);
+  const addChildToSelectedNode = useAddChildToSelectedNode(wholeNodes, setWholeNodes, wholeEdges, setWholeEdges, selectedNode);
+  const addSpouseToSelectedNode = useAddSpouseToSelectedNode(setWholeNodes, setWholeEdges, selectedNode);
 
   return (
     <>

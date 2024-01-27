@@ -6,13 +6,13 @@ export function useDirectLineage(wholeNodes: (PersonNodeData | maritalNodeData)[
   const { directLineageNodes, directLineageEdges } = useMemo(() => {
     const selectedNodeId = selectedNode?.id;
     if (!selectedNode || selectedNode.type !== 'person') return { directLineageNodes: [], directLineageEdges: [] };
+    console.log('setvisible', selectedNode);
 
     let lineageNodes: (PersonNodeData | maritalNodeData)[] = [];
     let lineageEdges: Edge[] = [];
 
     const findRelatedNodesAndEdges = (nodeId: string, nodes: (PersonNodeData | maritalNodeData)[], edges: Edge[], processedNodes: Set<string>) => {
       if (processedNodes.has(nodeId)) {
-        console.log(`processed ${Array.from(processedNodes)}`);
         return;
       }
 
@@ -25,7 +25,6 @@ export function useDirectLineage(wholeNodes: (PersonNodeData | maritalNodeData)[
       if (node.type === 'person') {
         // 配偶者とそのエッジを追加
         node.data.spouse.forEach(spouseId => {
-
           if (!processedNodes.has(spouseId)) {
             const spouseNode = wholeNodes.find(n => n.id === spouseId);
             if (spouseNode) {
@@ -39,7 +38,6 @@ export function useDirectLineage(wholeNodes: (PersonNodeData | maritalNodeData)[
 
         // 親系列を追加
         node.data.parents.forEach(parentId => {
-          console.log(typeof(parentId));
           if (!processedNodes.has(parentId)) {
             findRelatedNodesAndEdges(parentId, nodes, edges, processedNodes);
           }
@@ -47,13 +45,11 @@ export function useDirectLineage(wholeNodes: (PersonNodeData | maritalNodeData)[
 
         // 子孫系列を追加
         node.data.children.forEach(childId => {
-          console.log(typeof(childId));
           if (!processedNodes.has(childId)) {
             findRelatedNodesAndEdges(childId, nodes, edges, processedNodes);
           }
         });
       }
-
     };
 
     // useMemo内でのfindRelatedNodesAndEdgesの呼び出し
