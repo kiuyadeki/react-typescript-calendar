@@ -1,9 +1,9 @@
-import { Dispatch, SetStateAction, useMemo } from "react";
+import { Dispatch, SetStateAction } from "react";
 import { Edge, Node } from "reactflow";
 import useOutgoingEdges from "./useOutgoingEdges";
 import { PersonNodeData, maritalNodeData } from "../types/PersonNodeData";
-import { InitialPersonNode } from "../components/parts/InitialPersonNode";
-import { useGetAddedNodeId } from "./useGetAddedNodeId";
+import { createMaritalNode, createPersonNode } from "../utils/nodeUtils";
+import { createEdge } from "../utils/edgeUtils";
 
 export const useAddChildToSelectedNode = (
   wholeNodes: (PersonNodeData | maritalNodeData)[],
@@ -12,112 +12,57 @@ export const useAddChildToSelectedNode = (
   setWholeEdges: Dispatch<SetStateAction<Edge[]>>,
   selectedNode: null | PersonNodeData
 ) => {
-  const outgoingEdges = useOutgoingEdges(wholeEdges, selectedNode ? selectedNode : null);
-  const getAddedNodeId = useGetAddedNodeId();
+  const outgoingEdges = useOutgoingEdges(wholeEdges, selectedNode);
 
   const addChildToSelectedNode = () => {
-    if (selectedNode) {
-      let willAddedNodes: (PersonNodeData | maritalNodeData)[] = [];
-      let willAddedEdges: Edge[] = [];
-      let maritalNodeId = "";
-      const updatedNode = { ...selectedNode };
-      let spouseID: string = "";
+    if (!selectedNode) return;
 
-      if (!selectedNode.data.spouse.length) {
-        const maritalId = getAddedNodeId();
-        const maritalNode: maritalNodeData = {
-          type: "marital",
-          id: maritalId,
-          data: { isDivorced: false },
-          position: { x: selectedNode.position.x + 200, y: selectedNode.position.y },
-        };
+    let maritalNodeId: maritalNodeData["id"];
+    let spouseID: maritalNodeData["id"] = selectedNode.data.spouse[0] || "";
 
-        const selectedToMaritalEdge: Edge = {
-          type: "smoothstep",
-          id: `edge-${selectedNode.id}-${maritalId}`,
-          source: selectedNode.id,
-          sourceHandle: "toRight",
-          target: maritalId,
-          targetHandle: "fromLeft",
-        };
+    if (!selectedNode.data.spouse.length) {
+      const maritalNode = createMaritalNode({ x: selectedNode.position.x + 200, y: selectedNode.position.y });
+      maritalNodeId = maritalNode.id;
 
-        spouseID = getAddedNodeId();
-        const SpouseNode: PersonNodeData = {
-          ...InitialPersonNode,
-          id: spouseID,
-          data: {
-            ...InitialPersonNode.data,
-            label: spouseID,
-            children: [String(parseInt(spouseID) + 1)],
-            spouse: [selectedNode.id],
-          },
-          position: { x: selectedNode.position.x + 400, y: selectedNode.position.y },
-        };
+      const spouseNode = createPersonNode(
+        { x: selectedNode.position.x + 400, y: selectedNode.position.y },
+        { spouse: [selectedNode.id] }
+      );
+      spouseID = spouseNode.id;
 
-        const spouseToMaritalEdge: Edge = {
-          type: "smoothstep",
-          id: `edge-${spouseID}-${maritalId}`,
-          source: spouseID,
-          sourceHandle: "toLeft",
-          target: maritalId,
-          targetHandle: "fromRight",
-        };
+      setWholeNodes(prevNodes => [...prevNodes, maritalNode, spouseNode]);
+      setWholeEdges(prevEdges => [
+        ...prevEdges,
+        createEdge(selectedNode.id, maritalNodeId, "smoothstep", "personSourceRight", "maritalTargetLeft"),
+        createEdge(spouseID, maritalNodeId, "smoothstep", "personSourceLeft", "maritalTargetRight"),
+      ]);
+    } else {
+      maritalNodeId =
+        outgoingEdges.find(edge => edge.sourceHandle === "personSourceRight" || edge.sourceHandle === "personSourceLeft")?.target || "";
+    }
 
-        willAddedNodes.push(maritalNode, SpouseNode);
-        willAddedEdges.push(selectedToMaritalEdge, spouseToMaritalEdge);
-        maritalNodeId = maritalId;
-        updatedNode.data.spouse.push(spouseID);
-      } else {
-        const maritalIdList = outgoingEdges
-          .filter(edge => edge.sourceHandle === "toRight" || edge.sourceHandle === "toLeft")
-          .map(edge => edge.target);
-        maritalNodeId = maritalIdList[0];
+    const childNode = createPersonNode(
+      { x: selectedNode.position.x + 200, y: selectedNode.position.y + 300 },
+      { parents: [selectedNode.id, spouseID] }
+    );
 
-        spouseID = updatedNode.data.spouse[0];
-      }
-
-      const childId = getAddedNodeId();
-      const childNode: PersonNodeData = {
-        ...InitialPersonNode,
-        id: childId,
-        data: {
-          ...InitialPersonNode.data,
-          label: childId,
-          parents: [selectedNode.id, spouseID],
-          children: [],
-          spouse: [],
-        },
-        position: { x: selectedNode.position.x + 200, y: selectedNode.position.y + 300 },
-      };
-      const maritalToChildEdge: Edge = {
-        type: "smoothstep",
-        id: `edge-${maritalNodeId}-${childId}`,
-        source: maritalNodeId,
-        sourceHandle: "toChild",
-        target: childId,
-        targetHandle: "fromMarital",
-      };
-
-      willAddedNodes.push(childNode);
-      willAddedEdges.push(maritalToChildEdge);
-      updatedNode.data.children.push(childId);
-
-      setWholeNodes(prevNodes =>
-        prevNodes.map(node => {
+    setWholeNodes(prevNodes =>
+      prevNodes
+        .map(node => {
           if (node.id === spouseID && node.type === "person") {
-            const updatedSpouseNode = { ...node };
-            updatedSpouseNode.data.children.push(childId);
-            return updatedSpouseNode;
-          } else if (node.id === selectedNode.id) {
-            return updatedNode;
+            return { ...node, data: { ...node.data, children: [...node.data.children, childNode.id] } };
+          } else if (node.id === selectedNode.id && node.type === "person") {
+            return { ...node, data: { ...node.data, children: [...node.data.children, childNode.id] } };
           }
           return node;
         })
-      );
+        .concat([childNode])
+    );
 
-      setWholeNodes(prevNodes => [...prevNodes, ...willAddedNodes]);
-      setWholeEdges(prevEdges => [...prevEdges, ...willAddedEdges]);
-    }
+    setWholeEdges(prevEdges => [
+      ...prevEdges,
+      createEdge(childNode.id, maritalNodeId, "smoothstep", "personSourceTop", "maritalTargetBottom"),
+    ]);
   };
 
   return addChildToSelectedNode;

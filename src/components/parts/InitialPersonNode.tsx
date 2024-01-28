@@ -1,10 +1,12 @@
-import { PersonNodeData } from '../../types/PersonNodeData';
+import { getAddedNodeId } from "../../utils/getAddedNodeId";
+import { PersonNodeData } from "../../types/PersonNodeData";
 
+const nodeId = getAddedNodeId();
 export const InitialPersonNode: PersonNodeData = {
   type: "person",
-  id: Math.random().toString(32).substring(2),
+  id: nodeId,
   data: {
-    label: '',
+    label: "",
     parents: [],
     children: [],
     spouse: [],
