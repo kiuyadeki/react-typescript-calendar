@@ -140,17 +140,25 @@ export function useDirectLineage(
         // 親系列と子孫系列の追加
         node.data.parents.forEach(parentId => findRelatedNodesAndEdges(parentId));
         node.data.children.forEach(childId => findRelatedNodesAndEdges(childId));
+
+        lineageNodes.forEach((node) => {
+          if (node.type === "person") {
+            const maritalNode = wholeNodes.find(n => n.id === node.data.maritalNodeId);
+            maritalNode && lineageNodes.add(maritalNode);
+          }
+        });
       }
     };
-    // maritalNodeも追加する必要がある
 
 
     findRelatedNodesAndEdges(selectedNode.id);
 
     lineageNodes.forEach((node) => {
-      const lineageEdge = wholeEdges.find((edge) => edge.source === node.id);
-      if (lineageEdge) {
-        lineageEdges.add(lineageEdge);
+      const lineageEdgeList = wholeEdges.filter((edge) => edge.source === node.id);
+      if (lineageEdgeList) {
+        lineageEdgeList.forEach((edge) => {
+          lineageEdges.add(edge);
+        })
       }
     });
 

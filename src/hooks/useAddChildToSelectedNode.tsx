@@ -43,8 +43,9 @@ export const useAddChildToSelectedNode = (
 
     const childNode = createPersonNode(
       { x: selectedNode.position.x + 200, y: selectedNode.position.y + 300 },
-      { parents: [selectedNode.id, spouseID], siblings: [selectedNode.data.children] }
+      { parents: [selectedNode.id, spouseID], siblings: [...selectedNode.data.children] }
     );
+    childNode.data.siblings?.push(childNode.id);
 
     setWholeNodes(prevNodes =>
       prevNodes
@@ -52,9 +53,9 @@ export const useAddChildToSelectedNode = (
           if (node.id === spouseID && node.type === "person") {
             return { ...node, data: { ...node.data, children: [...node.data.children, childNode.id] } };
           } else if (node.id === selectedNode.id && node.type === "person") {
-            return { ...node, data: { ...node.data, spouse: [...node.data.spouse, spouseID], children: [...node.data.children, childNode.id] } };
+            return { ...node, data: { ...node.data, spouse: [...node.data.spouse, spouseID], children: [...node.data.children, childNode.id], maritalNodeId: maritalNodeId } };
           } else if (selectedNode.data.children.includes(node.id) && node.type === "person") {
-            return { ...node, data: { ...node.data, siblings: [...selectedNode.data.children]}}
+            return { ...node, data: { ...node.data, siblings: [...selectedNode.data.children, childNode.id]}}
           }
           return node;
         })

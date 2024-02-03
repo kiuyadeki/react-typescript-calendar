@@ -1,3 +1,4 @@
 import { v4 as uuidv4 } from 'uuid';
 
-export const getAddedNodeId = () => uuidv4();
+let nodeIdCounter = 0;
+export const getAddedNodeId = () => `${++nodeIdCounter}`;
