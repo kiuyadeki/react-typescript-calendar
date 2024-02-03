@@ -25,6 +25,7 @@ export const useAddSpouseToSelectedNode = (
         { x: selectedNode.position.x + 400, y: selectedNode.position.y },
         {
           spouse: [selectedNode.id],
+          maritalNodeId: maritalNode.id,
         }
       );
 
@@ -41,6 +42,7 @@ export const useAddSpouseToSelectedNode = (
         data: {
           ...selectedNode.data,
           spouse: [SpouseNode.id],
+          maritalNodeId: maritalNode.id,
         },
       };
 

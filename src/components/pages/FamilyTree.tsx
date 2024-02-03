@@ -48,9 +48,10 @@ const AddNodeOnEdgeDrop = () => {
   const { directLineageNodes, directLineageEdges} = useDirectLineage(wholeNodes, wholeEdges, selectedNode);
 
   useEffect(() => {
-    useCalculateNodesPosition(wholeNodes, selectedNode);
+    // useCalculateNodesPosition(wholeNodes, selectedNode);
     console.log('nodes', nodes);
     console.log('directLineageNodes', directLineageNodes);
+    console.log('directLineageEdges', directLineageEdges);
   }, [wholeNodes, nodes]);
 
   useEffect(() => {

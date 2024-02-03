@@ -15,11 +15,11 @@ export const useAddParentToSelectedNode = (
     const maritalNode = createMaritalNode({ x: selectedNode.position.x, y: selectedNode.position.y - 100 });
     const leftParentNode = createPersonNode(
       { x: selectedNode.position.x - 300, y: selectedNode.position.y - 100 },
-      { children: [selectedNode.id] }
+      { children: [selectedNode.id], maritalNodeId: maritalNode.id }
     );
     const rightParentNode = createPersonNode(
       { x: selectedNode.position.x + 300, y: selectedNode.position.y - 100 },
-      { children: [selectedNode.id], spouse: [leftParentNode.id] }
+      { children: [selectedNode.id], spouse: [leftParentNode.id], maritalNodeId: maritalNode.id }
     );
     leftParentNode.data.spouse.push(rightParentNode.id);
 

@@ -13,6 +13,8 @@ export interface NodeData {
   children: string[];
   spouse: string[];
   descendants: number;
+  siblings?: string[];
+  maritalNodeId?: string;
   numberOfDescendant?: number;
   numberOfAncestors?: number;
 };
