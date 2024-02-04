@@ -52,24 +52,27 @@ export function useCalculateNodesPosition(wholeNodes: (PersonNodeData | maritalN
 
   const placeNode = (nodeId: string, level: number, offsetX: number) => {
     const node = wholeNodes.find(n => n.id === nodeId);
-    if (!node || node.type !== 'person') return;
+    if (!node) return;
+    if (node.type === 'person') {
+      node.position.x = baseX + offsetX;
+      node.position.y = baseY + level * verticalSpacing;
+  
+      let cumulativeOffset = 0;
+      node.data.children.forEach((childId, index) => {
+        const childNode = wholeNodes.find(n => n.id === childId) as PersonNodeData;
+  
+        if (childNode) {
+          const childOffset = childNode.data.descendants * horizontalSpacing / 2;
+          placeNode(childId, level + 1, cumulativeOffset - childOffset);
+          cumulativeOffset += (childNode.data.descendants + 1) * horizontalSpacing;
+        }
+      })
+    } else if (node.type === 'marital') {
 
-    node.position.x = baseX + offsetX;
-    node.position.y = baseY + level * verticalSpacing;
-
-    let cumulativeOffset = 0;
-    node.data.children.forEach((childId, index) => {
-      const childNode = wholeNodes.find(n => n.id === childId) as PersonNodeData;
-
-      if (childNode) {
-        const childOffset = childNode.data.descendants * horizontalSpacing / 2;
-        placeNode(childId, level + 1, cumulativeOffset - childOffset);
-        cumulativeOffset += (childNode.data.descendants + 1) * horizontalSpacing;
-      }
-    })
+    }
   }
 
-  placeNode(selectedNode.id, 0, 0);
+  // placeNode(selectedNode.id, 0, 0);
 }
 
 

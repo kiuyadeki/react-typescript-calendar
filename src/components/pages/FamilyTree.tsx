@@ -1,6 +1,6 @@
 import { Box, useDisclosure } from "@chakra-ui/react";
 import { FC, memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import ReactFlow, { Background, Connection, ConnectionMode, ConnectionStatus, Controls, Edge, HandleType, MiniMap, Node, OnConnectEnd, OnConnectStart, ReactFlowProvider, addEdge, useEdgesState, useNodesState, useReactFlow } from "reactflow";
+import ReactFlow, { Background, Connection, ConnectionMode, ConnectionStatus, Controls, Edge, HandleType, MiniMap, Node, NodeChange, OnConnectEnd, OnConnectStart, ReactFlowProvider, XYPosition, addEdge, useEdgesState, useNodesState, useReactFlow } from "reactflow";
 import 'reactflow/dist/style.css';
 import { SelectActionModal } from '../parts/SelectActionModal';
 import { personNode } from '../parts/CustomNode';
@@ -32,6 +32,23 @@ const AddNodeOnEdgeDrop = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState(wholeNodes as Node[]);
   const [edges, setEdges, onEdgesChange] = useEdgesState(wholeEdges as Edge[]);
   const onConnect = useCallback((params: Connection) => setEdges((eds) => addEdge(params, eds)), []);
+  // const handleNodesChange = useCallback((changes: NodeChange[]) => {
+  //   changes.forEach((change) => {
+  //     if (change.type === 'position' && change.position) { // positionがundefinedでないことを確認
+  //       setNodes((nds) => nds.map((node) => {
+  //         if (node.id === change.id) {
+  //           // TypeScriptがpositionの存在を保証するため、undefinedでないと明示
+  //           return {
+  //             ...node,
+  //             position: change.position as XYPosition,
+  //           };
+  //         }
+  //         return node;
+  //       }));
+  //     }
+  //   });
+  // }, [setNodes]);
+  
 
 
   // modal
@@ -47,24 +64,43 @@ const AddNodeOnEdgeDrop = () => {
 
   const { directLineageNodes, directLineageEdges} = useDirectLineage(wholeNodes, wholeEdges, selectedNode);
 
+  
   useEffect(() => {
-    // useCalculateNodesPosition(wholeNodes, selectedNode);
-    console.log('nodes', nodes);
-    console.log('directLineageNodes', directLineageNodes);
-    console.log('directLineageEdges', directLineageEdges);
-  }, [wholeNodes, nodes]);
-
-  useEffect(() => {
-    console.log('edges', edges);
-  }, [wholeEdges, edges]);
-
-  useEffect(() => {
-    setEdges(wholeEdges);
-  }, [wholeEdges]);
-
-  useEffect(() => {
-    setNodes(wholeNodes);
+    setNodes(directLineageNodes);
   }, [wholeNodes]);
+  
+  useEffect(() => {
+    setEdges(directLineageEdges);
+  }, [wholeEdges]);
+  
+  useEffect(() => {
+    useCalculateNodesPosition(wholeNodes, selectedNode);
+  }, [selectedNode]);
+
+  
+
+  useEffect(() => {
+    const flattenedNodes = wholeNodes.map(obj => {
+      if (obj.type === 'person') {
+        return {
+          id: obj.id,
+          type: obj.type,
+          'data.descendants': obj.data.descendants,
+          'data.parents': obj.data.parents.join(", "),
+          'data.children': obj.data.children.join(", "),
+          'data.spouse': obj.data.spouse.join(", "),
+          'data.siblings': obj.data.siblings.join(", "),
+        };
+      } else {
+        return {
+          id: obj.id,
+          type: obj.type,
+        }
+      }
+    });
+    console.table(flattenedNodes, ["id", "type", "data.descendants", "data.parents", "data.children", "data.spouse", "data.siblings"]);
+    console.log('selected', selectedNode?.id);
+  }, [wholeNodes, nodes]);
 
   const addParentToSelectedNode = useAddParentToSelectedNode(setWholeNodes, setWholeEdges, selectedNode);
   const addChildToSelectedNode = useAddChildToSelectedNode(wholeNodes, setWholeNodes, wholeEdges, setWholeEdges, selectedNode);

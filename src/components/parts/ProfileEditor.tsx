@@ -67,7 +67,6 @@ export const ProfileEditor: FC<ProfileEditorProps> = memo(props => {
       setWholeNodes(prevNodes => prevNodes.map(node => {
         return node.id === selectedNode.id ? updatedNode : node;
       }));
-      console.log('selected', selectedNode.id);
     }
     onClose();
     setShowProfileEditor(false);

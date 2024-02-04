@@ -21,6 +21,7 @@ export const createPersonNode = (position: PersonNodeData["position"], dataOverr
       parents: [],
       children: [],
       spouse: [],
+      siblings: [],
       descendants: 0,
       ...dataOverrides,
     },
