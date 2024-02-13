@@ -2,22 +2,7 @@ import { Box, Image, Text } from "@chakra-ui/react";
 import { FC } from "react";
 import { Handle, NodeProps, Position } from "reactflow";
 import { PersonNodeData } from "../../types/PersonNodeData";
-
-// type PersonNodeData = {
-//   label: string;
-//   firstName?: string;
-//   lastName?: string;
-//   birthYear?: number;
-//   birthMonth?: number;
-//   birthDate?: number;
-//   gender?: string;
-//   profilePicture?: File;
-//   parents: (string | number)[];
-//   children: (string | number)[];
-//   spouse: (string | number)[];
-//   numberOfDescendant?: number;
-//   numberOfAncestors?: number;
-// };
+import { BASE_PERSON_NODE_WIDTH } from '../../utils/constants';
 
 type PersonNodeProps = Omit<NodeProps, "data"> & {
   data: PersonNodeData["data"];
@@ -28,7 +13,7 @@ export const personNode: FC<PersonNodeProps> = props => {
   const imageURL = imageFile instanceof File ? URL.createObjectURL(imageFile) : undefined;
 
   return (
-    <Box px={4} py={2} bg="white" w="200px" borderRadius="md" shadow={"md"} transform={"translate(-50%, -50%)"}>
+    <Box px={4} py={2} bg="white" w={`${BASE_PERSON_NODE_WIDTH}px`} borderRadius="md" shadow={"md"} transform={"translate(-50%, -50%)"}>
       <Handle type="source" position={Position.Right} id="personSourceRight" />
       <Handle type="source" position={Position.Left} id="personSourceLeft" />
       <Handle type="source" position={Position.Top} id="personSourceTop" />

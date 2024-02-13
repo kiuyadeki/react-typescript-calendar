@@ -32,24 +32,6 @@ const AddNodeOnEdgeDrop = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState(wholeNodes as Node[]);
   const [edges, setEdges, onEdgesChange] = useEdgesState(wholeEdges as Edge[]);
   const onConnect = useCallback((params: Connection) => setEdges((eds) => addEdge(params, eds)), []);
-  // const handleNodesChange = useCallback((changes: NodeChange[]) => {
-  //   changes.forEach((change) => {
-  //     if (change.type === 'position' && change.position) { // positionがundefinedでないことを確認
-  //       setNodes((nds) => nds.map((node) => {
-  //         if (node.id === change.id) {
-  //           // TypeScriptがpositionの存在を保証するため、undefinedでないと明示
-  //           return {
-  //             ...node,
-  //             position: change.position as XYPosition,
-  //           };
-  //         }
-  //         return node;
-  //       }));
-  //     }
-  //   });
-  // }, [setNodes]);
-  
-
 
   // modal
   const { isOpen, onOpen, onClose} = useDisclosure();
@@ -67,6 +49,7 @@ const AddNodeOnEdgeDrop = () => {
   
   useEffect(() => {
     setNodes(directLineageNodes);
+    useCalculateNodesPosition(wholeNodes, selectedNode);
   }, [wholeNodes]);
   
   useEffect(() => {
@@ -100,6 +83,7 @@ const AddNodeOnEdgeDrop = () => {
     });
     console.table(flattenedNodes, ["id", "type", "data.descendants", "data.parents", "data.children", "data.spouse", "data.siblings"]);
     console.log('selected', selectedNode?.id);
+    console.log(wholeNodes);
   }, [wholeNodes, nodes]);
 
   const addParentToSelectedNode = useAddParentToSelectedNode(setWholeNodes, setWholeEdges, selectedNode);

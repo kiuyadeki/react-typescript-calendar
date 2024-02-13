@@ -5,6 +5,7 @@ import { InitialPersonNode } from "../components/parts/InitialPersonNode";
 import { getAddedNodeId } from "../utils/getAddedNodeId";
 import { createMaritalNode, createPersonNode } from '../utils/nodeUtils';
 import { createEdge } from '../utils/edgeUtils';
+import { BASE_MARITAL_SPACING } from '../utils/constants';
 
 export const useAddSpouseToSelectedNode = (
   setWholeNodes: Dispatch<SetStateAction<(PersonNodeData | maritalNodeData)[]>>,
@@ -14,7 +15,7 @@ export const useAddSpouseToSelectedNode = (
   const addSpouseToSelectedNode = () => {
     if (selectedNode) {
       const maritalNode = createMaritalNode(
-        { x: selectedNode.position.x + 200, y: selectedNode.position.y }
+        { x: selectedNode.position.x + BASE_MARITAL_SPACING, y: selectedNode.position.y }
       );
 
       const selectedToMaritalEdge = createEdge(
@@ -22,7 +23,7 @@ export const useAddSpouseToSelectedNode = (
       )
 
       const SpouseNode= createPersonNode(
-        { x: selectedNode.position.x + 400, y: selectedNode.position.y },
+        { x: selectedNode.position.x + BASE_MARITAL_SPACING * 2, y: selectedNode.position.y },
         {
           spouse: [selectedNode.id],
           maritalNodeId: maritalNode.id,
