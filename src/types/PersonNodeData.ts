@@ -13,12 +13,12 @@ export interface NodeData {
   children: string[];
   spouse: string[];
   descendants: number;
-  descendantsWidth?: number;
+  descendantsWidth: number;
   siblings: string[];
   maritalNodeId?: string;
   numberOfDescendant?: number;
   numberOfAncestors?: number;
-};
+}
 
 export interface maritalData {
   isDivorced: boolean;
@@ -30,8 +30,8 @@ export interface PersonNodeData extends Node {
   position: { x: number; y: number };
 }
 
-export interface maritalNodeData extends Node {
+export interface MaritalNodeData extends Node {
   type: "marital";
   data: maritalData;
-  position: { x: number; y:number };
+  position: { x: number; y: number };
 }

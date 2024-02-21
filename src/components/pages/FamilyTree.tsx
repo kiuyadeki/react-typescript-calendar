@@ -20,6 +20,7 @@ const AddNodeOnEdgeDrop = () => {
   const [wholeEdges, setWholeEdges] = useRecoilState(wholeEdgesState);
   const [selectedNode, setSelectedNode] = useState<null | PersonNodeData>(null)
   const [showProfileEditor, setShowProfileEditor] = useState<boolean>(false);
+  const [nodesUpdated, setNodesUpdated] = useState(false);
 
 
   // react flow
@@ -27,7 +28,9 @@ const AddNodeOnEdgeDrop = () => {
   const fitViewOptions = {
     padding: 3,
   };
-  const defaultViewport = {x: 0, y: 0, zoom: 5}
+  const windowWidth = window.innerWidth;
+  const windowHeight = window.innerHeight;
+  const defaultViewport = {x: windowWidth / 2, y: windowHeight / 2, zoom: 1}
   const nodeTypes = useMemo(() => ( {person: personNode, marital: MaritalStatusNode}), []);
   const [nodes, setNodes, onNodesChange] = useNodesState(wholeNodes as Node[]);
   const [edges, setEdges, onEdgesChange] = useEdgesState(wholeEdges as Edge[]);
@@ -45,50 +48,34 @@ const AddNodeOnEdgeDrop = () => {
   }
 
   const { directLineageNodes, directLineageEdges} = useDirectLineage(wholeNodes, wholeEdges, selectedNode);
-
   
   useEffect(() => {
-    setNodes(directLineageNodes);
-    useCalculateNodesPosition(wholeNodes, selectedNode);
-  }, [wholeNodes]);
+    if(nodesUpdated) {
+      setNodes(directLineageNodes);
+      useCalculateNodesPosition(wholeNodes, selectedNode, wholeEdges);
+      setNodesUpdated(false);
+      console.log('directLineageNodes', directLineageNodes);
+    }
+  },[nodesUpdated, wholeNodes, selectedNode]);
   
   useEffect(() => {
     setEdges(directLineageEdges);
   }, [wholeEdges]);
   
   useEffect(() => {
-    useCalculateNodesPosition(wholeNodes, selectedNode);
+    useCalculateNodesPosition(wholeNodes, selectedNode, wholeEdges);
+    console.log('selectedNodeChanged', selectedNode?.id);
   }, [selectedNode]);
 
-  
 
   useEffect(() => {
-    const flattenedNodes = wholeNodes.map(obj => {
-      if (obj.type === 'person') {
-        return {
-          id: obj.id,
-          type: obj.type,
-          'data.descendants': obj.data.descendants,
-          'data.parents': obj.data.parents.join(", "),
-          'data.children': obj.data.children.join(", "),
-          'data.spouse': obj.data.spouse.join(", "),
-          'data.siblings': obj.data.siblings.join(", "),
-        };
-      } else {
-        return {
-          id: obj.id,
-          type: obj.type,
-        }
-      }
-    });
-    console.table(flattenedNodes, ["id", "type", "data.descendants", "data.parents", "data.children", "data.spouse", "data.siblings"]);
-    console.log('selected', selectedNode?.id);
-    console.log(wholeNodes);
+    console.log('wholeNodes', wholeNodes);
+    console.log('wholeEdges', wholeEdges);
   }, [wholeNodes, nodes]);
 
-  const addParentToSelectedNode = useAddParentToSelectedNode(setWholeNodes, setWholeEdges, selectedNode);
-  const addChildToSelectedNode = useAddChildToSelectedNode(wholeNodes, setWholeNodes, wholeEdges, setWholeEdges, selectedNode);
-  const addSpouseToSelectedNode = useAddSpouseToSelectedNode(setWholeNodes, setWholeEdges, selectedNode);
+  const addParentToSelectedNode = useAddParentToSelectedNode(setWholeNodes, setWholeEdges, selectedNode, () => setNodesUpdated(true));
+  const addChildToSelectedNode = useAddChildToSelectedNode(wholeNodes, setWholeNodes, wholeEdges, setWholeEdges, selectedNode, () => setNodesUpdated(true));
+  const addSpouseToSelectedNode = useAddSpouseToSelectedNode(setWholeNodes, setWholeEdges, selectedNode, () => setNodesUpdated(true));
 
   return (
     <>
@@ -106,7 +93,7 @@ const AddNodeOnEdgeDrop = () => {
             }
           }}
           defaultViewport={defaultViewport}
-          fitView
+          // fitView
           fitViewOptions={fitViewOptions}
           proOptions={{ hideAttribution: true }}
         />

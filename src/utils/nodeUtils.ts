@@ -1,7 +1,7 @@
 import { getAddedNodeId } from "./getAddedNodeId";
-import { PersonNodeData, maritalNodeData } from "../types/PersonNodeData";
+import { PersonNodeData, MaritalNodeData } from "../types/PersonNodeData";
 
-export const createMaritalNode = (position: maritalNodeData["position"]):maritalNodeData => {
+export const createMaritalNode = (position: MaritalNodeData["position"]): MaritalNodeData => {
   const maritalId = getAddedNodeId();
   return {
     type: "marital",
@@ -11,7 +11,7 @@ export const createMaritalNode = (position: maritalNodeData["position"]):marital
   };
 };
 
-export const createPersonNode = (position: PersonNodeData["position"], dataOverrides = {}):PersonNodeData => {
+export const createPersonNode = (position: PersonNodeData["position"], dataOverrides = {}): PersonNodeData => {
   const nodeId = getAddedNodeId();
   return {
     type: "person",

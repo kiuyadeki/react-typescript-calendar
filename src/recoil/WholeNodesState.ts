@@ -1,13 +1,13 @@
-import { Node } from 'reactflow';
-import { atom } from 'recoil';
-import { PersonNodeData, maritalNodeData } from '../types/PersonNodeData';
+import { Node } from "reactflow";
+import { atom } from "recoil";
+import { PersonNodeData, MaritalNodeData } from "../types/PersonNodeData";
 
-const initialNodes:(PersonNodeData | maritalNodeData)[] = [
+const initialNodes: (PersonNodeData | MaritalNodeData)[] = [
   {
-    id: '0',
+    id: "0",
     type: "person",
     data: {
-      label: 'Node',
+      label: "Node",
       birthYear: null,
       birthMonth: null,
       birthDate: null,
@@ -16,15 +16,15 @@ const initialNodes:(PersonNodeData | maritalNodeData)[] = [
       parents: [],
       children: [],
       spouse: [],
-      siblings: ['0'],
+      siblings: ["0"],
       descendants: 0,
       descendantsWidth: 0,
     },
-    position: {x: 0, y: 0},
+    position: { x: 0, y: 0 },
   },
 ];
 
-export const wholeNodesState = atom<(PersonNodeData | maritalNodeData)[]>({
+export const wholeNodesState = atom<(PersonNodeData | MaritalNodeData)[]>({
   key: "wholeNodesState",
   default: initialNodes,
   dangerouslyAllowMutability: true,
