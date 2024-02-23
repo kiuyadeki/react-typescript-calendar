@@ -14,6 +14,8 @@ export interface NodeData {
   spouse: string[];
   descendants: number;
   descendantsWidth: number;
+  ancestors: number;
+  ancestorsWidth: number;
   siblings: string[];
   maritalNodeId?: string;
   numberOfDescendant?: number;

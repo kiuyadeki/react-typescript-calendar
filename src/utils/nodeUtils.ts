@@ -24,6 +24,8 @@ export const createPersonNode = (position: PersonNodeData["position"], dataOverr
       siblings: [nodeId],
       descendants: 0,
       descendantsWidth: 0,
+      ancestors: 0,
+      ancestorsWidth: 0,
       ...dataOverrides,
     },
     position: { ...position },

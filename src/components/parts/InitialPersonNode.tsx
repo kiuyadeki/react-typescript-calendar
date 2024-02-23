@@ -13,6 +13,8 @@ export const InitialPersonNode: PersonNodeData = {
     siblings: [nodeId],
     descendants: 0,
     descendantsWidth: 0,
+    ancestors: 0,
+    ancestorsWidth: 0,
   },
   position: { x: 0, y: 0 },
 };
