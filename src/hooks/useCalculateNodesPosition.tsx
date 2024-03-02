@@ -1,6 +1,7 @@
-import { Edge } from 'reactflow';
+import { Edge } from "reactflow";
 import { PersonNodeData, MaritalNodeData } from "../types/PersonNodeData";
 import { BASE_GENERATIONS_SPACING, BASE_MARITAL_SPACING, BASE_SIBLINGS_SPACING } from "../utils/constants";
+import { MaritalStatusNode } from "../components/parts/MaritalStatusNode";
 
 export function setDescendants(wholeNodes: (PersonNodeData | MaritalNodeData)[]) {
   const calculatedNodes = new Map<string, number[]>();
@@ -58,41 +59,32 @@ export function setDescendants(wholeNodes: (PersonNodeData | MaritalNodeData)[])
 
 export function setAncestors(wholeNodes: (PersonNodeData | MaritalNodeData)[]) {
   const calculatedNodes = new Map<string, number[]>();
-  const calculatedNodeWidths = new Map<string, number[]>();
 
-  function calculateNodeAncestors(nodeId: string, ancestors: string[] = []): [number[], number[]] {
+  function calculateNodeAncestors(nodeId: string, ancestors: string[] = []): number[] {
     if (calculatedNodes.has(nodeId)) {
-      return [calculatedNodes.get(nodeId)!, calculatedNodeWidths.get(nodeId)!];
+      return calculatedNodes.get(nodeId)!;
     }
 
     const node = wholeNodes.find(node => node.id === nodeId) as PersonNodeData | undefined;
     if (!node || node.type !== "person" || !node.data.parents.length) {
-      return [[1], [BASE_MARITAL_SPACING * 2]];
+      return [1];
     }
 
     const parentCounts = node.data.parents.map(parentId => {
-      const [counts, widths] = calculateNodeAncestors(parentId, [...ancestors, nodeId]);
+      const counts = calculateNodeAncestors(parentId, [...ancestors, nodeId]);
       return counts;
     });
 
-    let parentWidths = node.data.parents.map(parentId => {
-      const [counts, widths] = calculateNodeAncestors(parentId, [...ancestors, nodeId]);
-      return widths;
-    });
-
     const maxParentsCount = parentCounts.map(array => array.reduce((a, b) => a + b, 0));
-    const descendantWidths = parentWidths.map(array => array.reduce((a, b) => a + b, 0));
 
     calculatedNodes.set(nodeId, maxParentsCount);
-    calculatedNodeWidths.set(nodeId, descendantWidths);
-    return [maxParentsCount, descendantWidths];
+    return maxParentsCount;
   }
 
   wholeNodes.forEach(node => {
     if (node.type === "person") {
-      const [maxParentsCount, descendantWidths] = calculateNodeAncestors(node.id);
+      const maxParentsCount = calculateNodeAncestors(node.id);
       if ("ancestors" in node.data) node.data.ancestors = maxParentsCount.reduce((a, b) => a + b, 0);
-      if ("ancestorsWidth" in node.data) node.data.ancestorsWidth = descendantWidths.reduce((a, b) => a + b, 0);
     }
   });
 }
@@ -104,34 +96,43 @@ export function useCalculateNodesPosition(
 ) {
   if (!selectedNode) return;
   setDescendants(wholeNodes);
-  // selectedNode.position.x = 0;
-  // selectedNode.position.y = 0;
-
-  const baseX = selectedNode.position.x;
-  const baseY = selectedNode.position.y;
-  const  calculateChildNodePosition = (node: PersonNodeData | MaritalNodeData, level: number, offsetX: number) => {
+  setAncestors(wholeNodes);
+  // 子孫ノードの位置計算
+  const calculateChildNodePosition = (node: PersonNodeData | MaritalNodeData, level: number, offsetX: number) => {
     if (!node) return;
-    node.position.y = baseY + level * BASE_GENERATIONS_SPACING;
+    node.position.y = level * BASE_GENERATIONS_SPACING;
     if (node.type === "person") {
-      const nodeTreeWidth = node.data.descendantsWidth;
-      
-      const isRightParent = wholeEdges.some(n => n.source === node.id && n.sourceHandle === "personSourceLeft");
-      const isLeftParent = wholeEdges.some(n => n.source === node.id && n.sourceHandle === "personSourceRight");
-      if (isLeftParent) {
-        node.position.x = baseX + offsetX + nodeTreeWidth / 2 - BASE_MARITAL_SPACING;
-      } else if (isRightParent) {
-        node.position.x = baseX + offsetX + nodeTreeWidth / 2 + BASE_MARITAL_SPACING;
+      const nodeDescendantsWidth = node.data.descendantsWidth;
+      const isRightNode = wholeEdges.some(n => n.source === node.id && n.sourceHandle === "personSourceLeft");
+      const isLeftNode = wholeEdges.some(n => n.source === node.id && n.sourceHandle === "personSourceRight");
+
+      if (isLeftNode) {
+        if(node.data.children.length === 1) {
+          node.position.x = offsetX + nodeDescendantsWidth / 2 - BASE_MARITAL_SPACING;
+        } else {
+          node.position.x = offsetX + (nodeDescendantsWidth - BASE_SIBLINGS_SPACING) / 2 - BASE_MARITAL_SPACING;
+        }
+      } else if (isRightNode) {
+        if(node.data.children.length === 1) {
+          node.position.x = offsetX + nodeDescendantsWidth / 2 + BASE_MARITAL_SPACING;
+        } else {
+          node.position.x = offsetX + (nodeDescendantsWidth - BASE_SIBLINGS_SPACING) / 2 + BASE_MARITAL_SPACING;
+        }
       } else {
-        node.position.x = baseX + offsetX;
+        if(!(node.data.siblings.length > 1)) {
+          node.position.x = offsetX + BASE_MARITAL_SPACING;
+        } else {
+          node.position.x = offsetX;
+        }
       }
       // 配偶者の位置計算
       node.data.spouse.forEach(spouseId => {
         const spouseNode = wholeNodes.find(n => n.id === spouseId);
         if (spouseNode) {
-          if(isRightParent) {
-            spouseNode.position.x = baseX + offsetX + nodeTreeWidth / 2 - BASE_MARITAL_SPACING;
-          } else if (isLeftParent) {
-            spouseNode.position.x = baseX + offsetX + nodeTreeWidth / 2 + BASE_MARITAL_SPACING;
+          if (isRightNode) {
+            spouseNode.position.x = node.position.x - BASE_MARITAL_SPACING * 2;
+          } else if (isLeftNode) {
+            spouseNode.position.x = node.position.x + BASE_MARITAL_SPACING * 2;
           }
           spouseNode.position.y = node.position.y;
         }
@@ -141,19 +142,28 @@ export function useCalculateNodesPosition(
       if (node.data.maritalNodeId) {
         const maritalNode = wholeNodes.find(n => n.id === node.data.maritalNodeId);
         if (maritalNode) {
-          maritalNode.position.x = baseX + offsetX + nodeTreeWidth / 2;
+          maritalNode.position.y = node.position.y;
+          if (isRightNode) {
+            maritalNode.position.x = node.position.x - BASE_MARITAL_SPACING;
+          } else if (isLeftNode) {
+            maritalNode.position.x = node.position.x + BASE_MARITAL_SPACING;
+          }
         }
       }
 
       // 子供の位置計算
       let cumulativeOffset = offsetX;
-      let numberOfChildren = node.data.children.length;
+      const childrenCounts = node.data.children.length;
       node.data.children.forEach((childId, index) => {
         const childNode = wholeNodes.find(n => n.id === childId) as PersonNodeData;
         if (childNode) {
-          const childOffset = (node.data.descendantsWidth - (numberOfChildren - 1) * BASE_SIBLINGS_SPACING) / 2;
-           calculateChildNodePosition(childNode, level + 1, cumulativeOffset + childOffset);
-          cumulativeOffset += (childNode.data.descendants || 0) * BASE_SIBLINGS_SPACING;
+          calculateChildNodePosition(childNode, level + 1, cumulativeOffset);
+          // console.log(childNode.id, "cumulativeOffset", cumulativeOffset);
+          if (childNode.data.children.length) {
+            cumulativeOffset += childNode.data.descendantsWidth + BASE_SIBLINGS_SPACING;
+          } else {
+            cumulativeOffset += BASE_SIBLINGS_SPACING;
+          }
         }
       });
     } else if (node.type === "marital") {
@@ -163,30 +173,22 @@ export function useCalculateNodesPosition(
 
   const calculateParentNodePosition = (node: PersonNodeData | MaritalNodeData, level: number, offsetX: number) => {
     if (!node) return;
-    node.position.y = baseY - level * BASE_GENERATIONS_SPACING;
+    node.position.y = level * BASE_GENERATIONS_SPACING;
     if (node.type === "person") {
-      const reversedNodeTreeWidth = node.data.ancestorsWidth;
-      const isRightParent = wholeEdges.some(n => n.source === node.id && n.sourceHandle === "personSourceLeft");
-      const isLeftParent = wholeEdges.some(n => n.source === node.id && n.sourceHandle === "personSourceRight");
+      const isRightNode = wholeEdges.some(n => n.source === node.id && n.sourceHandle === "personSourceLeft");
+      const isLeftNode = wholeEdges.some(n => n.source === node.id && n.sourceHandle === "personSourceRight");
 
       if (node.id = selectedNode.id) {}
 
-      if (isLeftParent) {
-        node.position.x = baseX + offsetX + reversedNodeTreeWidth / 2 - BASE_MARITAL_SPACING;
-      } else if (isRightParent) {
-        node.position.x = baseX + offsetX + reversedNodeTreeWidth / 2 + BASE_MARITAL_SPACING;
+      if (isLeftNode) {
+      } else if (isRightNode) {
       } else {
-        node.position.x = baseX + offsetX;
+        node.position.x = offsetX;
       }
 
       node.data.spouse.forEach(spouseId => {
         const spouseNode = wholeNodes.find(n => n.id === spouseId);
         if (spouseNode) {
-          if (isRightParent) {
-            spouseNode.position.x = baseX + offsetX + reversedNodeTreeWidth / 2 - BASE_MARITAL_SPACING;
-          } else if (isLeftParent) {
-            spouseNode.position.x = baseX + offsetX + reversedNodeTreeWidth / 2 + BASE_MARITAL_SPACING;
-          }
           spouseNode.position.y = node.position.y;
         }
       });
@@ -194,9 +196,6 @@ export function useCalculateNodesPosition(
       // maritalノードの位置計算
       if (node.data.maritalNodeId) {
         const maritalNode = wholeNodes.find(n => n.id === node.data.maritalNodeId);
-        if (maritalNode) {
-          maritalNode.position.x = baseX + offsetX + reversedNodeTreeWidth / 2;
-        }
       }
 
       let cumulativeOffset = offsetX;
@@ -216,8 +215,10 @@ export function useCalculateNodesPosition(
     calculateChildNodePosition(node, 0, siblingsOffset);
     if ("data" in node && node.type === "person" && node.data.descendantsWidth) {
       if (node.data.spouse.length) {
+        console.log(node.id, 'hasSpousesiblingsOffset', siblingsOffset);
         siblingsOffset += node.data.descendantsWidth + BASE_SIBLINGS_SPACING;
       } else {
+        console.log(node.id, 'siblingsOffset', siblingsOffset);
         siblingsOffset += node.data.descendantsWidth;
       }
     }

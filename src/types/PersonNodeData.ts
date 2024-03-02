@@ -15,7 +15,6 @@ export interface NodeData {
   descendants: number;
   descendantsWidth: number;
   ancestors: number;
-  ancestorsWidth: number;
   siblings: string[];
   maritalNodeId?: string;
   numberOfDescendant?: number;

@@ -1,6 +1,6 @@
 import { Box, useDisclosure } from "@chakra-ui/react";
 import { FC, memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import ReactFlow, { Background, Connection, ConnectionMode, ConnectionStatus, Controls, Edge, HandleType, MiniMap, Node, NodeChange, OnConnectEnd, OnConnectStart, ReactFlowProvider, XYPosition, addEdge, useEdgesState, useNodesState, useReactFlow } from "reactflow";
+import ReactFlow, { Background, BackgroundVariant, Connection, ConnectionMode, ConnectionStatus, Controls, Edge, HandleType, MiniMap, Node, NodeChange, OnConnectEnd, OnConnectStart, ReactFlowProvider, XYPosition, addEdge, useEdgesState, useNodesState, useReactFlow, useViewport } from "reactflow";
 import 'reactflow/dist/style.css';
 import { SelectActionModal } from '../parts/SelectActionModal';
 import { personNode } from '../parts/CustomNode';
@@ -26,7 +26,7 @@ const AddNodeOnEdgeDrop = () => {
   // react flow
   const reactFlowWrapper = useRef<HTMLDivElement | null>(null);
   const fitViewOptions = {
-    padding: 3,
+    padding: 10,
   };
   const windowWidth = window.innerWidth;
   const windowHeight = window.innerHeight;
@@ -48,12 +48,22 @@ const AddNodeOnEdgeDrop = () => {
   }
 
   const { directLineageNodes, directLineageEdges} = useDirectLineage(wholeNodes, wholeEdges, selectedNode);
+
+  const {x, y, zoom} = useViewport();
+  const reactFlowInstance = useReactFlow();
+
+  useEffect(() => {
+    reactFlowInstance.fitView({
+      padding: 20,
+    });
+  }, [reactFlowInstance]);
   
   useEffect(() => {
     if(nodesUpdated) {
       setNodes(directLineageNodes);
       useCalculateNodesPosition(wholeNodes, selectedNode, wholeEdges);
       setNodesUpdated(false);
+      console.log(`The viewport is currently at (${x}, ${y}) and zoomed to ${zoom}.`)
       console.log('directLineageNodes', directLineageNodes);
     }
   },[nodesUpdated, wholeNodes, selectedNode]);
@@ -67,11 +77,54 @@ const AddNodeOnEdgeDrop = () => {
     console.log('selectedNodeChanged', selectedNode?.id);
   }, [selectedNode]);
 
-
   useEffect(() => {
     console.log('wholeNodes', wholeNodes);
     console.log('wholeEdges', wholeEdges);
   }, [wholeNodes, nodes]);
+
+  // 以下検証用 ---
+  // useEffect(() => {
+  //   useCalculateNodesPosition(wholeNodes, {
+  //     "id": "0",
+  //     "type": "person",
+  //     "data": {
+  //         "label": "Node",
+  //         "birthYear": null,
+  //         "birthMonth": null,
+  //         "birthDate": null,
+  //         "gender": null,
+  //         "profilePicture": null,
+  //         "parents": [],
+  //         "children": [
+  //             "3",
+  //             "4",
+  //             "5",
+  //             "6",
+  //             "7"
+  //         ],
+  //         "spouse": [
+  //             "2",
+  //             "2",
+  //             "2",
+  //             "2",
+  //             "2"
+  //         ],
+  //         "siblings": [
+  //             "0"
+  //         ],
+  //         "descendants": 5,
+  //         "descendantsWidth": 1440,
+  //         "ancestors": 0,
+  //         "ancestorsWidth": 0,
+  //         "maritalNodeId": "1"
+  //     },
+  //     "position": {
+  //         "x": 0,
+  //         "y": 0
+  //     }
+  // }, wholeEdges);
+  // });
+  // 検証用ここまで ----
 
   const addParentToSelectedNode = useAddParentToSelectedNode(setWholeNodes, setWholeEdges, selectedNode, () => setNodesUpdated(true));
   const addChildToSelectedNode = useAddChildToSelectedNode(wholeNodes, setWholeNodes, wholeEdges, setWholeEdges, selectedNode, () => setNodesUpdated(true));
@@ -92,11 +145,13 @@ const AddNodeOnEdgeDrop = () => {
               handleNodeClick(node as PersonNodeData);
             }
           }}
-          defaultViewport={defaultViewport}
-          // fitView
+          // defaultViewport={defaultViewport}
+          fitView
           fitViewOptions={fitViewOptions}
           proOptions={{ hideAttribution: true }}
-        />
+        >
+          <Background color="#E60067" variant={BackgroundVariant.Lines} gap={[340, 250]} />
+        </ReactFlow>
       </Box>
       <SelectActionModal
         isOpen={isOpen}
