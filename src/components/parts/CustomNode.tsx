@@ -12,11 +12,17 @@ export const personNode: FC<PersonNodeProps> = props => {
   const imageFile = data.profilePicture;
   const imageURL = imageFile instanceof File ? URL.createObjectURL(imageFile) : undefined;
 
+  const keysToShow = ['label', 'descendants', 'ancestors'];
+
   return (
     <Box px={4} py={2} bg="white" w={`${BASE_PERSON_NODE_WIDTH}px`} borderRadius="md" shadow={"md"} transform={"translate(-50%, -50%)"}>
       <Handle type="source" position={Position.Right} id="personSourceRight" />
       <Handle type="source" position={Position.Left} id="personSourceLeft" />
       <Handle type="source" position={Position.Top} id="personSourceTop" />
+
+      {/* {keysToShow.map((key) => 
+        data[key as keyof typeof data] && <Text fontSize="md" key={key}>{`${key}: ${(data as any)[key]}`}</Text>
+      )} */}
 
       <Text fontSize="md">{data.label}</Text>
       <Text fontSize="md">{data.lastName}</Text>

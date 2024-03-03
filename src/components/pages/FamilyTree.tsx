@@ -63,7 +63,6 @@ const AddNodeOnEdgeDrop = () => {
       setNodes(directLineageNodes);
       useCalculateNodesPosition(wholeNodes, selectedNode, wholeEdges);
       setNodesUpdated(false);
-      console.log(`The viewport is currently at (${x}, ${y}) and zoomed to ${zoom}.`)
       console.log('directLineageNodes', directLineageNodes);
     }
   },[nodesUpdated, wholeNodes, selectedNode]);
@@ -150,7 +149,7 @@ const AddNodeOnEdgeDrop = () => {
           fitViewOptions={fitViewOptions}
           proOptions={{ hideAttribution: true }}
         >
-          <Background color="#E60067" variant={BackgroundVariant.Lines} gap={[340, 250]} />
+          <Background color="#ddd" variant={BackgroundVariant.Lines} gap={[340, 250]} />
         </ReactFlow>
       </Box>
       <SelectActionModal

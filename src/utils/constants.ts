@@ -2,4 +2,5 @@ export const BASE_PERSON_NODE_WIDTH = 200;
 export const BASE_MARITAL_NODE_WIDTH = 10;
 export const BASE_SIBLINGS_SPACING = 340;
 export const BASE_MARITAL_SPACING = 140;
-export const BASE_GENERATIONS_SPACING = 250;
+export const BASE_GENERATIONS_SPACING = 150;
+export const BASE_PARENTS_GAP = 140;
