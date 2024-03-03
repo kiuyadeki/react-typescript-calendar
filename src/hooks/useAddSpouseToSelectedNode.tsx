@@ -15,6 +15,10 @@ export const useAddSpouseToSelectedNode = (
 ) => {
   const addSpouseToSelectedNode = () => {
     if (selectedNode) {
+      let selectedNodeMaritalPosition = selectedNode.data.maritalPosition;
+      if (!selectedNodeMaritalPosition) {
+        selectedNodeMaritalPosition = 'left';
+      }
       const maritalNode = createMaritalNode({
         x: selectedNode.position.x + BASE_MARITAL_SPACING,
         y: selectedNode.position.y,
@@ -33,6 +37,7 @@ export const useAddSpouseToSelectedNode = (
         {
           spouse: [selectedNode.id],
           maritalNodeId: maritalNode.id,
+          maritalPosition: selectedNodeMaritalPosition === 'left'  ? 'right' : 'left'
         }
       );
 
@@ -50,6 +55,7 @@ export const useAddSpouseToSelectedNode = (
           ...selectedNode.data,
           spouse: [SpouseNode.id],
           maritalNodeId: maritalNode.id,
+          maritalPosition: selectedNodeMaritalPosition,
         },
       };
 

@@ -20,11 +20,11 @@ export const useAddParentToSelectedNode = (
     });
     const leftParentNode = createPersonNode(
       { x: selectedNode.position.x - BASE_MARITAL_SPACING, y: selectedNode.position.y - BASE_GENERATIONS_SPACING },
-      { children: [selectedNode.id], maritalNodeId: maritalNode.id }
+      { children: [selectedNode.id], maritalNodeId: maritalNode.id, maritalPosition: 'left' }
     );
     const rightParentNode = createPersonNode(
       { x: selectedNode.position.x + BASE_MARITAL_SPACING, y: selectedNode.position.y - BASE_GENERATIONS_SPACING },
-      { children: [selectedNode.id], spouse: [leftParentNode.id], maritalNodeId: maritalNode.id }
+      { children: [selectedNode.id], spouse: [leftParentNode.id], maritalNodeId: maritalNode.id, maritalPosition: 'right' }
     );
     leftParentNode.data.spouse.push(rightParentNode.id);
 

@@ -107,19 +107,19 @@ export function useCalculateNodesPosition(
       const isLeftNode = wholeEdges.some(n => n.source === node.id && n.sourceHandle === "personSourceRight");
 
       if (isLeftNode) {
-        if(node.data.children.length === 1) {
+        if (node.data.children.length === 1) {
           node.position.x = offsetX + nodeDescendantsWidth / 2 - BASE_MARITAL_SPACING;
         } else {
           node.position.x = offsetX + (nodeDescendantsWidth - BASE_SIBLINGS_SPACING) / 2 - BASE_MARITAL_SPACING;
         }
       } else if (isRightNode) {
-        if(node.data.children.length === 1) {
+        if (node.data.children.length === 1) {
           node.position.x = offsetX + nodeDescendantsWidth / 2 + BASE_MARITAL_SPACING;
         } else {
           node.position.x = offsetX + (nodeDescendantsWidth - BASE_SIBLINGS_SPACING) / 2 + BASE_MARITAL_SPACING;
         }
       } else {
-        if(!(node.data.siblings.length > 1)) {
+        if (!(node.data.siblings.length > 1)) {
           node.position.x = offsetX + BASE_MARITAL_SPACING;
         } else {
           node.position.x = offsetX;
@@ -173,52 +173,52 @@ export function useCalculateNodesPosition(
 
   const calculateParentNodePosition = (node: PersonNodeData | MaritalNodeData, level: number, offsetX: number) => {
     if (!node) return;
-    node.position.y = level * BASE_GENERATIONS_SPACING;
+    node.position.y = -level * BASE_GENERATIONS_SPACING;
     if (node.type === "person") {
       const isRightNode = wholeEdges.some(n => n.source === node.id && n.sourceHandle === "personSourceLeft");
       const isLeftNode = wholeEdges.some(n => n.source === node.id && n.sourceHandle === "personSourceRight");
 
-      if (node.id = selectedNode.id) {}
-
-      if (isLeftNode) {
-      } else if (isRightNode) {
-      } else {
-        node.position.x = offsetX;
-      }
-
-      node.data.spouse.forEach(spouseId => {
-        const spouseNode = wholeNodes.find(n => n.id === spouseId);
-        if (spouseNode) {
-          spouseNode.position.y = node.position.y;
+      if (!(node.id === selectedNode.id)) {
+        if (isLeftNode) {
+        } else if (isRightNode) {
+        } else {
         }
-      });
 
-      // maritalノードの位置計算
-      if (node.data.maritalNodeId) {
-        const maritalNode = wholeNodes.find(n => n.id === node.data.maritalNodeId);
+        // maritalノードの位置計算
+        if (node.data.maritalNodeId) {
+          const maritalNode = wholeNodes.find(n => n.id === node.data.maritalNodeId);
+          if (maritalNode) {
+            maritalNode.position.y = node.position.y;
+            if (isRightNode) {
+              maritalNode.position.x = node.position.x - BASE_MARITAL_SPACING;
+            } else if (isLeftNode) {
+              maritalNode.position.x = node.position.x + BASE_MARITAL_SPACING;
+            }
+          }
+        }
       }
 
       let cumulativeOffset = offsetX;
       node.data.parents.forEach(parentId => {
         const parentNode = wholeNodes.find(n => n.id === parentId) as PersonNodeData;
         if (parentNode) {
-          calculateParentNodePosition(parentNode, level + 1, cumulativeOffset)
+          calculateParentNodePosition(parentNode, level + 1, cumulativeOffset);
         }
       });
     }
   };
 
+  calculateParentNodePosition(selectedNode, 0, 0);
   const siblingsNodes = wholeNodes.filter(node => selectedNode.data.siblings.includes(node.id));
   let siblingsOffset = 0;
-  // calculateParentNodePosition(selectedNode, 0, 0);
   siblingsNodes.forEach(node => {
     calculateChildNodePosition(node, 0, siblingsOffset);
     if ("data" in node && node.type === "person" && node.data.descendantsWidth) {
       if (node.data.spouse.length) {
-        console.log(node.id, 'hasSpousesiblingsOffset', siblingsOffset);
+        console.log(node.id, "hasSpousesiblingsOffset", siblingsOffset);
         siblingsOffset += node.data.descendantsWidth + BASE_SIBLINGS_SPACING;
       } else {
-        console.log(node.id, 'siblingsOffset', siblingsOffset);
+        console.log(node.id, "siblingsOffset", siblingsOffset);
         siblingsOffset += node.data.descendantsWidth;
       }
     }

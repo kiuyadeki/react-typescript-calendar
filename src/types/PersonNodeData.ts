@@ -16,9 +16,8 @@ export interface NodeData {
   descendantsWidth: number;
   ancestors: number;
   siblings: string[];
+  maritalPosition: 'right' | 'left' | null;
   maritalNodeId?: string;
-  numberOfDescendant?: number;
-  numberOfAncestors?: number;
 }
 
 export interface maritalData {

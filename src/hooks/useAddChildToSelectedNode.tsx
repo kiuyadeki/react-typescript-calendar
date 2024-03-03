@@ -18,7 +18,9 @@ export const useAddChildToSelectedNode = (
 
   const addChildToSelectedNode = () => {
     if (!selectedNode) return;
-    if (selectedNode.data.gender !== "female") {
+    let selectedNodeMaritalPosition = selectedNode.data.maritalPosition;
+    if (!selectedNodeMaritalPosition) {
+      selectedNodeMaritalPosition = 'left';
     }
     let maritalNodeId: MaritalNodeData["id"];
     let spouseID: MaritalNodeData["id"] = selectedNode.data.spouse[0] || "";
@@ -30,7 +32,7 @@ export const useAddChildToSelectedNode = (
       maritalNodeId = maritalNode.id;
       const spouseNode = createPersonNode(
         { x: selectedNode.position.x + BASE_MARITAL_SPACING * 2, y: selectedNode.position.y },
-        { spouse: [selectedNode.id], maritalNodeId: maritalNodeId }
+        { spouse: [selectedNode.id], maritalNodeId: maritalNodeId, maritalPosition: selectedNodeMaritalPosition === ('left')  ? 'right' : 'left'}
       );
       spouseID = spouseNode.id;
       setWholeNodes(prevNodes => [...prevNodes, maritalNode, spouseNode]);
@@ -65,6 +67,7 @@ export const useAddChildToSelectedNode = (
                 spouse: [...node.data.spouse, spouseID],
                 children: [...node.data.children, childNode.id],
                 maritalNodeId: maritalNodeId,
+                maritalPosition: selectedNodeMaritalPosition,
               },
             };
           } else if (selectedNode.data.children.includes(node.id) && node.type === "person") {

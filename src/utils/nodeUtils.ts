@@ -25,6 +25,7 @@ export const createPersonNode = (position: PersonNodeData["position"], dataOverr
       descendants: 0,
       descendantsWidth: 0,
       ancestors: 0,
+      maritalPosition: null,
       ...dataOverrides,
     },
     position: { ...position },
