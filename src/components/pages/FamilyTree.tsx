@@ -83,7 +83,7 @@ const AddNodeOnEdgeDrop = () => {
 
   // 以下検証用 ---
   // useEffect(() => {
-  //   useCalculateNodesPosition(wholeNodes, {
+  //   useCalculateNodesPosition(wholeNodes,   {
   //     "id": "0",
   //     "type": "person",
   //     "data": {
@@ -96,29 +96,23 @@ const AddNodeOnEdgeDrop = () => {
   //         "parents": [],
   //         "children": [
   //             "3",
-  //             "4",
-  //             "5",
-  //             "6",
-  //             "7"
+  //             "8"
   //         ],
   //         "spouse": [
-  //             "2",
-  //             "2",
-  //             "2",
   //             "2",
   //             "2"
   //         ],
   //         "siblings": [
   //             "0"
   //         ],
-  //         "descendants": 5,
-  //         "descendantsWidth": 1440,
-  //         "ancestors": 0,
-  //         "ancestorsWidth": 0,
+  //         "descendants": 3,
+  //         "descendantsWidth": 1020,
+  //         "maritalPosition": "left",
+  //         "ancestors": 1,
   //         "maritalNodeId": "1"
   //     },
   //     "position": {
-  //         "x": 0,
+  //         "x": 200,
   //         "y": 0
   //     }
   // }, wholeEdges);

@@ -174,8 +174,10 @@ export function useCalculateNodesPosition(
         if (childNode) {
           calculateChildNodePosition(childNode, level + 1, cumulativeOffset);
           console.log(childNode.id, "cumulativeOffset", cumulativeOffset);
-          if (childNode.data.children.length) {
+          if (childNode.data.children.length === 1) {
             cumulativeOffset += childNode.data.descendantsWidth + BASE_SIBLINGS_SPACING;
+          } else if(childNode.data.children.length > 1) {
+            cumulativeOffset += childNode.data.descendantsWidth;
           } else {
             cumulativeOffset += BASE_SIBLINGS_SPACING;
           }
@@ -283,11 +285,11 @@ export function useCalculateNodesPosition(
   siblingsNodes.forEach(node => {
     calculateChildNodePosition(node, 0, siblingsOffset);
     if ("data" in node && node.type === "person" && node.data.descendantsWidth) {
-      if (node.data.spouse.length) {
-        console.log(node.id, "siblingsOffset", siblingsOffset);
+      if (node.data.children.length === 1) {
         siblingsOffset += node.data.descendantsWidth + BASE_SIBLINGS_SPACING;
+      } else if(node.data.children.length > 1) {
+        siblingsOffset += node.data.descendantsWidth;
       } else {
-        console.log(node.id, "siblingsOffset", siblingsOffset);
         siblingsOffset += node.data.descendantsWidth;
       }
     }

@@ -3,6 +3,96 @@ import { atom } from 'recoil';
 
 const initialEdges: Edge[] = [];
 // const initialEdges: Edge[] = [
+//   {
+//       "type": "smoothstep",
+//       "id": "edge-0-1",
+//       "source": "0",
+//       "sourceHandle": "personSourceRight",
+//       "target": "1",
+//       "targetHandle": "maritalTargetLeft",
+//       "style": {
+//           "stroke": "#FF0072"
+//       }
+//   },
+//   {
+//       "type": "smoothstep",
+//       "id": "edge-2-1",
+//       "source": "2",
+//       "sourceHandle": "personSourceLeft",
+//       "target": "1",
+//       "targetHandle": "maritalTargetRight",
+//       "style": {
+//           "stroke": "#FF0072"
+//       }
+//   },
+//   {
+//       "type": "smoothstep",
+//       "id": "edge-3-1",
+//       "source": "3",
+//       "sourceHandle": "personSourceTop",
+//       "target": "1",
+//       "targetHandle": "maritalTargetBottom",
+//       "style": {
+//           "stroke": "#FF0072"
+//       }
+//   },
+//   {
+//       "type": "smoothstep",
+//       "id": "edge-3-4",
+//       "source": "3",
+//       "sourceHandle": "personSourceRight",
+//       "target": "4",
+//       "targetHandle": "maritalTargetLeft",
+//       "style": {
+//           "stroke": "#FF0072"
+//       }
+//   },
+//   {
+//       "type": "smoothstep",
+//       "id": "edge-5-4",
+//       "source": "5",
+//       "sourceHandle": "personSourceLeft",
+//       "target": "4",
+//       "targetHandle": "maritalTargetRight",
+//       "style": {
+//           "stroke": "#FF0072"
+//       }
+//   },
+//   {
+//       "type": "smoothstep",
+//       "id": "edge-6-4",
+//       "source": "6",
+//       "sourceHandle": "personSourceTop",
+//       "target": "4",
+//       "targetHandle": "maritalTargetBottom",
+//       "style": {
+//           "stroke": "#FF0072"
+//       }
+//   },
+//   {
+//       "type": "smoothstep",
+//       "id": "edge-7-4",
+//       "source": "7",
+//       "sourceHandle": "personSourceTop",
+//       "target": "4",
+//       "targetHandle": "maritalTargetBottom",
+//       "style": {
+//           "stroke": "#FF0072"
+//       }
+//   },
+//   {
+//       "type": "smoothstep",
+//       "id": "edge-8-1",
+//       "source": "8",
+//       "sourceHandle": "personSourceTop",
+//       "target": "1",
+//       "targetHandle": "maritalTargetBottom",
+//       "style": {
+//           "stroke": "#FF0072"
+//       }
+//   }
+// ];
+
 //     {
 //         "type": "smoothstep",
 //         "id": "edge-0-1",
