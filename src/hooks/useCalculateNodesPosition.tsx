@@ -24,7 +24,7 @@ export function setDescendants(wholeNodes: (PersonNodeData | MaritalNodeData)[])
     const node = wholeNodes.find(node => node.id === nodeId) as PersonNodeData | undefined;
     if (!node || node.type !== "person" || !node.data.children.length) {
       // const defaultCounts = node?.data.spouse.length ? [2] : [1];
-      const defaultSpacing = node?.data.spouse.length ? BASE_MARITAL_SPACING * 2 : BASE_SIBLINGS_SPACING;
+      const defaultSpacing = node?.data.spouse.length ? BASE_MARITAL_SPACING * 2 + BASE_SIBLINGS_SPACING : BASE_SIBLINGS_SPACING;
       return [[defaultSpacing]];
     }
 
@@ -41,7 +41,7 @@ export function setDescendants(wholeNodes: (PersonNodeData | MaritalNodeData)[])
     if (node.data.children.length === 1) {
       const childNode = wholeNodes.find(n => n.id === node.data.children[0]);
       if (childNode && childNode.type === "person" && !childNode.data.spouse.length) {
-        childWidths = [[BASE_MARITAL_SPACING * 2]];
+        childWidths = [[BASE_MARITAL_SPACING * 2 + BASE_SIBLINGS_SPACING]];
       }
     }
 
@@ -113,14 +113,14 @@ export function useCalculateNodesPosition(
       switch (nodeMaritalPosition) {
         case "left":
           if (node.data.children.length === 1) {
-            node.position.x = offsetX + nodeDescendantsWidth / 2 - BASE_MARITAL_SPACING;
+            node.position.x = offsetX + (nodeDescendantsWidth - BASE_SIBLINGS_SPACING) / 2  - BASE_MARITAL_SPACING;
           } else {
             node.position.x = offsetX + (nodeDescendantsWidth - BASE_SIBLINGS_SPACING) / 2 - BASE_MARITAL_SPACING;
           }
           break;
         case "right":
           if (node.data.children.length === 1) {
-            node.position.x = offsetX + nodeDescendantsWidth / 2 + BASE_MARITAL_SPACING;
+            node.position.x = offsetX + (nodeDescendantsWidth - BASE_SIBLINGS_SPACING) / 2 + BASE_MARITAL_SPACING;
           } else {
             node.position.x = offsetX + (nodeDescendantsWidth - BASE_SIBLINGS_SPACING) / 2 + BASE_MARITAL_SPACING;
           }
@@ -173,9 +173,8 @@ export function useCalculateNodesPosition(
         const childNode = wholeNodes.find(n => n.id === childId) as PersonNodeData;
         if (childNode) {
           calculateChildNodePosition(childNode, level + 1, cumulativeOffset);
-          console.log(childNode.id, "cumulativeOffset", cumulativeOffset);
           if (childNode.data.children.length === 1) {
-            cumulativeOffset += childNode.data.descendantsWidth + BASE_SIBLINGS_SPACING;
+            cumulativeOffset += childNode.data.descendantsWidth;
           } else if(childNode.data.children.length > 1) {
             cumulativeOffset += childNode.data.descendantsWidth;
           } else {
@@ -231,7 +230,6 @@ export function useCalculateNodesPosition(
       }
 
       if (!(node.id === selectedNode.id)) {
-        console.log("検証", node.id, "offsetX", offsetX, "parentOffset", parentOffset);
         switch (nodeMaritalPosition) {
           case "left":
             node.position.x = offsetX - BASE_MARITAL_SPACING;
@@ -286,10 +284,13 @@ export function useCalculateNodesPosition(
     calculateChildNodePosition(node, 0, siblingsOffset);
     if ("data" in node && node.type === "person" && node.data.descendantsWidth) {
       if (node.data.children.length === 1) {
-        siblingsOffset += node.data.descendantsWidth + BASE_SIBLINGS_SPACING;
+        console.log(node.id, "siblingsOffset", siblingsOffset);
+        siblingsOffset += node.data.descendantsWidth;
       } else if(node.data.children.length > 1) {
+        console.log(node.id, "siblingsOffset", siblingsOffset);
         siblingsOffset += node.data.descendantsWidth;
       } else {
+        console.log(node.id, "siblingsOffset", siblingsOffset);
         siblingsOffset += node.data.descendantsWidth;
       }
     }
