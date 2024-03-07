@@ -12,29 +12,29 @@ export function setDescendants(wholeNodes: (PersonNodeData | MaritalNodeData)[])
   const calculatedNodes = new Map<string, number[]>();
   const calculatedNodeWidths = new Map<string, number[]>();
 
-  function calculateNodeDescendants(nodeId: string, ancestors: string[] = []): [number[], number[]] {
+  function calculateNodeDescendants(nodeId: string, ancestors: string[] = []): [number[]] {
     if (calculatedNodes.has(nodeId)) {
-      return [calculatedNodes.get(nodeId)!, calculatedNodeWidths.get(nodeId)!];
+      return [calculatedNodeWidths.get(nodeId)!];
     }
 
     if (ancestors.includes(nodeId)) {
-      return [[0], [0]];
+      return [[0]];
     }
 
     const node = wholeNodes.find(node => node.id === nodeId) as PersonNodeData | undefined;
     if (!node || node.type !== "person" || !node.data.children.length) {
-      const defaultCounts = node?.data.spouse.length ? [2] : [1];
+      // const defaultCounts = node?.data.spouse.length ? [2] : [1];
       const defaultSpacing = node?.data.spouse.length ? BASE_MARITAL_SPACING * 2 : BASE_SIBLINGS_SPACING;
-      return [defaultCounts, [defaultSpacing]];
+      return [[defaultSpacing]];
     }
 
-    const childCounts = node.data.children.map(childId => {
-      const [counts, widths] = calculateNodeDescendants(childId, [...ancestors, nodeId]);
-      return counts;
-    });
+    // const childCounts = node.data.children.map(childId => {
+    //   const [counts, widths] = calculateNodeDescendants(childId, [...ancestors, nodeId]);
+    //   return counts;
+    // });
 
     let childWidths = node.data.children.map(childId => {
-      const [counts, widths] = calculateNodeDescendants(childId, [...ancestors, nodeId]);
+      const [widths] = calculateNodeDescendants(childId, [...ancestors, nodeId]);
       return widths;
     });
 
@@ -45,18 +45,18 @@ export function setDescendants(wholeNodes: (PersonNodeData | MaritalNodeData)[])
       }
     }
 
-    const maxCounts = childCounts.map(array => array.reduce((a, b) => a + b, 0));
+    // const maxCounts = childCounts.map(array => array.reduce((a, b) => a + b, 0));
     const descendantWidths = childWidths.map(array => array.reduce((a, b) => a + b, 0));
 
-    calculatedNodes.set(nodeId, maxCounts);
+    // calculatedNodes.set(nodeId, maxCounts);
     calculatedNodeWidths.set(nodeId, descendantWidths);
-    return [maxCounts, descendantWidths];
+    return [descendantWidths];
   }
 
   wholeNodes.forEach(node => {
     if (node.type === "person") {
-      const [descendantCounts, descendantWidths] = calculateNodeDescendants(node.id);
-      if ("descendants" in node.data) node.data.descendants = descendantCounts.reduce((a, b) => a + b, 0);
+      const [descendantWidths] = calculateNodeDescendants(node.id);
+      // if ("descendants" in node.data) node.data.descendants = descendantCounts.reduce((a, b) => a + b, 0);
       if ("descendantsWidth" in node.data) node.data.descendantsWidth = descendantWidths.reduce((a, b) => a + b, 0);
     }
   });
