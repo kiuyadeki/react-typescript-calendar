@@ -63,7 +63,6 @@ const AddNodeOnEdgeDrop = () => {
       setNodes(directLineageNodes);
       useCalculateNodesPosition(wholeNodes, selectedNode, wholeEdges);
       setNodesUpdated(false);
-      console.log('directLineageNodes', directLineageNodes);
     }
   },[nodesUpdated, wholeNodes, selectedNode]);
   
@@ -80,44 +79,6 @@ const AddNodeOnEdgeDrop = () => {
     console.log('wholeNodes', wholeNodes);
     console.log('wholeEdges', wholeEdges);
   }, [wholeNodes, nodes]);
-
-  // 以下検証用 ---
-  // useEffect(() => {
-  //   useCalculateNodesPosition(wholeNodes,   {
-  //     "id": "0",
-  //     "type": "person",
-  //     "data": {
-  //         "label": "Node",
-  //         "birthYear": null,
-  //         "birthMonth": null,
-  //         "birthDate": null,
-  //         "gender": null,
-  //         "profilePicture": null,
-  //         "parents": [],
-  //         "children": [
-  //             "3",
-  //             "8"
-  //         ],
-  //         "spouse": [
-  //             "2",
-  //             "2"
-  //         ],
-  //         "siblings": [
-  //             "0"
-  //         ],
-  //         "descendants": 3,
-  //         "descendantsWidth": 1020,
-  //         "maritalPosition": "left",
-  //         "ancestors": 1,
-  //         "maritalNodeId": "1"
-  //     },
-  //     "position": {
-  //         "x": 200,
-  //         "y": 0
-  //     }
-  // }, wholeEdges);
-  // });
-  // 検証用ここまで ----
 
   const addParentToSelectedNode = useAddParentToSelectedNode(setWholeNodes, setWholeEdges, selectedNode, () => setNodesUpdated(true));
   const addChildToSelectedNode = useAddChildToSelectedNode(wholeNodes, setWholeNodes, wholeEdges, setWholeEdges, selectedNode, () => setNodesUpdated(true));
@@ -138,7 +99,6 @@ const AddNodeOnEdgeDrop = () => {
               handleNodeClick(node as PersonNodeData);
             }
           }}
-          // defaultViewport={defaultViewport}
           fitView
           fitViewOptions={fitViewOptions}
           proOptions={{ hideAttribution: true }}
