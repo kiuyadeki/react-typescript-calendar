@@ -35,6 +35,7 @@ const AddNodeOnEdgeDrop = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState(wholeNodes as Node[]);
   const [edges, setEdges, onEdgesChange] = useEdgesState(wholeEdges as Edge[]);
   const onConnect = useCallback((params: Connection) => setEdges((eds) => addEdge(params, eds)), []);
+  const { setCenter } = useReactFlow();
 
   // modal
   const { isOpen, onOpen, onClose} = useDisclosure();
@@ -59,10 +60,11 @@ const AddNodeOnEdgeDrop = () => {
   }, [reactFlowInstance]);
   
   useEffect(() => {
-    if(nodesUpdated) {
+    if(nodesUpdated && selectedNode) {
       setNodes(directLineageNodes);
       useCalculateNodesPosition(wholeNodes, selectedNode, wholeEdges);
       setNodesUpdated(false);
+      setCenter(selectedNode?.position.x, selectedNode?.position.y, {zoom, duration: 1000});
     }
   },[nodesUpdated, wholeNodes, selectedNode]);
   

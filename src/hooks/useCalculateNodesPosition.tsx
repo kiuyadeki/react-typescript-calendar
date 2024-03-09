@@ -31,6 +31,7 @@ export function setDescendants(wholeNodes: (PersonNodeData | MaritalNodeData)[])
       return widths;
     });
 
+
     if (node.data.children.length === 1) {
       const childNode = wholeNodes.find(n => n.id === node.data.children[0]);
       if (childNode && childNode.type === "person" && !childNode.data.spouse.length) {
