@@ -48,16 +48,6 @@ export function useDirectLineage(
             break;
         }
 
-        // 親系列と子孫系列の追加
-        // if (node.data.parents.length) {
-        //   node.data.parents.forEach(parentId => findRelatedNodesAndEdges(parentId, selectedNodeId, 'isParent'));
-        // }
-        // node.data.children.forEach(childId => findRelatedNodesAndEdges(childId, selectedNodeId, 'isChild'));
-
-        // if (node.id === selectedNodeId) {
-        //   node.data.siblings?.forEach(siblingsId => findRelatedNodesAndEdges(siblingsId, selectedNodeId, 'isSibling'));
-        // }
-
         lineageNodes.forEach(node => {
           if (node.type === "person") {
             const maritalNode = wholeNodes.find(n => n.id === node.data.maritalNodeId);
