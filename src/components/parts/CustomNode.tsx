@@ -37,7 +37,7 @@ export const personNode: FC<PersonNodeProps> = props => {
         w={`${BASE_PERSON_NODE_WIDTH}px`}
         borderRadius="md"
         shadow={"md"}
-        // transform={"translate(-50%, -50%)"}
+        transform={"translate(-50%, -50%)"}
       >
         <Handle type="source" position={Position.Right} id="personSourceRight" />
         <Handle type="source" position={Position.Left} id="personSourceLeft" />

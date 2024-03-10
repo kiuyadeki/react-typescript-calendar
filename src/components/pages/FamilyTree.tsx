@@ -14,6 +14,7 @@ import { wholeEdgesState } from '../../recoil/WholeEdgesState';
 import { PersonNodeData } from '../../types/PersonNodeData';
 import { useCalculateNodesPosition } from '../../hooks/useCalculateNodesPosition';
 import { useDirectLineage } from '../../hooks/useSetVisibleNodes';
+import { AnimatePresence } from 'framer-motion';
 
 const AddNodeOnEdgeDrop = () => {
   const [wholeNodes, setWholeNodes] = useRecoilState(wholeNodesState);
