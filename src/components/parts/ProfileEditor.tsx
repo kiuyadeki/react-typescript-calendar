@@ -1,10 +1,11 @@
-import { Box, Button, FormControl, FormErrorMessage, FormLabel, HStack, Image, Input, Select } from "@chakra-ui/react";
-import { FC, memo, useEffect, useRef } from "react";
+import { Box, Button, FormControl, FormErrorMessage, FormLabel, HStack, Image, Input, Radio, RadioGroup, Select, Stack } from "@chakra-ui/react";
+import { ChangeEvent, FC, memo, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useProfilePictureUpload } from '../../hooks/useProfilePictureChange';
 import { useRecoilState } from 'recoil';
 import { wholeNodesState } from '../../recoil/WholeNodesState';
 import { Node } from 'reactflow';
+import { PersonNodeData } from '../../types/PersonNodeData';
 
 type Inputs = {
   lastName: string;
@@ -12,11 +13,12 @@ type Inputs = {
   birthYear: number;
   birthMonth: number;
   birthDate: number;
+  gender: string;
   profilePicture: any;
 };
 
 type ProfileEditorProps = {
-  selectedNode: Node | null;
+  selectedNode: PersonNodeData | null;
   setShowProfileEditor: (value: boolean) => void;
   onClose: () => void;
 }
@@ -59,6 +61,7 @@ export const ProfileEditor: FC<ProfileEditorProps> = memo(props => {
           birthYear: data.birthYear,
           birthMonth: data.birthMonth,
           birthDate: data.birthDate,
+          gender: data.gender,
           profilePicture: data.profilePicture,
         }
       }
@@ -66,18 +69,26 @@ export const ProfileEditor: FC<ProfileEditorProps> = memo(props => {
       setWholeNodes(prevNodes => prevNodes.map(node => {
         return node.id === selectedNode.id ? updatedNode : node;
       }));
-      console.log('selected', selectedNode.id);
     }
-    console.log(data.profilePicture);
     onClose();
     setShowProfileEditor(false);
   });
 
-  useEffect(() => {
-    if(selectedNode) {
-      setValue('lastName', selectedNode.data.lastName);
-    }
-  }, [selectedNode]);
+  const [selectedGender, setSelectedGender] = useState<string | undefined>(undefined);
+  interface Gender {
+    label: string;
+    value: string;
+  }
+  const genders: Gender[] = [
+    {
+      label: '男性',
+      value: 'male',
+    },
+    {
+      label: '女性',
+      value: 'female',
+    },
+  ];
 
   return (
     <form onSubmit={onSubmit}>
@@ -91,12 +102,20 @@ export const ProfileEditor: FC<ProfileEditorProps> = memo(props => {
           />
           <FormErrorMessage>{errors.lastName && errors.lastName.message}</FormErrorMessage>
         </FormControl>
-
         <FormControl>
           <FormLabel htmlFor="firstName">名</FormLabel>
           <Input id="firstName" placeholder="名" {...register("firstName")} />
           <FormErrorMessage>{errors.firstName && errors.firstName.message}</FormErrorMessage>
         </FormControl>
+      </HStack>
+      <FormLabel mt={6}>性別</FormLabel>
+      <HStack>
+        <RadioGroup onChange={setSelectedGender} value={selectedGender}>
+          <Stack direction='row'>
+            <Radio value='male' {...register("gender")}>男性</Radio>
+            <Radio value='female' {...register("gender")}>女性</Radio>
+          </Stack>
+        </RadioGroup>
       </HStack>
       <FormLabel mt={6}>生年月日</FormLabel>
       <HStack>

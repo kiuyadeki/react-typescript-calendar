@@ -1,6 +1,6 @@
 import { Box, useDisclosure } from "@chakra-ui/react";
-import { FC, MouseEvent, memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import ReactFlow, { Background, Connection, ConnectionMode, ConnectionStatus, Controls, Edge, HandleType, MiniMap, Node, OnConnectEnd, OnConnectStart, ReactFlowProvider, addEdge, useEdgesState, useNodesState, useReactFlow } from "reactflow";
+import { FC, memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import ReactFlow, { Background, BackgroundVariant, Connection, ConnectionMode, ConnectionStatus, Controls, Edge, HandleType, MiniMap, Node, NodeChange, OnConnectEnd, OnConnectStart, ReactFlowProvider, XYPosition, addEdge, useEdgesState, useNodesState, useReactFlow, useViewport } from "reactflow";
 import 'reactflow/dist/style.css';
 import { SelectActionModal } from '../parts/SelectActionModal';
 import { personNode } from '../parts/CustomNode';
@@ -9,55 +9,83 @@ import { wholeNodesState } from '../../recoil/WholeNodesState';
 import { useAddParentToSelectedNode } from '../../hooks/useAddParentToSelectedNode';
 import { useAddChildToSelectedNode } from '../../hooks/useAddChildToSelectedNode';
 import { useAddSpouseToSelectedNode } from '../../hooks/useAddSpouseToSelectedNode';
-import { MaritalNode } from '../parts/MaritalNode';
+import { MaritalStatusNode } from '../parts/MaritalStatusNode';
+import { wholeEdgesState } from '../../recoil/WholeEdgesState';
+import { PersonNodeData } from '../../types/PersonNodeData';
+import { useCalculateNodesPosition } from '../../hooks/useCalculateNodesPosition';
+import { useDirectLineage } from '../../hooks/useSetVisibleNodes';
+import { AnimatePresence } from 'framer-motion';
 
-let id = 1;
-const getId = () => `${id++}`;
 const AddNodeOnEdgeDrop = () => {
   const [wholeNodes, setWholeNodes] = useRecoilState(wholeNodesState);
-  const [selectedNode, setSelectedNode] = useState<null | Node>(null)
+  const [wholeEdges, setWholeEdges] = useRecoilState(wholeEdgesState);
+  const [selectedNode, setSelectedNode] = useState<null | PersonNodeData>(null)
   const [showProfileEditor, setShowProfileEditor] = useState<boolean>(false);
+  const [nodesUpdated, setNodesUpdated] = useState(false);
 
 
   // react flow
   const reactFlowWrapper = useRef<HTMLDivElement | null>(null);
   const fitViewOptions = {
-    padding: 3,
+    padding: 10,
   };
-  const defaultViewport = {x: 0, y: 0, zoom: 5}
-  const nodeTypes = useMemo(() => ( {person: personNode, marital: MaritalNode}), []);
-  const [nodes, setNodes, onNodesChange] = useNodesState(wholeNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+  const windowWidth = window.innerWidth;
+  const windowHeight = window.innerHeight;
+  const defaultViewport = {x: windowWidth / 2, y: windowHeight / 2, zoom: 1}
+  const nodeTypes = useMemo(() => ( {person: personNode, marital: MaritalStatusNode}), []);
+  const [nodes, setNodes, onNodesChange] = useNodesState(wholeNodes as Node[]);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(wholeEdges as Edge[]);
   const onConnect = useCallback((params: Connection) => setEdges((eds) => addEdge(params, eds)), []);
-
+  const { setCenter } = useReactFlow();
 
   // modal
   const { isOpen, onOpen, onClose} = useDisclosure();
-  const handleNodeClick = (node: Node) => {
+  const handleNodeClick = (node: PersonNodeData) => {
     setSelectedNode(node);
     onOpen();
   }
-
   const handleCloseModal = () => {
     setShowProfileEditor(false);
     onClose();
   }
 
+  const { directLineageNodes, directLineageEdges} = useDirectLineage(wholeNodes, wholeEdges, selectedNode);
+
+  const {x, y, zoom} = useViewport();
+  const reactFlowInstance = useReactFlow();
+
   useEffect(() => {
-    console.log('selectedNode', selectedNode?.id);
+    reactFlowInstance.fitView({
+      padding: 20,
+    });
+  }, [reactFlowInstance]);
+  
+  useEffect(() => {
+    if(nodesUpdated && selectedNode) {
+      setNodes(directLineageNodes);
+      useCalculateNodesPosition(wholeNodes, selectedNode, wholeEdges);
+      setNodesUpdated(false);
+      setCenter(selectedNode?.position.x, selectedNode?.position.y, {zoom, duration: 1000});
+    }
+  },[nodesUpdated, wholeNodes, selectedNode]);
+  
+  useEffect(() => {
+    setEdges(directLineageEdges);
+  }, [wholeEdges]);
+  
+  useEffect(() => {
+    useCalculateNodesPosition(wholeNodes, selectedNode, wholeEdges);
+    console.log('selectedNodeChanged', selectedNode?.id);
   }, [selectedNode]);
 
   useEffect(() => {
-    console.log('nodes', nodes);
-  }, [nodes]);
+    console.log('wholeNodes', wholeNodes);
+    console.log('wholeEdges', wholeEdges);
+  }, [wholeNodes, nodes]);
 
-  useEffect(() => {
-    setNodes(wholeNodes)
-  }, [wholeNodes]);
-
-  const addParentToSelectedNode = useAddParentToSelectedNode(setWholeNodes, setEdges, getId, selectedNode);
-  const addChildToSelectedNode = useAddChildToSelectedNode(setWholeNodes, setEdges, getId, selectedNode);
-  const addSpouseToSelectedNode = useAddSpouseToSelectedNode(setWholeNodes, setEdges, getId, selectedNode);
+  const addParentToSelectedNode = useAddParentToSelectedNode(setWholeNodes, setWholeEdges, selectedNode, () => setNodesUpdated(true));
+  const addChildToSelectedNode = useAddChildToSelectedNode(wholeNodes, setWholeNodes, wholeEdges, setWholeEdges, selectedNode, () => setNodesUpdated(true));
+  const addSpouseToSelectedNode = useAddSpouseToSelectedNode(setWholeNodes, setWholeEdges, selectedNode, () => setNodesUpdated(true));
 
   return (
     <>
@@ -69,11 +97,17 @@ const AddNodeOnEdgeDrop = () => {
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           onConnect={onConnect}
-          onNodeClick={(e, node) => handleNodeClick(node)}
-          defaultViewport={defaultViewport}
+          onNodeClick={(e, node) => {
+            if (node.type === "person") {
+              handleNodeClick(node as PersonNodeData);
+            }
+          }}
           fitView
           fitViewOptions={fitViewOptions}
-        />
+          proOptions={{ hideAttribution: true }}
+        >
+          <Background color="#ddd" variant={BackgroundVariant.Lines} gap={[340, 250]} />
+        </ReactFlow>
       </Box>
       <SelectActionModal
         isOpen={isOpen}
