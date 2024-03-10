@@ -11,7 +11,6 @@ export function useDirectLineage(
     if (!selectedNode || selectedNode.type !== "person")
       return { directLineageNodes: wholeNodes, directLineageEdges: wholeEdges };
 
-    const selectedNodesSiblings = selectedNode.data.siblings;
     let lineageNodes = new Set<PersonNodeData | MaritalNodeData>();
     let lineageEdges = new Set<Edge>();
     const findRelatedNodesAndEdges = (nodeId: string, selectedNodeId: string, lineage: 'isSibling' | 'isParent' | 'isChild' | 'isSelected') => {
@@ -21,7 +20,7 @@ export function useDirectLineage(
 
       if (node.type === "person") {
 
-        if(node.data.spouse.length) {
+        if(node.data.spouse.length && lineage !== 'isParent') {
           node.data.spouse.forEach(spouseId => {
             const spouseNode = wholeNodes.find(n => n.id === spouseId);
             if (spouseNode) {
@@ -29,7 +28,6 @@ export function useDirectLineage(
             }
           });
         }
-        console.log('lineage', lineage);
         switch (lineage) {
           case 'isSibling' :
             node.data.children.forEach(childId => findRelatedNodesAndEdges(childId, selectedNodeId, 'isChild'));
@@ -45,6 +43,7 @@ export function useDirectLineage(
             node.data.siblings?.forEach(siblingsId => findRelatedNodesAndEdges(siblingsId, selectedNodeId, 'isSibling'));
             node.data.children.forEach(childId => findRelatedNodesAndEdges(childId, selectedNodeId, 'isChild'));
             node.data.parents.forEach(parentId => findRelatedNodesAndEdges(parentId, selectedNodeId, 'isParent'));
+            console.log(node.id, node.data.parents, 'PARENTS!!');
             break;
         }
 

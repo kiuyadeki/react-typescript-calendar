@@ -2,8 +2,12 @@ import { Edge } from "reactflow";
 import { PersonNodeData, MaritalNodeData } from "../types/PersonNodeData";
 import {
   BASE_GENERATIONS_SPACING,
+  BASE_MARITAL_NODE_HEIGHT,
+  BASE_MARITAL_NODE_WIDTH,
   BASE_MARITAL_SPACING,
   BASE_PARENTS_GAP,
+  BASE_PERSON_NODE_HEIGHT,
+  BASE_PERSON_NODE_WIDTH,
   BASE_SIBLINGS_SPACING,
 } from "../utils/constants";
 
@@ -135,13 +139,13 @@ export function useCalculateNodesPosition(
       if (node.data.maritalNodeId) {
         const maritalNode = wholeNodes.find(n => n.id === node.data.maritalNodeId);
         if (maritalNode) {
-          maritalNode.position.y = node.position.y;
+          maritalNode.position.y = node.position.y + (BASE_PERSON_NODE_HEIGHT - BASE_MARITAL_NODE_HEIGHT) / 2;
           switch (nodeMaritalPosition) {
             case "left":
-              maritalNode.position.x = node.position.x + BASE_MARITAL_SPACING;
+              maritalNode.position.x = node.position.x + BASE_MARITAL_SPACING + (BASE_PERSON_NODE_WIDTH - BASE_MARITAL_NODE_WIDTH) / 2;
               break;
             case "right":
-              maritalNode.position.x = node.position.x - BASE_MARITAL_SPACING;
+              maritalNode.position.x = node.position.x - BASE_MARITAL_SPACING + (BASE_PERSON_NODE_WIDTH - BASE_MARITAL_NODE_WIDTH) / 2;
               break;
             default:
           }
@@ -224,13 +228,13 @@ export function useCalculateNodesPosition(
         if (node.data.maritalNodeId) {
           const maritalNode = wholeNodes.find(n => n.id === node.data.maritalNodeId);
           if (maritalNode) {
-            maritalNode.position.y = node.position.y;
+            maritalNode.position.y = node.position.y + (BASE_PERSON_NODE_HEIGHT - BASE_MARITAL_NODE_HEIGHT) / 2;
             switch (nodeMaritalPosition) {
               case "left":
-                maritalNode.position.x = node.position.x + BASE_MARITAL_SPACING;
+                maritalNode.position.x = node.position.x + BASE_MARITAL_SPACING + (BASE_PERSON_NODE_WIDTH - BASE_MARITAL_NODE_WIDTH) / 2;
                 break;
               case "right":
-                maritalNode.position.x = node.position.x - BASE_MARITAL_SPACING;
+                maritalNode.position.x = node.position.x - BASE_MARITAL_SPACING + (BASE_PERSON_NODE_WIDTH - BASE_MARITAL_NODE_WIDTH) / 2;
                 break;
               default:
             }

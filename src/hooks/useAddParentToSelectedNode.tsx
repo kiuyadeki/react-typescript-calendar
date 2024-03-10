@@ -3,7 +3,7 @@ import { Edge } from "reactflow";
 import { PersonNodeData, MaritalNodeData } from "../types/PersonNodeData";
 import { createMaritalNode, createPersonNode } from "../utils/nodeUtils";
 import { createEdge } from "../utils/edgeUtils";
-import { BASE_GENERATIONS_SPACING, BASE_MARITAL_SPACING } from "../utils/constants";
+import { BASE_GENERATIONS_SPACING, BASE_MARITAL_NODE_HEIGHT, BASE_MARITAL_NODE_WIDTH, BASE_MARITAL_SPACING, BASE_PERSON_NODE_HEIGHT, BASE_PERSON_NODE_WIDTH } from "../utils/constants";
 
 export const useAddParentToSelectedNode = (
   setWholeNodes: Dispatch<SetStateAction<(PersonNodeData | MaritalNodeData)[]>>,
@@ -15,8 +15,8 @@ export const useAddParentToSelectedNode = (
     if (!selectedNode) return;
 
     const maritalNode = createMaritalNode({
-      x: selectedNode.position.x,
-      y: selectedNode.position.y - BASE_GENERATIONS_SPACING,
+      x: selectedNode.position.x  + (BASE_PERSON_NODE_WIDTH - BASE_MARITAL_NODE_WIDTH) / 2,
+      y: selectedNode.position.y - BASE_GENERATIONS_SPACING + (BASE_PERSON_NODE_HEIGHT - BASE_MARITAL_NODE_HEIGHT) / 2,
     });
     const leftParentNode = createPersonNode(
       { x: selectedNode.position.x - BASE_MARITAL_SPACING, y: selectedNode.position.y - BASE_GENERATIONS_SPACING },

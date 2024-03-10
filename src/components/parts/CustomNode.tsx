@@ -2,7 +2,7 @@ import { Box, Image, Text } from "@chakra-ui/react";
 import { FC } from "react";
 import { Handle, NodeProps, Position } from "reactflow";
 import { PersonNodeData } from "../../types/PersonNodeData";
-import { BASE_PERSON_NODE_WIDTH } from "../../utils/constants";
+import { BASE_PERSON_NODE_HEIGHT, BASE_PERSON_NODE_WIDTH } from "../../utils/constants";
 import { AnimatePresence, Variants, easeOut, motion } from "framer-motion";
 
 type PersonNodeProps = Omit<NodeProps, "data"> & {
@@ -35,9 +35,9 @@ export const personNode: FC<PersonNodeProps> = props => {
         py={2}
         bg="white"
         w={`${BASE_PERSON_NODE_WIDTH}px`}
+        h={`${BASE_PERSON_NODE_HEIGHT}px`}
         borderRadius="md"
         shadow={"md"}
-        transform={"translate(-50%, -50%)"}
       >
         <Handle type="source" position={Position.Right} id="personSourceRight" />
         <Handle type="source" position={Position.Left} id="personSourceLeft" />
