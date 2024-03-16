@@ -37,6 +37,7 @@ export const ProfileEditor: FC<ProfileEditorProps> = memo(props => {
   } = useForm<Inputs>();
   const { uploadedImage, handleImageChange } = useProfilePictureUpload();
   const [wholeNodes, setWholeNodes] = useRecoilState(wholeNodesState);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   // ファイルが選択されたときにreact-hook-formの値を更新
   const onFileInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -46,7 +47,8 @@ export const ProfileEditor: FC<ProfileEditorProps> = memo(props => {
   };
 
   const handleButtonClick = () => {
-    document.getElementById('profilePictureInput')?.click();
+    inputRef.current?.click();
+    // document.getElementById('profilePictureInput')?.click();
   };
 
 
@@ -157,6 +159,7 @@ export const ProfileEditor: FC<ProfileEditorProps> = memo(props => {
             onChange: onFileInputChange
           })}
           hidden
+          ref={inputRef}
         />
         <Button onClick={handleButtonClick}>Upload File</Button>
         {uploadedImage && (
