@@ -11,6 +11,7 @@ type PersonNodeProps = Omit<NodeProps, "data"> & {
 export const personNode: FC<PersonNodeProps> = props => {
   const { data } = props;
   const imageFile = data.profilePicture;
+  const isSelected = data.selected;
   const imageURL = imageFile instanceof File ? URL.createObjectURL(imageFile) : undefined;
   const variants: Variants = {
     initial: {
@@ -33,9 +34,8 @@ export const personNode: FC<PersonNodeProps> = props => {
       <Box
         px={4}
         py={2}
-        bg="white"
+        bg={isSelected ? "blue.500" : "white"}
         w={`${BASE_PERSON_NODE_WIDTH}px`}
-        h={`${BASE_PERSON_NODE_HEIGHT}px`}
         borderRadius="md"
         shadow={"md"}
       >

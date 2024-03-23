@@ -1,7 +1,6 @@
 import { Dispatch, SetStateAction } from "react";
 import { Edge, Node } from "reactflow";
 import { PersonNodeData, MaritalNodeData } from "../types/PersonNodeData";
-import { InitialPersonNode } from "../components/parts/InitialPersonNode";
 import { getAddedNodeId } from "../utils/getAddedNodeId";
 import { createMaritalNode, createPersonNode } from "../utils/nodeUtils";
 import { createEdge } from "../utils/edgeUtils";

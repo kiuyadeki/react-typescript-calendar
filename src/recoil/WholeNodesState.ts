@@ -1,4 +1,3 @@
-import { Node } from "reactflow";
 import { atom } from "recoil";
 import { PersonNodeData, MaritalNodeData } from "../types/PersonNodeData";
 
@@ -21,6 +20,7 @@ const initialNodes: (PersonNodeData | MaritalNodeData)[] = [
       descendantsWidth: 0,
       maritalPosition: null,
       ancestors: 0,
+      selected: true,
     },
     position: { x: 0, y: 0 },
   },

@@ -18,6 +18,7 @@ export interface NodeData {
   siblings: string[];
   maritalPosition: 'right' | 'left' | null;
   maritalNodeId?: string;
+  selected: boolean;
 }
 
 export interface maritalData {
