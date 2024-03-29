@@ -38,22 +38,19 @@ import { useCalculateNodesPosition } from "../../hooks/useCalculateNodesPosition
 import { useDirectLineage } from "../../hooks/useSetVisibleNodes";
 import { AnimatePresence } from "framer-motion";
 import { isPersonNodeData } from "../../typeGuards/personTypeGuards";
+import { nodesUpdatedState } from '../../recoil/nodesUpdatedState';
+import { selectedNodeState } from '../../recoil/selectedNodeState';
 
 const AddNodeOnEdgeDrop = () => {
   const [wholeNodes, setWholeNodes] = useRecoilState(wholeNodesState);
   const [wholeEdges, setWholeEdges] = useRecoilState(wholeEdgesState);
-  const [selectedNode, setSelectedNode] = useState<null | PersonNodeData>(null);
+  const [selectedNode, setSelectedNode] = useRecoilState(selectedNodeState);
   const [showProfileEditor, setShowProfileEditor] = useState<boolean>(false);
-  const [nodesUpdated, setNodesUpdated] = useState(false);
+  const [nodesUpdated, setNodesUpdated] = useRecoilState(nodesUpdatedState);
 
   // react flow
   const reactFlowWrapper = useRef<HTMLDivElement | null>(null);
-  const fitViewOptions = {
-    padding: 10,
-  };
-  const windowWidth = window.innerWidth;
-  const windowHeight = window.innerHeight;
-  const defaultViewport = { x: windowWidth / 2, y: windowHeight / 2, zoom: 1 };
+
   const nodeTypes = useMemo(() => ({ person: personNode, marital: MaritalStatusNode }), []);
   const [nodes, setNodes, onNodesChange] = useNodesState(wholeNodes as Node[]);
   const [edges, setEdges, onEdgesChange] = useEdgesState(wholeEdges as Edge[]);
@@ -88,28 +85,6 @@ const AddNodeOnEdgeDrop = () => {
     onClose();
   };
 
-  // useOnSelectionChange({
-  //   onChange: ({ nodes, edges }) => {
-  //     if (nodes.length === 1) {
-  //       setSelectedNode(nodes[0] as PersonNodeData);
-  //       setWholeNodes(prevNodes =>
-  //         prevNodes.map(node => {
-  //           if (isPersonNodeData(node)) {
-  //             if (node.id === nodes[0].id) {
-  //               return { ...node, data: {...node.data, selected: true } };
-  //             } else {
-  //               return { ...node, data: {...node.data, selected: false } };
-  //             }
-  //           } else {
-  //             return node;
-  //           }
-  //         })
-  //       );
-  //       setNodesUpdated(true);
-  //     }
-  //   },
-  // });
-
   const { directLineageNodes, directLineageEdges } = useDirectLineage(wholeNodes, wholeEdges, selectedNode);
 
   const { x, y, zoom } = useViewport();
@@ -124,19 +99,15 @@ const AddNodeOnEdgeDrop = () => {
   useEffect(() => {
     if (nodesUpdated && selectedNode) {
       setNodes(directLineageNodes);
+      setEdges(directLineageEdges);
       useCalculateNodesPosition(wholeNodes, selectedNode, wholeEdges);
       setNodesUpdated(false);
       setCenter(selectedNode?.position.x, selectedNode?.position.y, { zoom, duration: 1000 });
     }
-  }, [nodesUpdated, wholeNodes, selectedNode]);
-
-  useEffect(() => {
-    setEdges(directLineageEdges);
-  }, [wholeEdges]);
+  }, [nodesUpdated]);
 
   useEffect(() => {
     useCalculateNodesPosition(wholeNodes, selectedNode, wholeEdges);
-    console.log("selectedNodeChanged", selectedNode?.id);
   }, [selectedNode]);
 
   useEffect(() => {
@@ -174,8 +145,9 @@ const AddNodeOnEdgeDrop = () => {
               handleNodeClick(node);
             }
           }}
+          nodesDraggable={false}
           fitView
-          fitViewOptions={fitViewOptions}
+          fitViewOptions={{padding: 10}}
           proOptions={{ hideAttribution: true }}
         >
           <Background color="#ddd" variant={BackgroundVariant.Lines} gap={[340, 250]} />
@@ -190,6 +162,9 @@ const AddNodeOnEdgeDrop = () => {
         addParent={addParentToSelectedNode}
         addChild={addChildToSelectedNode}
         addSpouse={addSpouseToSelectedNode}
+        onUpdated={() =>
+          setNodesUpdated(true)
+        }
       />
     </>
   );

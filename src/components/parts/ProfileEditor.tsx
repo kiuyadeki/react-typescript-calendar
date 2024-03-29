@@ -6,6 +6,7 @@ import { useRecoilState } from 'recoil';
 import { wholeNodesState } from '../../recoil/WholeNodesState';
 import { Node } from 'reactflow';
 import { PersonNodeData } from '../../types/PersonNodeData';
+import { nodesUpdatedState } from '../../recoil/nodesUpdatedState';
 
 type Inputs = {
   lastName: string;
@@ -37,6 +38,7 @@ export const ProfileEditor: FC<ProfileEditorProps> = memo(props => {
   } = useForm<Inputs>();
   const { uploadedImage, handleImageChange } = useProfilePictureUpload();
   const [wholeNodes, setWholeNodes] = useRecoilState(wholeNodesState);
+  const [nodesUpdated, setNodesUpdated] = useRecoilState(nodesUpdatedState);
   const inputRef = useRef<HTMLInputElement>(null);
 
   // ファイルが選択されたときにreact-hook-formの値を更新
@@ -74,6 +76,7 @@ export const ProfileEditor: FC<ProfileEditorProps> = memo(props => {
     }
     onClose();
     setShowProfileEditor(false);
+    setNodesUpdated(true);
   });
 
   const [selectedGender, setSelectedGender] = useState<string | undefined>(undefined);

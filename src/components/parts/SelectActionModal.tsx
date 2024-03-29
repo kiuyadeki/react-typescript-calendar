@@ -27,10 +27,11 @@ type SelectActionModalProps = {
   addParent: () => void;
   addChild: () => void;
   addSpouse: () => void;
+  onUpdated: () => void;
 };
 
 export const SelectActionModal: FC<SelectActionModalProps> = memo(props => {
-  const { isOpen, onClose, showProfileEditor, setShowProfileEditor, selectedNode, addParent, addChild, addSpouse } = props;
+  const { isOpen, onClose, showProfileEditor, setShowProfileEditor, selectedNode, addParent, addChild, addSpouse, onUpdated } = props;
   // const [showProfileEditor, setShowProfileEditor] = useState<boolean>(false);
 
   // 情報を編集
