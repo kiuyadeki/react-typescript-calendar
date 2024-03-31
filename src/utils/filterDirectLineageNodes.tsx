@@ -1,15 +1,18 @@
 import { useMemo } from "react";
 import { PersonNodeData, MaritalNodeData } from "../types/PersonNodeData";
 import { Edge } from "reactflow";
+import { useRecoilValue } from 'recoil';
+import { selectedNodeState } from '../recoil/selectedNodeState';
 
-export function useDirectLineage(
+export function filterDirectLineagesNodes (
   wholeNodes: (PersonNodeData | MaritalNodeData)[],
   wholeEdges: Edge[],
   selectedNode: PersonNodeData | null
 ) {
-  const { directLineageNodes, directLineageEdges } = useMemo(() => {
-    if (!selectedNode || selectedNode.type !== "person")
+  const findDirectLineage = () => {
+    if (!selectedNode || selectedNode.type !== "person") {
       return { directLineageNodes: wholeNodes, directLineageEdges: wholeEdges };
+    }
 
     let lineageNodes = new Set<PersonNodeData | MaritalNodeData>();
     let lineageEdges = new Set<Edge>();
@@ -43,7 +46,6 @@ export function useDirectLineage(
             node.data.siblings?.forEach(siblingsId => findRelatedNodesAndEdges(siblingsId, selectedNodeId, 'isSibling'));
             node.data.children.forEach(childId => findRelatedNodesAndEdges(childId, selectedNodeId, 'isChild'));
             node.data.parents.forEach(parentId => findRelatedNodesAndEdges(parentId, selectedNodeId, 'isParent'));
-            console.log(node.id, node.data.parents, 'PARENTS!!');
             break;
         }
 
@@ -71,7 +73,8 @@ export function useDirectLineage(
       directLineageNodes: Array.from(lineageNodes),
       directLineageEdges: Array.from(lineageEdges),
     };
-  }, [wholeNodes, wholeEdges, selectedNode]);
+  }
+  const { directLineageNodes, directLineageEdges } = findDirectLineage();
 
   return { directLineageNodes, directLineageEdges };
 }

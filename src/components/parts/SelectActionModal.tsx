@@ -17,13 +17,14 @@ import {
 import { Dispatch, FC, SetStateAction, memo, useEffect, useState } from "react";
 import { ProfileEditor } from './ProfileEditor';
 import { PersonNodeData } from '../../types/PersonNodeData';
+import { useRecoilValue } from 'recoil';
+import { selectedNodeState } from '../../recoil/selectedNodeState';
 
 type SelectActionModalProps = {
   isOpen: boolean;
   onClose: () => void;
   showProfileEditor: boolean;
   setShowProfileEditor: Dispatch<SetStateAction<boolean>>;
-  selectedNode: PersonNodeData | null;
   addParent: () => void;
   addChild: () => void;
   addSpouse: () => void;
@@ -31,7 +32,8 @@ type SelectActionModalProps = {
 };
 
 export const SelectActionModal: FC<SelectActionModalProps> = memo(props => {
-  const { isOpen, onClose, showProfileEditor, setShowProfileEditor, selectedNode, addParent, addChild, addSpouse, onUpdated } = props;
+  const { isOpen, onClose, showProfileEditor, setShowProfileEditor, addParent, addChild, addSpouse, onUpdated } = props;
+  const selectedNode = useRecoilValue(selectedNodeState);
   // const [showProfileEditor, setShowProfileEditor] = useState<boolean>(false);
 
   // 情報を編集
@@ -56,7 +58,7 @@ export const SelectActionModal: FC<SelectActionModalProps> = memo(props => {
         <ModalCloseButton />
         <ModalBody>
           {showProfileEditor ? (
-            <ProfileEditor onClose={onClose} selectedNode={selectedNode} setShowProfileEditor={setShowProfileEditor} />
+            <ProfileEditor onClose={onClose} setShowProfileEditor={setShowProfileEditor} />
           ) : (
             <>
               <Text>{selectedNode?.data.birthDate}</Text>

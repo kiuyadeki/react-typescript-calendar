@@ -31,15 +31,15 @@ import { wholeNodesState } from "../../recoil/WholeNodesState";
 import { useAddParentToSelectedNode } from "../../hooks/useAddParentToSelectedNode";
 import { useAddChildToSelectedNode } from "../../hooks/useAddChildToSelectedNode";
 import { useAddSpouseToSelectedNode } from "../../hooks/useAddSpouseToSelectedNode";
-import { MaritalStatusNode } from "../parts/MaritalStatusNode";
+import { maritalNode } from "../parts/MaritalStatusNode";
 import { wholeEdgesState } from "../../recoil/WholeEdgesState";
-import { PersonNodeData } from "../../types/PersonNodeData";
-import { useCalculateNodesPosition } from "../../hooks/useCalculateNodesPosition";
-import { useDirectLineage } from "../../hooks/useSetVisibleNodes";
+import { MaritalNodeData, PersonNodeData } from "../../types/PersonNodeData";
+import { calculateNodesPosition } from "../../utils/calculateNodesPosition";
+import { filterDirectLineagesNodes } from "../../utils/filterDirectLineageNodes";
 import { AnimatePresence } from "framer-motion";
 import { isPersonNodeData } from "../../typeGuards/personTypeGuards";
-import { nodesUpdatedState } from '../../recoil/nodesUpdatedState';
-import { selectedNodeState } from '../../recoil/selectedNodeState';
+import { nodesUpdatedState } from "../../recoil/nodesUpdatedState";
+import { selectedNodeState } from "../../recoil/selectedNodeState";
 
 const AddNodeOnEdgeDrop = () => {
   const [wholeNodes, setWholeNodes] = useRecoilState(wholeNodesState);
@@ -51,8 +51,8 @@ const AddNodeOnEdgeDrop = () => {
   // react flow
   const reactFlowWrapper = useRef<HTMLDivElement | null>(null);
 
-  const nodeTypes = useMemo(() => ({ person: personNode, marital: MaritalStatusNode }), []);
-  const [nodes, setNodes, onNodesChange] = useNodesState(wholeNodes as Node[]);
+  const nodeTypes = useMemo(() => ({ person: personNode, marital: maritalNode }), []);
+  const [nodes, setNodes, onNodesChange] = useNodesState(wholeNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(wholeEdges as Edge[]);
   const onConnect = useCallback((params: Connection) => setEdges(eds => addEdge(params, eds)), []);
   const { setCenter } = useReactFlow();
@@ -85,50 +85,32 @@ const AddNodeOnEdgeDrop = () => {
     onClose();
   };
 
-  const { directLineageNodes, directLineageEdges } = useDirectLineage(wholeNodes, wholeEdges, selectedNode);
-
   const { x, y, zoom } = useViewport();
   const reactFlowInstance = useReactFlow();
-
+  
   useEffect(() => {
     reactFlowInstance.fitView({
       padding: 20,
     });
   }, [reactFlowInstance]);
-
+  
   useEffect(() => {
     if (nodesUpdated && selectedNode) {
-      setNodes(directLineageNodes);
+      const { directLineageNodes, directLineageEdges } = filterDirectLineagesNodes(wholeNodes, wholeEdges, selectedNode);
+      const calculatedWholeNodes = calculateNodesPosition(directLineageNodes, selectedNode, nodesUpdated);
+      if (!calculatedWholeNodes) return;
+      setNodes(calculatedWholeNodes);
       setEdges(directLineageEdges);
-      useCalculateNodesPosition(wholeNodes, selectedNode, wholeEdges);
       setNodesUpdated(false);
       setCenter(selectedNode?.position.x, selectedNode?.position.y, { zoom, duration: 1000 });
     }
   }, [nodesUpdated]);
 
-  useEffect(() => {
-    useCalculateNodesPosition(wholeNodes, selectedNode, wholeEdges);
-  }, [selectedNode]);
-
-  useEffect(() => {
-    console.log("wholeNodes", wholeNodes);
-    console.log("wholeEdges", wholeEdges);
-  }, [wholeNodes, nodes]);
-
-  const addParentToSelectedNode = useAddParentToSelectedNode(setWholeNodes, setWholeEdges, selectedNode, () =>
+  const addParentToSelectedNode = useAddParentToSelectedNode(setWholeNodes, setWholeEdges, () => setNodesUpdated(true));
+  const addChildToSelectedNode = useAddChildToSelectedNode(wholeNodes, setWholeNodes, wholeEdges, setWholeEdges, () =>
     setNodesUpdated(true)
   );
-  const addChildToSelectedNode = useAddChildToSelectedNode(
-    wholeNodes,
-    setWholeNodes,
-    wholeEdges,
-    setWholeEdges,
-    selectedNode,
-    () => setNodesUpdated(true)
-  );
-  const addSpouseToSelectedNode = useAddSpouseToSelectedNode(setWholeNodes, setWholeEdges, selectedNode, () =>
-    setNodesUpdated(true)
-  );
+  const addSpouseToSelectedNode = useAddSpouseToSelectedNode(setWholeNodes, setWholeEdges, () => setNodesUpdated(true));
 
   return (
     <>
@@ -147,7 +129,7 @@ const AddNodeOnEdgeDrop = () => {
           }}
           nodesDraggable={false}
           fitView
-          fitViewOptions={{padding: 10}}
+          fitViewOptions={{ padding: 10 }}
           proOptions={{ hideAttribution: true }}
         >
           <Background color="#ddd" variant={BackgroundVariant.Lines} gap={[340, 250]} />
@@ -158,13 +140,10 @@ const AddNodeOnEdgeDrop = () => {
         onClose={handleCloseModal}
         showProfileEditor={showProfileEditor}
         setShowProfileEditor={setShowProfileEditor}
-        selectedNode={selectedNode}
         addParent={addParentToSelectedNode}
         addChild={addChildToSelectedNode}
         addSpouse={addSpouseToSelectedNode}
-        onUpdated={() =>
-          setNodesUpdated(true)
-        }
+        onUpdated={() => setNodesUpdated(true)}
       />
     </>
   );

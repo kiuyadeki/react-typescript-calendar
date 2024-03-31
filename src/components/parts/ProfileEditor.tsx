@@ -2,11 +2,12 @@ import { Box, Button, FormControl, FormErrorMessage, FormLabel, HStack, Image, I
 import { ChangeEvent, FC, memo, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useProfilePictureUpload } from '../../hooks/useProfilePictureChange';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { wholeNodesState } from '../../recoil/WholeNodesState';
 import { Node } from 'reactflow';
 import { PersonNodeData } from '../../types/PersonNodeData';
 import { nodesUpdatedState } from '../../recoil/nodesUpdatedState';
+import { selectedNodeState } from '../../recoil/selectedNodeState';
 
 type Inputs = {
   lastName: string;
@@ -19,13 +20,13 @@ type Inputs = {
 };
 
 type ProfileEditorProps = {
-  selectedNode: PersonNodeData | null;
   setShowProfileEditor: (value: boolean) => void;
   onClose: () => void;
 }
 
 export const ProfileEditor: FC<ProfileEditorProps> = memo(props => {
-  const { selectedNode, setShowProfileEditor, onClose } = props;
+  const { setShowProfileEditor, onClose } = props;
+  const selectedNode = useRecoilValue(selectedNodeState);
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: currentYear - 1900 + 1 }, (_, i) => 1900 + i);
   const months = Array.from( {length: 12}, (_, i) => i + 1);
@@ -50,7 +51,6 @@ export const ProfileEditor: FC<ProfileEditorProps> = memo(props => {
 
   const handleButtonClick = () => {
     inputRef.current?.click();
-    // document.getElementById('profilePictureInput')?.click();
   };
 
 

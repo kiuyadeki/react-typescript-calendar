@@ -1,14 +1,11 @@
 import { Box, Image, Text } from "@chakra-ui/react";
 import { FC } from "react";
 import { Handle, NodeProps, Position } from "reactflow";
-import { PersonNodeData } from "../../types/PersonNodeData";
+import { PersonData, PersonNodeData } from "../../types/PersonNodeData";
 import { BASE_PERSON_NODE_HEIGHT, BASE_PERSON_NODE_WIDTH } from "../../utils/constants";
 import { AnimatePresence, Variants, easeOut, motion } from "framer-motion";
 
-type PersonNodeProps = Omit<NodeProps, "data"> & {
-  data: PersonNodeData["data"];
-};
-export const personNode: FC<PersonNodeProps> = props => {
+export const personNode = (props: NodeProps<PersonData>) => {
   const { data } = props;
   const imageFile = data.profilePicture;
   const isSelected = data.selected;

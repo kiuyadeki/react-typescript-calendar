@@ -1,6 +1,6 @@
 import { Node } from "reactflow";
 
-export interface NodeData {
+export interface PersonData {
   label: string;
   firstName?: string | null | undefined;
   lastName?: string | null | undefined;
@@ -25,14 +25,12 @@ export interface maritalData {
   isDivorced: boolean;
 }
 
-export interface PersonNodeData extends Node {
+export interface PersonNodeData extends Node<PersonData> {
   type: "person";
-  data: NodeData;
-  position: { x: number; y: number };
+  data: PersonData;
 }
 
-export interface MaritalNodeData extends Node {
+export interface MaritalNodeData extends Node<PersonData | maritalData> {
   type: "marital";
-  data: maritalData;
-  position: { x: number; y: number };
+  data: PersonData | maritalData;
 }

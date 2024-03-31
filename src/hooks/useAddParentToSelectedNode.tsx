@@ -4,13 +4,15 @@ import { PersonNodeData, MaritalNodeData } from "../types/PersonNodeData";
 import { createMaritalNode, createPersonNode } from "../utils/nodeUtils";
 import { createEdge } from "../utils/edgeUtils";
 import { BASE_GENERATIONS_SPACING, BASE_MARITAL_NODE_HEIGHT, BASE_MARITAL_NODE_WIDTH, BASE_MARITAL_SPACING, BASE_PERSON_NODE_HEIGHT, BASE_PERSON_NODE_WIDTH } from "../utils/constants";
+import { useRecoilValue } from 'recoil';
+import { selectedNodeState } from '../recoil/selectedNodeState';
 
 export const useAddParentToSelectedNode = (
   setWholeNodes: Dispatch<SetStateAction<(PersonNodeData | MaritalNodeData)[]>>,
   setWholeEdges: Dispatch<SetStateAction<Edge[]>>,
-  selectedNode: null | PersonNodeData,
   onUpdated: () => void
 ) => {
+  const selectedNode = useRecoilValue(selectedNodeState);
   const addParentToSelectedNode = () => {
     if (!selectedNode) return;
 
