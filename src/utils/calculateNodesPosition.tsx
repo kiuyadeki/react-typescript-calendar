@@ -11,6 +11,7 @@ import {
   BASE_SIBLINGS_SPACING,
 } from "./constants";
 import { deepCopyUnfrozen } from "./deepCopyUnfrozen";
+import { isPersonNodeData } from '../typeGuards/personTypeGuards';
 
 const setDescendants = (wholeNodes: (PersonNodeData | MaritalNodeData)[]) => {
   const calculatedNodes = new Map<string, number[]>();
@@ -288,15 +289,28 @@ export function calculateNodesPosition(
   nodesUpdated: boolean
 ) {
   if (!selectedNode) return;
-  // const wholeNodesCopy: (PersonNodeData | MaritalNodeData)[] = JSON.parse(JSON.stringify(wholeNodes));
   const wholeNodesCopy: (PersonNodeData | MaritalNodeData)[] = deepCopyUnfrozen(wholeNodes);
   const selectedNodesCopy = deepCopyUnfrozen(selectedNode);
   setDescendants(wholeNodesCopy);
   setAncestors(wholeNodesCopy);
 
   const siblingsNodes = wholeNodesCopy.filter(node => selectedNodesCopy.data.siblings.includes(node.id));
+  const sortedSiblingsNodes = siblingsNodes.sort((a, b) => {
+    const getAge = (node: PersonNodeData) => {
+      const birthYear = node.data.birthYear;
+      return birthYear ? new Date().getFullYear() - birthYear : -Infinity;
+    };
+    
+    if(!isPersonNodeData(a) || !isPersonNodeData(b)) return 0;
+    const ageA = getAge(a);
+    const ageB = getAge(b);
+  
+    if (ageA > ageB) return -1;
+    if (ageA < ageB) return 1;
+    return a.id.localeCompare(b.id);
+  });
   let siblingsOffset = 0;
-  siblingsNodes.forEach(node => {
+  sortedSiblingsNodes.forEach(node => {
     calculateChildNodePosition(wholeNodesCopy, node, 0, siblingsOffset);
     if ("data" in node && node.type === "person" && node.data.descendantsWidth) {
       siblingsOffset += node.data.descendantsWidth;

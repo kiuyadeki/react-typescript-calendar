@@ -17,30 +17,43 @@ import {
 import { Dispatch, FC, SetStateAction, memo, useEffect, useState } from "react";
 import { ProfileEditor } from './ProfileEditor';
 import { PersonNodeData } from '../../types/PersonNodeData';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { selectedNodeState } from '../../recoil/selectedNodeState';
+import { useAddParentToSelectedNode } from '../../hooks/useAddParentToSelectedNode';
+import { useAddChildToSelectedNode } from '../../hooks/useAddChildToSelectedNode';
+import { useAddSpouseToSelectedNode } from '../../hooks/useAddSpouseToSelectedNode';
+import { wholeNodesState } from '../../recoil/WholeNodesState';
+import { nodesUpdatedState } from '../../recoil/nodesUpdatedState';
+import { wholeEdgesState } from '../../recoil/WholeEdgesState';
 
 type SelectActionModalProps = {
   isOpen: boolean;
   onClose: () => void;
-  showProfileEditor: boolean;
-  setShowProfileEditor: Dispatch<SetStateAction<boolean>>;
-  addParent: () => void;
-  addChild: () => void;
-  addSpouse: () => void;
-  onUpdated: () => void;
 };
 
 export const SelectActionModal: FC<SelectActionModalProps> = memo(props => {
-  const { isOpen, onClose, showProfileEditor, setShowProfileEditor, addParent, addChild, addSpouse, onUpdated } = props;
+  const { isOpen, onClose } = props;
   const selectedNode = useRecoilValue(selectedNodeState);
-  // const [showProfileEditor, setShowProfileEditor] = useState<boolean>(false);
+  const [wholeNodes, setWholeNodes] = useRecoilState(wholeNodesState);
+  const [nodesUpdated, setNodesUpdated] = useRecoilState(nodesUpdatedState);
+  const [wholeEdges, setWholeEdges] = useRecoilState(wholeEdgesState);
+  const [showProfileEditor, setShowProfileEditor] = useState<boolean>(false);
+  const addParentToSelectedNode = useAddParentToSelectedNode(setWholeNodes, setWholeEdges, () => setNodesUpdated(true));
+  const addChildToSelectedNode = useAddChildToSelectedNode(wholeNodes, setWholeNodes, wholeEdges, setWholeEdges, () =>
+    setNodesUpdated(true)
+  );
+  const addSpouseToSelectedNode = useAddSpouseToSelectedNode(setWholeNodes, setWholeEdges, () => setNodesUpdated(true));
 
   // 情報を編集
   const displayProfileEditor = () => {
     if (selectedNode) {
       setShowProfileEditor(true);
     }
+  };
+
+  const handleCloseModal = () => {
+    setShowProfileEditor(false);
+    handleCloseModal();
   };
 
   let hasParents = false;
@@ -69,7 +82,7 @@ export const SelectActionModal: FC<SelectActionModalProps> = memo(props => {
                 <Button
                   isDisabled={hasParents}
                   onClick={() => {
-                    addParent();
+                    addParentToSelectedNode();
                     onClose();
                   }}
                 >
@@ -77,7 +90,7 @@ export const SelectActionModal: FC<SelectActionModalProps> = memo(props => {
                 </Button>
                 <Button
                   onClick={() => {
-                    addChild();
+                    addChildToSelectedNode();
                     onClose();
                   }}
                 >
@@ -86,7 +99,7 @@ export const SelectActionModal: FC<SelectActionModalProps> = memo(props => {
                 <Button
                   isDisabled={hasSpouse}
                   onClick={() => {
-                    addSpouse();
+                    addSpouseToSelectedNode();
                     onClose();
                   }}
                 >
