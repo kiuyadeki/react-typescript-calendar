@@ -5,22 +5,26 @@ import { PersonNodeData, MaritalNodeData } from "../types/PersonNodeData";
 import { createMaritalNode, createPersonNode } from "../utils/nodeUtils";
 import { createEdge } from "../utils/edgeUtils";
 import { BASE_GENERATIONS_SPACING, BASE_MARITAL_SPACING } from "../utils/constants";
+import { isPersonNodeData } from "../typeGuards/personTypeGuards";
+import { useRecoilValue } from 'recoil';
+import { selectedNodeState } from '../recoil/selectedNodeState';
 
 export const useAddChildToSelectedNode = (
   wholeNodes: (PersonNodeData | MaritalNodeData)[],
   setWholeNodes: Dispatch<SetStateAction<(PersonNodeData | MaritalNodeData)[]>>,
   wholeEdges: Edge[],
   setWholeEdges: Dispatch<SetStateAction<Edge[]>>,
-  selectedNode: null | PersonNodeData,
   onUpdated: () => void
 ) => {
-  const outgoingEdges = useOutgoingEdges(wholeEdges, selectedNode);
+  const selectedNode = useRecoilValue(selectedNodeState);
+  const outgoingEdges = useOutgoingEdges(wholeEdges);
 
   const addChildToSelectedNode = () => {
     if (!selectedNode) return;
+
     let selectedNodeMaritalPosition = selectedNode.data.maritalPosition;
     if (!selectedNodeMaritalPosition) {
-      selectedNodeMaritalPosition = 'left';
+      selectedNodeMaritalPosition = "left";
     }
     let maritalNodeId: MaritalNodeData["id"];
     let spouseID: MaritalNodeData["id"] = selectedNode.data.spouse[0] || "";
@@ -32,7 +36,11 @@ export const useAddChildToSelectedNode = (
       maritalNodeId = maritalNode.id;
       const spouseNode = createPersonNode(
         { x: selectedNode.position.x + BASE_MARITAL_SPACING * 2, y: selectedNode.position.y },
-        { spouse: [selectedNode.id], maritalNodeId: maritalNodeId, maritalPosition: selectedNodeMaritalPosition === ('left')  ? 'right' : 'left'}
+        {
+          spouse: [selectedNode.id],
+          maritalNodeId: maritalNodeId,
+          maritalPosition: selectedNodeMaritalPosition === "left" ? "right" : "left",
+        }
       );
       spouseID = spouseNode.id;
       setWholeNodes(prevNodes => [...prevNodes, maritalNode, spouseNode]);
@@ -54,24 +62,44 @@ export const useAddChildToSelectedNode = (
     );
     childNode.data.siblings?.push(childNode.id);
 
+    const updateChildren = (node: PersonNodeData, childId: string): PersonNodeData => ({
+      ...node,
+      data: { ...node.data, children: [...node.data.children, childId] },
+    });
+
+    const updateSpouseAndChildren = (
+      node: PersonNodeData,
+      spouseId: string,
+      childId: string,
+      maritalNodeId: string,
+      maritalPosition: "left" | "right" | null
+    ): PersonNodeData => ({
+      ...node,
+      data: {
+        ...node.data,
+        spouse: [...node.data.spouse, spouseId],
+        children: [...node.data.children, childId],
+        maritalNodeId,
+        maritalPosition,
+      },
+    });
+
+    const updateSiblings = (node: PersonNodeData, siblings: string[], childId: string): PersonNodeData => ({
+      ...node,
+      data: { ...node.data, siblings: [...siblings, childId] },
+    });
+
     setWholeNodes(prevNodes =>
       prevNodes
         .map(node => {
-          if (node.id === spouseID && node.type === "person") {
-            return { ...node, data: { ...node.data, children: [...node.data.children, childNode.id] } };
-          } else if (node.id === selectedNode.id && node.type === "person") {
-            return {
-              ...node,
-              data: {
-                ...node.data,
-                spouse: [...node.data.spouse, spouseID],
-                children: [...node.data.children, childNode.id],
-                maritalNodeId: maritalNodeId,
-                maritalPosition: selectedNodeMaritalPosition,
-              },
-            };
-          } else if (selectedNode.data.children.includes(node.id) && node.type === "person") {
-            return { ...node, data: { ...node.data, siblings: [...selectedNode.data.children, childNode.id] } };
+          if (isPersonNodeData(node)) {
+            if (node.id == spouseID) {
+              return updateChildren(node, childNode.id);
+            } else if (node.id === selectedNode.id) {
+              return updateSpouseAndChildren(node, spouseID, childNode.id, maritalNodeId, selectedNodeMaritalPosition);
+            } else if (selectedNode.data.children.includes(node.id)) {
+              return updateSiblings(node, selectedNode.data.children, childNode.id);
+            }
           }
           return node;
         })

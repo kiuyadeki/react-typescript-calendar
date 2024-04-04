@@ -1,16 +1,14 @@
 import { Box, Image, Text } from "@chakra-ui/react";
 import { FC } from "react";
 import { Handle, NodeProps, Position } from "reactflow";
-import { PersonNodeData } from "../../types/PersonNodeData";
-import { BASE_PERSON_NODE_WIDTH } from "../../utils/constants";
+import { PersonData, PersonNodeData } from "../../types/PersonNodeData";
+import { BASE_PERSON_NODE_HEIGHT, BASE_PERSON_NODE_WIDTH } from "../../utils/constants";
 import { AnimatePresence, Variants, easeOut, motion } from "framer-motion";
 
-type PersonNodeProps = Omit<NodeProps, "data"> & {
-  data: PersonNodeData["data"];
-};
-export const personNode: FC<PersonNodeProps> = props => {
+export const personNode = (props: NodeProps<PersonData>) => {
   const { data } = props;
   const imageFile = data.profilePicture;
+  const isSelected = data.selected;
   const imageURL = imageFile instanceof File ? URL.createObjectURL(imageFile) : undefined;
   const variants: Variants = {
     initial: {
@@ -33,11 +31,10 @@ export const personNode: FC<PersonNodeProps> = props => {
       <Box
         px={4}
         py={2}
-        bg="white"
+        bg={isSelected ? "blue.500" : "white"}
         w={`${BASE_PERSON_NODE_WIDTH}px`}
         borderRadius="md"
         shadow={"md"}
-        transform={"translate(-50%, -50%)"}
       >
         <Handle type="source" position={Position.Right} id="personSourceRight" />
         <Handle type="source" position={Position.Left} id="personSourceLeft" />

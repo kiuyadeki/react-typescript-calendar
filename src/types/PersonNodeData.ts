@@ -1,13 +1,13 @@
 import { Node } from "reactflow";
 
-export interface NodeData {
+export interface PersonData {
   label: string;
   firstName?: string | null | undefined;
   lastName?: string | null | undefined;
   birthYear?: number | null | undefined;
   birthMonth?: number | null | undefined;
   birthDate?: number | null | undefined;
-  gender?: string | null | undefined;
+  gender?: string | undefined;
   profilePicture?: File | null | undefined;
   parents: string[];
   children: string[];
@@ -18,20 +18,19 @@ export interface NodeData {
   siblings: string[];
   maritalPosition: 'right' | 'left' | null;
   maritalNodeId?: string;
+  selected: boolean;
 }
 
 export interface maritalData {
   isDivorced: boolean;
 }
 
-export interface PersonNodeData extends Node {
+export interface PersonNodeData extends Node<PersonData> {
   type: "person";
-  data: NodeData;
-  position: { x: number; y: number };
+  data: PersonData;
 }
 
-export interface MaritalNodeData extends Node {
+export interface MaritalNodeData extends Node<PersonData | maritalData> {
   type: "marital";
-  data: maritalData;
-  position: { x: number; y: number };
+  data: PersonData | maritalData;
 }

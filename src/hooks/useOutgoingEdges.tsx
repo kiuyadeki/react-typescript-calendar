@@ -1,8 +1,11 @@
 import { useMemo } from 'react';
 import { Edge } from 'reactflow';
 import { PersonNodeData } from '../types/PersonNodeData';
+import { useRecoilValue } from 'recoil';
+import { selectedNodeState } from '../recoil/selectedNodeState';
 
-function useOutgoingEdges(wholeEdges: Edge[], selectedNode: PersonNodeData | null) {
+function useOutgoingEdges(wholeEdges: Edge[]) {
+  const selectedNode = useRecoilValue(selectedNodeState);
   const outgoingEdges = useMemo(() => {
     if (selectedNode) {
       return wholeEdges.filter(e => e.source === selectedNode.id);

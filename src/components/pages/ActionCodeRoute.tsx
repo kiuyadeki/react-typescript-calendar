@@ -1,5 +1,4 @@
 import { memo, FC, useEffect, useState } from "react";
-import { Box, Heading, Text, Divider, Stack, Flex, Link as ChakraLink } from "@chakra-ui/react";
 import { Link as ReactRouterLink, useLocation } from "react-router-dom";
 import { applyActionCode } from "firebase/auth";
 import { auth } from "../../firebase";

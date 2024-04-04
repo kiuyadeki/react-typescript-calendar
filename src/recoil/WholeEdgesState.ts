@@ -6,5 +6,4 @@ const initialEdges: Edge[] = [];
 export const wholeEdgesState = atom<Edge[]>({
   key: "wholeEdgesState",
   default: initialEdges,
-  dangerouslyAllowMutability: true,
 });

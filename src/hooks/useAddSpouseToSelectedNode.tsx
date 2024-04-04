@@ -1,19 +1,20 @@
 import { Dispatch, SetStateAction } from "react";
 import { Edge, Node } from "reactflow";
 import { PersonNodeData, MaritalNodeData } from "../types/PersonNodeData";
-import { InitialPersonNode } from "../components/parts/InitialPersonNode";
 import { getAddedNodeId } from "../utils/getAddedNodeId";
 import { createMaritalNode, createPersonNode } from "../utils/nodeUtils";
 import { createEdge } from "../utils/edgeUtils";
 import { BASE_MARITAL_SPACING } from "../utils/constants";
+import { useRecoilValue } from 'recoil';
+import { selectedNodeState } from '../recoil/selectedNodeState';
 
 export const useAddSpouseToSelectedNode = (
   setWholeNodes: Dispatch<SetStateAction<(PersonNodeData | MaritalNodeData)[]>>,
   setWholeEdges: Dispatch<SetStateAction<Edge[]>>,
-  selectedNode: null | PersonNodeData,
   onUpdated: () => void
 ) => {
   const addSpouseToSelectedNode = () => {
+    const selectedNode = useRecoilValue(selectedNodeState);
     if (selectedNode) {
       let selectedNodeMaritalPosition = selectedNode.data.maritalPosition;
       if (!selectedNodeMaritalPosition) {

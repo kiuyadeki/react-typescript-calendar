@@ -2,10 +2,12 @@ import { Box, Button, FormControl, FormErrorMessage, FormLabel, HStack, Image, I
 import { ChangeEvent, FC, memo, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useProfilePictureUpload } from '../../hooks/useProfilePictureChange';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { wholeNodesState } from '../../recoil/WholeNodesState';
 import { Node } from 'reactflow';
 import { PersonNodeData } from '../../types/PersonNodeData';
+import { nodesUpdatedState } from '../../recoil/nodesUpdatedState';
+import { selectedNodeState } from '../../recoil/selectedNodeState';
 
 type Inputs = {
   lastName: string;
@@ -18,13 +20,13 @@ type Inputs = {
 };
 
 type ProfileEditorProps = {
-  selectedNode: PersonNodeData | null;
   setShowProfileEditor: (value: boolean) => void;
   onClose: () => void;
 }
 
 export const ProfileEditor: FC<ProfileEditorProps> = memo(props => {
-  const { selectedNode, setShowProfileEditor, onClose } = props;
+  const { setShowProfileEditor, onClose } = props;
+  const selectedNode = useRecoilValue(selectedNodeState);
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: currentYear - 1900 + 1 }, (_, i) => 1900 + i);
   const months = Array.from( {length: 12}, (_, i) => i + 1);
@@ -37,6 +39,8 @@ export const ProfileEditor: FC<ProfileEditorProps> = memo(props => {
   } = useForm<Inputs>();
   const { uploadedImage, handleImageChange } = useProfilePictureUpload();
   const [wholeNodes, setWholeNodes] = useRecoilState(wholeNodesState);
+  const [nodesUpdated, setNodesUpdated] = useRecoilState(nodesUpdatedState);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   // ファイルが選択されたときにreact-hook-formの値を更新
   const onFileInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -46,7 +50,7 @@ export const ProfileEditor: FC<ProfileEditorProps> = memo(props => {
   };
 
   const handleButtonClick = () => {
-    document.getElementById('profilePictureInput')?.click();
+    inputRef.current?.click();
   };
 
 
@@ -72,6 +76,7 @@ export const ProfileEditor: FC<ProfileEditorProps> = memo(props => {
     }
     onClose();
     setShowProfileEditor(false);
+    setNodesUpdated(true);
   });
 
   const [selectedGender, setSelectedGender] = useState<string | undefined>(undefined);
@@ -89,6 +94,21 @@ export const ProfileEditor: FC<ProfileEditorProps> = memo(props => {
       value: 'female',
     },
   ];
+
+  useEffect(() => {
+    if (selectedNode && selectedNode.data) {
+      const { lastName, firstName, birthYear, birthMonth, birthDate, gender, profilePicture } = selectedNode.data;
+      setValue('lastName', lastName || '');
+      setValue('firstName', firstName || '');
+      setValue('birthYear', birthYear || new Date().getFullYear());
+      setValue('birthMonth', birthMonth || 1);
+      setValue('birthDate', birthDate || 1);
+      setSelectedGender(gender); // RadioGroup用のstateも更新
+      if (profilePicture) {
+        setValue('profilePicture', profilePicture || '');
+      }
+    }
+  }, [selectedNode, setValue]);
 
   return (
     <form onSubmit={onSubmit}>
@@ -157,6 +177,7 @@ export const ProfileEditor: FC<ProfileEditorProps> = memo(props => {
             onChange: onFileInputChange
           })}
           hidden
+          ref={inputRef}
         />
         <Button onClick={handleButtonClick}>Upload File</Button>
         {uploadedImage && (
