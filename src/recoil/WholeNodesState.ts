@@ -10,7 +10,7 @@ const initialNodes: (PersonNodeData | MaritalNodeData)[] = [
       birthYear: null,
       birthMonth: null,
       birthDate: null,
-      gender: null,
+      gender: undefined,
       profilePicture: null,
       parents: [],
       children: [],

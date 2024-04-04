@@ -95,6 +95,21 @@ export const ProfileEditor: FC<ProfileEditorProps> = memo(props => {
     },
   ];
 
+  useEffect(() => {
+    if (selectedNode && selectedNode.data) {
+      const { lastName, firstName, birthYear, birthMonth, birthDate, gender, profilePicture } = selectedNode.data;
+      setValue('lastName', lastName || '');
+      setValue('firstName', firstName || '');
+      setValue('birthYear', birthYear || new Date().getFullYear());
+      setValue('birthMonth', birthMonth || 1);
+      setValue('birthDate', birthDate || 1);
+      setSelectedGender(gender); // RadioGroup用のstateも更新
+      if (profilePicture) {
+        setValue('profilePicture', profilePicture || '');
+      }
+    }
+  }, [selectedNode, setValue]);
+
   return (
     <form onSubmit={onSubmit}>
       <HStack>

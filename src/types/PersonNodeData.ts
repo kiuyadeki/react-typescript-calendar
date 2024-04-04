@@ -7,7 +7,7 @@ export interface PersonData {
   birthYear?: number | null | undefined;
   birthMonth?: number | null | undefined;
   birthDate?: number | null | undefined;
-  gender?: string | null | undefined;
+  gender?: string | undefined;
   profilePicture?: File | null | undefined;
   parents: string[];
   children: string[];
