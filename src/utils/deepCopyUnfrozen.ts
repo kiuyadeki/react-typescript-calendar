@@ -3,6 +3,8 @@ export function deepCopyUnfrozen(obj: any): any {
     return obj;
   }
 
+  if (obj instanceof File) return new File([obj], obj.name, { type: obj.type })
+
   if (Array.isArray(obj)) {
     return obj.map(deepCopyUnfrozen);
   }
