@@ -1,4 +1,4 @@
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { wholeNodesState } from '../../recoil/WholeNodesState';
 import { wholeEdgesState } from '../../recoil/WholeEdgesState';
 import { selectedNodeState } from '../../recoil/selectedNodeState';
@@ -30,6 +30,10 @@ export const FamilyTreeWrapper = (props: {onOpen: () => void}) => {
   const { x, y, zoom } = useViewport();
   const reactFlowInstance = useReactFlow();
   useEffect(() => {
+    setSelectedNode(wholeNodes[0] as PersonNodeData);
+  }, []);
+
+  useEffect(() => {
     reactFlowInstance.fitView({
       padding: 20,
     });
@@ -58,18 +62,6 @@ export const FamilyTreeWrapper = (props: {onOpen: () => void}) => {
     if (selectedNode && clickedNode.id === selectedNode.id) {
       onOpen();
     } else {
-      setWholeNodes(prevNodes =>
-        prevNodes.map(node => {
-          if (!isPersonNodeData(node)) return node;
-          if (previousSelectedNode && node.id === previousSelectedNode.id) {
-            return { ...node, data: { ...node.data, selected: false } };
-          } else if (node.id === clickedNode.id) {
-            return { ...node, data: { ...node.data, selected: true } };
-          } else {
-            return node;
-          }
-        })
-      );
       setNodesUpdated(true);
     }
   };

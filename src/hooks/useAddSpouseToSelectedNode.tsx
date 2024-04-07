@@ -5,16 +5,18 @@ import { getAddedNodeId } from "../utils/getAddedNodeId";
 import { createMaritalNode, createPersonNode } from "../utils/nodeUtils";
 import { createEdge } from "../utils/edgeUtils";
 import { BASE_MARITAL_SPACING } from "../utils/constants";
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { selectedNodeState } from '../recoil/selectedNodeState';
+import { lastAddedNodeState } from '../recoil/lastAddedNodeState';
 
 export const useAddSpouseToSelectedNode = (
   setWholeNodes: Dispatch<SetStateAction<(PersonNodeData | MaritalNodeData)[]>>,
   setWholeEdges: Dispatch<SetStateAction<Edge[]>>,
   onUpdated: () => void
 ) => {
+  const selectedNode = useRecoilValue(selectedNodeState);
+  // const [lastAddedNode, setLastAddedNode] = useRecoilState(lastAddedNodeState);
   const addSpouseToSelectedNode = () => {
-    const selectedNode = useRecoilValue(selectedNodeState);
     if (selectedNode) {
       let selectedNodeMaritalPosition = selectedNode.data.maritalPosition;
       if (!selectedNodeMaritalPosition) {
@@ -41,6 +43,7 @@ export const useAddSpouseToSelectedNode = (
           maritalPosition: selectedNodeMaritalPosition === 'left'  ? 'right' : 'left'
         }
       );
+      // setLastAddedNode(SpouseNode);
 
       const spouseToMaritalEdge = createEdge(
         SpouseNode.id,

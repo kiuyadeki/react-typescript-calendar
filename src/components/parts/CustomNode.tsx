@@ -4,11 +4,14 @@ import { Handle, NodeProps, Position } from "reactflow";
 import { PersonData, PersonNodeData } from "../../types/PersonNodeData";
 import { BASE_PERSON_NODE_HEIGHT, BASE_PERSON_NODE_WIDTH } from "../../utils/constants";
 import { AnimatePresence, Variants, easeOut, motion } from "framer-motion";
+import { useRecoilValue } from 'recoil';
+import { selectedNodeState } from '../../recoil/selectedNodeState';
 
 export const personNode = (props: NodeProps<PersonData>) => {
-  const { data } = props;
+  const { id, data } = props;
+  const selectedNode = useRecoilValue(selectedNodeState);
   const imageFile = data.profilePicture;
-  const isSelected = data.selected;
+  const isSelected = id === selectedNode?.id;
   const imageURL = imageFile instanceof File ? URL.createObjectURL(imageFile) : undefined;
   const variants: Variants = {
     initial: {
@@ -40,6 +43,8 @@ export const personNode = (props: NodeProps<PersonData>) => {
         <Handle type="source" position={Position.Left} id="personSourceLeft" />
         <Handle type="source" position={Position.Top} id="personSourceTop" />
 
+        
+        <Text fontSize="md">{id}</Text>
         <Text fontSize="md">{data.label}</Text>
         <Text fontSize="md">{data.lastName}</Text>
         <Text fontSize="md">{data.firstName}</Text>

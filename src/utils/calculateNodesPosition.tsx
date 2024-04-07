@@ -1,4 +1,4 @@
-import { Edge, Node, useNodesState } from "reactflow";
+
 import { PersonNodeData, MaritalNodeData } from "../types/PersonNodeData";
 import {
   BASE_GENERATIONS_SPACING,
