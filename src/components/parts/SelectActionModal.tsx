@@ -53,7 +53,7 @@ export const SelectActionModal: FC<SelectActionModalProps> = memo(props => {
 
   const handleCloseModal = () => {
     setShowProfileEditor(false);
-    handleCloseModal();
+    onClose();
   };
 
   let hasParents = false;
@@ -64,7 +64,7 @@ export const SelectActionModal: FC<SelectActionModalProps> = memo(props => {
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Modal isOpen={isOpen} onClose={handleCloseModal}>
       <ModalOverlay />
       <ModalContent p={3}>
         <ModalHeader>Modal Title</ModalHeader>
