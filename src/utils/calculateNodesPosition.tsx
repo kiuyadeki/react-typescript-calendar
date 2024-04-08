@@ -285,8 +285,7 @@ const calculateParentNodePosition = (
 
 export function calculateNodesPosition(
   wholeNodes: (PersonNodeData | MaritalNodeData)[],
-  selectedNode: PersonNodeData | null,
-  nodesUpdated: boolean
+  selectedNode: PersonNodeData | null
 ) {
   if (!selectedNode) return;
   const wholeNodesCopy: (PersonNodeData | MaritalNodeData)[] = deepCopyUnfrozen(wholeNodes);
@@ -300,14 +299,13 @@ export function calculateNodesPosition(
       const birthYear = node.data.birthYear;
       return birthYear ? new Date().getFullYear() - birthYear : -Infinity;
     };
-    
     if(!isPersonNodeData(a) || !isPersonNodeData(b)) return 0;
     const ageA = getAge(a);
     const ageB = getAge(b);
   
     if (ageA > ageB) return -1;
     if (ageA < ageB) return 1;
-    return a.id.localeCompare(b.id);
+    return parseInt(a.id, 10) - parseInt(b.id, 10);
   });
   let siblingsOffset = 0;
   sortedSiblingsNodes.forEach(node => {
@@ -316,6 +314,6 @@ export function calculateNodesPosition(
       siblingsOffset += node.data.descendantsWidth;
     }
   });
-  calculateParentNodePosition(wholeNodesCopy, selectedNodesCopy, selectedNodesCopy, 0, 0, "");
+  calculateParentNodePosition(wholeNodesCopy, selectedNodesCopy, selectedNodesCopy, 0, selectedNodesCopy.position.x, "");
   return wholeNodesCopy;
 }

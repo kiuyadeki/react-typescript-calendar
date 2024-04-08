@@ -40,30 +40,40 @@ export const FamilyTreeWrapper = (props: {onOpen: () => void}) => {
   }, [reactFlowInstance]);
   useEffect(() => {
     console.log('wholeNodes', wholeNodes);
-    console.log('wholeEdges', wholeEdges);
     if (nodesUpdated && selectedNode) {
+      const calculatedWholeNodes = calculateNodesPosition(wholeNodes, selectedNode);
+      if (!calculatedWholeNodes) return;
+      setWholeNodes(calculatedWholeNodes);
       const { directLineageNodes, directLineageEdges } = filterDirectLineagesNodes(
-        wholeNodes,
+        calculatedWholeNodes,
         wholeEdges,
         selectedNode
       );
-      const calculatedWholeNodes = calculateNodesPosition(directLineageNodes, selectedNode, nodesUpdated);
-      if (!calculatedWholeNodes) return;
-      setNodes(calculatedWholeNodes);
+      // const { directLineageNodes, directLineageEdges } = filterDirectLineagesNodes(
+      //   wholeNodes,
+      //   wholeEdges,
+      //   selectedNode
+      // );
+      // const calculatedWholeNodes = calculateNodesPosition(directLineageNodes, selectedNode, nodesUpdated);
+      // if (!calculatedWholeNodes) return;
+      setNodes(directLineageNodes);
       setEdges(directLineageEdges);
       setNodesUpdated(false);
       setCenter(selectedNode?.position.x, selectedNode?.position.y, { zoom, duration: 1000 });
     }
   }, [nodesUpdated]);
 
+  useEffect(() => {
+    if (selectedNode) {
+      setNodesUpdated(true);
+    }
+  }, [selectedNode])
+
   const handleNodeClick = (clickedNode: PersonNodeData) => {
-    const previousSelectedNode = selectedNode;
     setSelectedNode(clickedNode);
     if (selectedNode && clickedNode.id === selectedNode.id) {
       onOpen();
-    } else {
-      setNodesUpdated(true);
-    }
+    } 
   };
 
   return (
