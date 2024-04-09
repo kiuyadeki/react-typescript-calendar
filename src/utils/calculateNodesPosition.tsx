@@ -289,7 +289,8 @@ export function calculateNodesPosition(
 ) {
   if (!selectedNode) return;
   const wholeNodesCopy: (PersonNodeData | MaritalNodeData)[] = deepCopyUnfrozen(wholeNodes);
-  const selectedNodesCopy = deepCopyUnfrozen(selectedNode);
+  const selectedNodesCopy = wholeNodesCopy.find(node => node.id === selectedNode.id);
+  if (!selectedNodesCopy || !isPersonNodeData(selectedNodesCopy)) return;
   setDescendants(wholeNodesCopy);
   setAncestors(wholeNodesCopy);
 
@@ -314,6 +315,6 @@ export function calculateNodesPosition(
       siblingsOffset += node.data.descendantsWidth;
     }
   });
-  calculateParentNodePosition(wholeNodesCopy, selectedNodesCopy, selectedNodesCopy, 0, selectedNodesCopy.position.x, "");
+  calculateParentNodePosition(wholeNodesCopy, selectedNodesCopy, selectedNodesCopy, 0, 0, "");
   return wholeNodesCopy;
 }
