@@ -21,6 +21,7 @@ export const initialNode: (PersonNodeData | MaritalNodeData) =
       maritalPosition: null,
       ancestors: 0,
       selected: true,
+      isDivorced: false,
     },
     position: { x: 0, y: 0 },
   };
