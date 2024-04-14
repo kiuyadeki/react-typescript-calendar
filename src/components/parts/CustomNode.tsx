@@ -6,6 +6,7 @@ import { BASE_PERSON_NODE_HEIGHT, BASE_PERSON_NODE_WIDTH } from "../../utils/con
 import { AnimatePresence, Variants, easeOut, motion } from "framer-motion";
 import { useRecoilValue } from 'recoil';
 import { selectedNodeState } from '../../recoil/selectedNodeState';
+import { BiSolidUser } from "react-icons/bi";
 
 export const personNode = (props: NodeProps<PersonData>) => {
   const { id, data } = props;
@@ -43,7 +44,7 @@ export const personNode = (props: NodeProps<PersonData>) => {
         <Handle type="source" position={Position.Left} id="personSourceLeft" />
         <Handle type="source" position={Position.Top} id="personSourceTop" />
 
-        
+        <BiSolidUser color="#ffffff" />
         <Text fontSize="md">{id}</Text>
         <Text fontSize="md">{data.label}</Text>
         <Text fontSize="md">{data.lastName}</Text>

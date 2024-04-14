@@ -49,13 +49,6 @@ export const FamilyTreeWrapper = (props: {onOpen: () => void}) => {
         wholeEdges,
         selectedNode
       );
-      // const { directLineageNodes, directLineageEdges } = filterDirectLineagesNodes(
-      //   wholeNodes,
-      //   wholeEdges,
-      //   selectedNode
-      // );
-      // const calculatedWholeNodes = calculateNodesPosition(directLineageNodes, selectedNode, nodesUpdated);
-      // if (!calculatedWholeNodes) return;
       setNodes(directLineageNodes);
       setEdges(directLineageEdges);
       setNodesUpdated(false);
