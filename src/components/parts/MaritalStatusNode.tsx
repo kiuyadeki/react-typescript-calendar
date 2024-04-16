@@ -8,6 +8,7 @@ import { TfiUnlink } from "react-icons/tfi";
 import { useRecoilState } from 'recoil';
 import { wholeNodesState } from '../../recoil/WholeNodesState';
 import { isMaritalNodeData } from '../../typeGuards/maritalTypeGuards';
+import styled from '@emotion/styled';
 
 export const maritalNode = (props: NodeProps<MaritalData>) => {
   const {id, data } = props;
@@ -24,20 +25,33 @@ export const maritalNode = (props: NodeProps<MaritalData>) => {
     })
   };
 
+  const StyledHandle = styled(Handle)`
+  opacity: 0;
+  border: none;
+  pointer-events: none;
+  background: #ccc;
+`;
+
   return (
     <Center
       onClick={handleClick}
-      shadow={"md"}
       w={`${BASE_MARITAL_NODE_WIDTH}px`}
       h={`${BASE_MARITAL_NODE_HEIGHT}px`}
       borderRadius={50}
-      backgroundColor="#fff"
     >
-      { !data.isDivorced ?  <GiBigDiamondRing />: <TfiUnlink />}
-      <Text>{data.isDivorced}</Text>
-      <Handle type="target" position={Position.Right} id="maritalTargetRight" />
-      <Handle type="target" position={Position.Left} id="maritalTargetLeft" />
-      <Handle type="target" position={Position.Bottom} id="maritalTargetBottom" />
+      <Center
+        bg={"#fff"} 
+        transform={"scale(1.3)"}
+        w={`${BASE_MARITAL_NODE_WIDTH}px`}
+        h={`${BASE_MARITAL_NODE_HEIGHT}px`}
+        borderRadius={50}
+        shadow={"md"}
+      >
+        { !data.isDivorced ?  <GiBigDiamondRing />: <TfiUnlink />}
+      </Center>
+        <StyledHandle type="target" position={Position.Right} id="maritalTargetRight" />
+        <StyledHandle type="target" position={Position.Left} id="maritalTargetLeft" />
+        <StyledHandle type="target" position={Position.Bottom} id="maritalTargetBottom" />
     </Center>
   );
 };
