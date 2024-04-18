@@ -18,10 +18,11 @@ export interface PersonData {
   siblings: string[];
   maritalPosition: 'right' | 'left' | null;
   maritalNodeId?: string;
+  isDivorced: boolean;
   selected: boolean;
 }
 
-export interface maritalData {
+export interface MaritalData {
   isDivorced: boolean;
 }
 
@@ -30,7 +31,7 @@ export interface PersonNodeData extends Node<PersonData> {
   data: PersonData;
 }
 
-export interface MaritalNodeData extends Node<PersonData | maritalData> {
+export interface MaritalNodeData extends Node<PersonData | MaritalData> {
   type: "marital";
-  data: PersonData | maritalData;
+  data: PersonData | MaritalData;
 }

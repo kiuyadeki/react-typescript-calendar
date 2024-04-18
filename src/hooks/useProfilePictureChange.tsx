@@ -4,10 +4,7 @@ export const useProfilePictureUpload = () => {
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
 
   const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
-    // const files = event.target?.files;
     const file = event.target.files ? event.target.files[0] : null;
-    // if (files && files.length > 0) {
-      // const file = files[0];
       if(file) {
         if(file.size > 5242880) {
           alert("ファイルサイズは5MB以下である必要があります");
@@ -28,7 +25,6 @@ export const useProfilePictureUpload = () => {
           reader.readAsDataURL(file);
         }
       }
-    // }
   };
 
   return { uploadedImage, handleImageChange };

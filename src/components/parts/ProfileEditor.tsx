@@ -40,19 +40,25 @@ export const ProfileEditor: FC<ProfileEditorProps> = memo(props => {
   const { uploadedImage, handleImageChange } = useProfilePictureUpload();
   const [wholeNodes, setWholeNodes] = useRecoilState(wholeNodesState);
   const [nodesUpdated, setNodesUpdated] = useRecoilState(nodesUpdatedState);
+  const [previewImageURL, setPreviewImageURL] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   // ファイルが選択されたときにreact-hook-formの値を更新
   const onFileInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     handleImageChange(event);
     const file = event.target.files ? event.target.files[0] : null;
+    if (file) {
+      const previewURL = URL.createObjectURL(file);
+      setPreviewImageURL(previewURL);
+    } else {
+      setPreviewImageURL(null);
+    }
     setValue('profilePicture', file);
   };
 
   const handleButtonClick = () => {
     inputRef.current?.click();
   };
-
 
   const onSubmit = handleSubmit(data => {
     if (selectedNode) {
@@ -69,7 +75,6 @@ export const ProfileEditor: FC<ProfileEditorProps> = memo(props => {
           profilePicture: data.profilePicture,
         }
       }
-
       setWholeNodes(prevNodes => prevNodes.map(node => {
         return node.id === selectedNode.id ? updatedNode : node;
       }));
@@ -103,9 +108,11 @@ export const ProfileEditor: FC<ProfileEditorProps> = memo(props => {
       setValue('birthYear', birthYear || new Date().getFullYear());
       setValue('birthMonth', birthMonth || 1);
       setValue('birthDate', birthDate || 1);
-      setSelectedGender(gender); // RadioGroup用のstateも更新
+      setSelectedGender(gender);
       if (profilePicture) {
         setValue('profilePicture', profilePicture || '');
+        const previewURL = typeof profilePicture === 'string' ? profilePicture : URL.createObjectURL(profilePicture);
+        setPreviewImageURL(previewURL);
       }
     }
   }, [selectedNode, setValue]);
@@ -180,6 +187,11 @@ export const ProfileEditor: FC<ProfileEditorProps> = memo(props => {
           ref={inputRef}
         />
         <Button onClick={handleButtonClick}>Upload File</Button>
+        {
+          previewImageURL && (
+            <Image src={previewImageURL} />
+          )
+        }
         {uploadedImage && (
           <Box>
             <Image src={uploadedImage} />

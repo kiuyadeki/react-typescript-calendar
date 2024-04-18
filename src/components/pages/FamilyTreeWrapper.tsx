@@ -1,4 +1,4 @@
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { wholeNodesState } from '../../recoil/WholeNodesState';
 import { wholeEdgesState } from '../../recoil/WholeEdgesState';
 import { selectedNodeState } from '../../recoil/selectedNodeState';
@@ -12,6 +12,8 @@ import { calculateNodesPosition } from '../../utils/calculateNodesPosition';
 import { Box } from '@chakra-ui/react';
 import { isPersonNodeData } from '../../typeGuards/personTypeGuards';
 import { PersonNodeData } from '../../types/PersonNodeData';
+import { getSelectedNodePosition } from '../../utils/getSelectedNodePosition';
+import { BASE_MARITAL_NODE_WIDTH, BASE_PERSON_NODE_HEIGHT, BASE_PERSON_NODE_WIDTH } from '../../utils/constants';
 
 export const FamilyTreeWrapper = (props: {onOpen: () => void}) => {
   const { onOpen } = props
@@ -30,48 +32,44 @@ export const FamilyTreeWrapper = (props: {onOpen: () => void}) => {
   const { x, y, zoom } = useViewport();
   const reactFlowInstance = useReactFlow();
   useEffect(() => {
+    setSelectedNode(wholeNodes[0] as PersonNodeData);
+  }, []);
+
+  useEffect(() => {
     reactFlowInstance.fitView({
       padding: 20,
     });
   }, [reactFlowInstance]);
   useEffect(() => {
     console.log('wholeNodes', wholeNodes);
-    console.log('wholeEdges', wholeEdges);
     if (nodesUpdated && selectedNode) {
+      const calculatedWholeNodes = calculateNodesPosition(wholeNodes, selectedNode);
+      if (!calculatedWholeNodes) return;
+      setWholeNodes(calculatedWholeNodes);
       const { directLineageNodes, directLineageEdges } = filterDirectLineagesNodes(
-        wholeNodes,
+        calculatedWholeNodes,
         wholeEdges,
         selectedNode
       );
-      const calculatedWholeNodes = calculateNodesPosition(directLineageNodes, selectedNode, nodesUpdated);
-      if (!calculatedWholeNodes) return;
-      setNodes(calculatedWholeNodes);
+      setNodes(directLineageNodes);
       setEdges(directLineageEdges);
       setNodesUpdated(false);
-      setCenter(selectedNode?.position.x, selectedNode?.position.y, { zoom, duration: 1000 });
+      const [selectedNodePostionX, selectedNodePostionY] = getSelectedNodePosition(calculatedWholeNodes, selectedNode) || [0, 0];
+      setCenter(selectedNodePostionX + BASE_PERSON_NODE_WIDTH / 2, selectedNodePostionY + BASE_PERSON_NODE_HEIGHT / 2, { zoom, duration: 1000 });
     }
   }, [nodesUpdated]);
 
+  useEffect(() => {
+    if (selectedNode) {
+      setNodesUpdated(true);
+    }
+  }, [selectedNode])
+
   const handleNodeClick = (clickedNode: PersonNodeData) => {
-    const previousSelectedNode = selectedNode;
     setSelectedNode(clickedNode);
     if (selectedNode && clickedNode.id === selectedNode.id) {
       onOpen();
-    } else {
-      setWholeNodes(prevNodes =>
-        prevNodes.map(node => {
-          if (!isPersonNodeData(node)) return node;
-          if (previousSelectedNode && node.id === previousSelectedNode.id) {
-            return { ...node, data: { ...node.data, selected: false } };
-          } else if (node.id === clickedNode.id) {
-            return { ...node, data: { ...node.data, selected: true } };
-          } else {
-            return node;
-          }
-        })
-      );
-      setNodesUpdated(true);
-    }
+    } 
   };
 
   return (

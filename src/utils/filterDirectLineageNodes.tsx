@@ -1,8 +1,6 @@
 import { useMemo } from "react";
 import { PersonNodeData, MaritalNodeData } from "../types/PersonNodeData";
 import { Edge } from "reactflow";
-import { useRecoilValue } from 'recoil';
-import { selectedNodeState } from '../recoil/selectedNodeState';
 
 export function filterDirectLineagesNodes (
   wholeNodes: (PersonNodeData | MaritalNodeData)[],

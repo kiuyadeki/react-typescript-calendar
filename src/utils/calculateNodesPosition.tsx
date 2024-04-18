@@ -1,4 +1,4 @@
-import { Edge, Node, useNodesState } from "reactflow";
+
 import { PersonNodeData, MaritalNodeData } from "../types/PersonNodeData";
 import {
   BASE_GENERATIONS_SPACING,
@@ -285,12 +285,12 @@ const calculateParentNodePosition = (
 
 export function calculateNodesPosition(
   wholeNodes: (PersonNodeData | MaritalNodeData)[],
-  selectedNode: PersonNodeData | null,
-  nodesUpdated: boolean
+  selectedNode: PersonNodeData | null
 ) {
   if (!selectedNode) return;
   const wholeNodesCopy: (PersonNodeData | MaritalNodeData)[] = deepCopyUnfrozen(wholeNodes);
-  const selectedNodesCopy = deepCopyUnfrozen(selectedNode);
+  const selectedNodesCopy = wholeNodesCopy.find(node => node.id === selectedNode.id);
+  if (!selectedNodesCopy || !isPersonNodeData(selectedNodesCopy)) return;
   setDescendants(wholeNodesCopy);
   setAncestors(wholeNodesCopy);
 
@@ -300,14 +300,13 @@ export function calculateNodesPosition(
       const birthYear = node.data.birthYear;
       return birthYear ? new Date().getFullYear() - birthYear : -Infinity;
     };
-    
     if(!isPersonNodeData(a) || !isPersonNodeData(b)) return 0;
     const ageA = getAge(a);
     const ageB = getAge(b);
   
     if (ageA > ageB) return -1;
     if (ageA < ageB) return 1;
-    return a.id.localeCompare(b.id);
+    return parseInt(a.id, 10) - parseInt(b.id, 10);
   });
   let siblingsOffset = 0;
   sortedSiblingsNodes.forEach(node => {
