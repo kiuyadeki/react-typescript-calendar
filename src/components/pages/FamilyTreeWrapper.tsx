@@ -13,6 +13,7 @@ import { Box } from '@chakra-ui/react';
 import { isPersonNodeData } from '../../typeGuards/personTypeGuards';
 import { PersonNodeData } from '../../types/PersonNodeData';
 import { getSelectedNodePosition } from '../../utils/getSelectedNodePosition';
+import { BASE_MARITAL_NODE_WIDTH, BASE_PERSON_NODE_HEIGHT, BASE_PERSON_NODE_WIDTH } from '../../utils/constants';
 
 export const FamilyTreeWrapper = (props: {onOpen: () => void}) => {
   const { onOpen } = props
@@ -54,7 +55,7 @@ export const FamilyTreeWrapper = (props: {onOpen: () => void}) => {
       setEdges(directLineageEdges);
       setNodesUpdated(false);
       const [selectedNodePostionX, selectedNodePostionY] = getSelectedNodePosition(calculatedWholeNodes, selectedNode) || [0, 0];
-      setCenter(selectedNodePostionX, selectedNodePostionY, { zoom, duration: 1000 });
+      setCenter(selectedNodePostionX + BASE_PERSON_NODE_WIDTH / 2, selectedNodePostionY + BASE_PERSON_NODE_HEIGHT / 2, { zoom, duration: 1000 });
     }
   }, [nodesUpdated]);
 
