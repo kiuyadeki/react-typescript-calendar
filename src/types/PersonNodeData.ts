@@ -9,6 +9,7 @@ export interface PersonData {
   birthDate?: number | null | undefined;
   gender?: string | undefined;
   profilePicture?: File | null | undefined;
+  profilePictureURL?: string | null;
   parents: string[];
   children: string[];
   spouse: string[];

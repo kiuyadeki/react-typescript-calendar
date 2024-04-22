@@ -15,7 +15,8 @@ export const personNode = (props: NodeProps<PersonData>) => {
   const selectedNode = useRecoilValue(selectedNodeState);
   const imageFile = data.profilePicture;
   const isSelected = id === selectedNode?.id;
-  const imageURL = imageFile instanceof File ? URL.createObjectURL(imageFile) : undefined;
+  // const imageURL = imageFile instanceof File ? URL.createObjectURL(imageFile) : undefined;
+  const imageURL = data.profilePictureURL;
   interface StyledBoxProps {
     isSelected: boolean;
   }
@@ -44,12 +45,10 @@ export const personNode = (props: NodeProps<PersonData>) => {
   const selectedAnimation = keyframes`
   0% {
     transform: translate(-50%, -50%) scale(1, 1);
-    // background-color: rgba(144, 205, 244, 0.6);
     opacity: 1;
   }
   100% {
     transform: translate(-50%, -50%) scale(1.8, 1.8);
-    // background-color: rgba(144, 205, 244, 0);
     opacity: 0;
   }
   `;
@@ -101,6 +100,21 @@ export const personNode = (props: NodeProps<PersonData>) => {
     position: absolute;
     inset: 0;
     border-radius: 50%;
+  `;
+
+  const DefaultProfileIcon = styled.div`
+    margin-top: 14px;
+  `;
+
+  const CustomProfileIcon = styled.img`
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  `
+
+  const InformationBox = styled.div`
+    position: absolute;
+    top: calc(100% + 8px);
   `
 
   return (
@@ -120,20 +134,19 @@ export const personNode = (props: NodeProps<PersonData>) => {
           <StyledBox isSelected={isSelected}>
             <IconBox isSelected={isSelected}>
               <IconInner>
-                {imageURL ? <Image src={imageURL} /> : <BiSolidUser size={100} color="#ffffff" />}
+                {imageURL ? <CustomProfileIcon src={imageURL} /> : <DefaultProfileIcon><BiSolidUser size={100} color="#ffffff" /></DefaultProfileIcon>}
               </IconInner>
             </IconBox>
 
-            <Box position="absolute">
+            <InformationBox>
               <Text fontSize="md">{id}</Text>
-              <Text fontSize="md">{data.label}</Text>
               <Text fontSize="md">{data.lastName}</Text>
               <Text fontSize="md">{data.firstName}</Text>
               <Text fontSize="md">{data.birthYear}</Text>
               <Text fontSize="md">{data.birthMonth}</Text>
               <Text fontSize="md">{data.birthDate}</Text>
               <Text fontSize="md">{data.gender}</Text>
-            </Box>
+            </InformationBox>
           </StyledBox>
         </motion.div>
       </AnimatePresence>
