@@ -14,6 +14,7 @@ import { isPersonNodeData } from '../../typeGuards/personTypeGuards';
 import { PersonNodeData } from '../../types/PersonNodeData';
 import { getSelectedNodePosition } from '../../utils/getSelectedNodePosition';
 import { BASE_MARITAL_NODE_WIDTH, BASE_PERSON_NODE_HEIGHT, BASE_PERSON_NODE_WIDTH } from '../../utils/constants';
+import { ParentChildEdge } from '../parts/ParentChildEdge';
 
 export const FamilyTreeWrapper = (props: {onOpen: () => void}) => {
   const { onOpen } = props
@@ -24,6 +25,7 @@ export const FamilyTreeWrapper = (props: {onOpen: () => void}) => {
 
   const reactFlowWrapper = useRef<HTMLDivElement | null>(null);
   const nodeTypes = useMemo(() => ({ person: personNode, marital: maritalNode }), []);
+  const edgeTypes = useMemo(() => ({ parentChild: ParentChildEdge}), [])
   const [nodes, setNodes, onNodesChange] = useNodesState(wholeNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(wholeEdges as Edge[]);
   const onConnect = useCallback((params: Connection) => setEdges(eds => addEdge(params, eds)), []);
@@ -42,6 +44,7 @@ export const FamilyTreeWrapper = (props: {onOpen: () => void}) => {
   }, [reactFlowInstance]);
   useEffect(() => {
     console.log('wholeNodes', wholeNodes);
+    console.log('wholeEdges', wholeEdges);
     if (nodesUpdated && selectedNode) {
       const calculatedWholeNodes = calculateNodesPosition(wholeNodes, selectedNode);
       if (!calculatedWholeNodes) return;
@@ -78,6 +81,7 @@ export const FamilyTreeWrapper = (props: {onOpen: () => void}) => {
         nodes={nodes}
         edges={edges}
         nodeTypes={nodeTypes}
+        edgeTypes={edgeTypes}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}

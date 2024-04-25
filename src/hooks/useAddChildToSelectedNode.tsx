@@ -108,7 +108,7 @@ export const useAddChildToSelectedNode = (
 
     setWholeEdges(prevEdges => [
       ...prevEdges,
-      createEdge(childNode.id, maritalNodeId, "smoothstep", "personSourceTop", "maritalTargetBottom"),
+      createEdge(childNode.id, maritalNodeId, "parentChild", "personSourceTop", "maritalTargetBottom"),
     ]);
     if (onUpdated) {
       onUpdated();
