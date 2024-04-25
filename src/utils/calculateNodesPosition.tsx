@@ -10,7 +10,6 @@ import {
   BASE_PERSON_NODE_WIDTH,
   BASE_SIBLINGS_SPACING,
 } from "./constants";
-import { deepCopyUnfrozen } from "./deepCopyUnfrozen";
 import { isPersonNodeData } from '../typeGuards/personTypeGuards';
 
 const setDescendants = (wholeNodes: (PersonNodeData | MaritalNodeData)[]) => {
@@ -288,7 +287,7 @@ export function calculateNodesPosition(
   selectedNode: PersonNodeData | null
 ) {
   if (!selectedNode) return;
-  const wholeNodesCopy: (PersonNodeData | MaritalNodeData)[] = deepCopyUnfrozen(wholeNodes);
+  const wholeNodesCopy: (PersonNodeData | MaritalNodeData)[] = structuredClone(wholeNodes);
   const selectedNodesCopy = wholeNodesCopy.find(node => node.id === selectedNode.id);
   if (!selectedNodesCopy || !isPersonNodeData(selectedNodesCopy)) return;
   setDescendants(wholeNodesCopy);
