@@ -12,6 +12,7 @@ export const initialNode: (PersonNodeData | MaritalNodeData) =
       birthDate: null,
       gender: undefined,
       profilePicture: null,
+      profilePictureURL: null,
       parents: [],
       children: [],
       spouse: [],

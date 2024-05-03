@@ -17,6 +17,7 @@ type Inputs = {
   birthDate: number;
   gender: string;
   profilePicture: any;
+  profilePictureURL: any;
 };
 
 type ProfileEditorProps = {
@@ -73,6 +74,7 @@ export const ProfileEditor: FC<ProfileEditorProps> = memo(props => {
           birthDate: data.birthDate,
           gender: data.gender,
           profilePicture: data.profilePicture,
+          profilePictureURL: data.profilePicture instanceof File ? URL.createObjectURL(data.profilePicture) : null,
         }
       }
       setWholeNodes(prevNodes => prevNodes.map(node => {
