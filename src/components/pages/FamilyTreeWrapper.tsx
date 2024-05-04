@@ -9,15 +9,20 @@ import { maritalNode } from '../parts/MaritalStatusNode';
 import ReactFlow, { Background, BackgroundVariant, Connection, Edge, addEdge, useEdgesState, useNodesState, useReactFlow, useViewport } from 'reactflow';
 import { filterDirectLineagesNodes } from '../../utils/filterDirectLineageNodes';
 import { calculateNodesPosition } from '../../utils/calculateNodesPosition';
-import { Box } from '@chakra-ui/react';
 import { isPersonNodeData } from '../../typeGuards/personTypeGuards';
 import { PersonNodeData } from '../../types/PersonNodeData';
 import { getSelectedNodePosition } from '../../utils/getSelectedNodePosition';
 import { BASE_MARITAL_NODE_WIDTH, BASE_PERSON_NODE_HEIGHT, BASE_PERSON_NODE_WIDTH } from '../../utils/constants';
 import { ParentChildEdge } from '../parts/ParentChildEdge';
+import styled from '@emotion/styled';
 
-export const FamilyTreeWrapper = (props: {onOpen: () => void}) => {
-  const { onOpen } = props
+const OuterBox = styled.div`
+width: 100vw;
+height: 100vh;
+`;
+
+export const FamilyTreeWrapper = (props: {openModal: () => void}) => {
+  const { openModal } = props
   const [wholeNodes, setWholeNodes] = useRecoilState(wholeNodesState);
   const [wholeEdges, setWholeEdges] = useRecoilState(wholeEdgesState);
   const [selectedNode, setSelectedNode] = useRecoilState(selectedNodeState);
@@ -71,12 +76,12 @@ export const FamilyTreeWrapper = (props: {onOpen: () => void}) => {
   const handleNodeClick = (clickedNode: PersonNodeData) => {
     setSelectedNode(clickedNode);
     if (selectedNode && clickedNode.id === selectedNode.id) {
-      onOpen();
+      openModal();
     } 
   };
 
   return (
-    <Box w="100vw" h="100vh" className="wrapper" ref={reactFlowWrapper}>
+    <OuterBox  className="wrapper" ref={reactFlowWrapper}>
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -97,6 +102,6 @@ export const FamilyTreeWrapper = (props: {onOpen: () => void}) => {
       >
         <Background color="#ddd" variant={BackgroundVariant.Lines} gap={[340, 250]} />
       </ReactFlow>
-    </Box>
+    </OuterBox>
   );
 };

@@ -1,38 +1,27 @@
 import {
   Button,
   Flex,
-  FormControl,
-  FormErrorMessage,
-  FormLabel,
-  Input,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
   Text,
-  useDisclosure,
 } from "@chakra-ui/react";
 import { Dispatch, FC, SetStateAction, memo, useEffect, useState } from "react";
-import { ProfileEditor } from './ProfileEditor';
-import { PersonNodeData } from '../../types/PersonNodeData';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { selectedNodeState } from '../../recoil/selectedNodeState';
-import { useAddParentToSelectedNode } from '../../hooks/useAddParentToSelectedNode';
-import { useAddChildToSelectedNode } from '../../hooks/useAddChildToSelectedNode';
-import { useAddSpouseToSelectedNode } from '../../hooks/useAddSpouseToSelectedNode';
-import { wholeNodesState } from '../../recoil/WholeNodesState';
-import { nodesUpdatedState } from '../../recoil/nodesUpdatedState';
-import { wholeEdgesState } from '../../recoil/WholeEdgesState';
+import { ProfileEditor } from "./ProfileEditor";
+import { PersonNodeData } from "../../types/PersonNodeData";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { selectedNodeState } from "../../recoil/selectedNodeState";
+import { useAddParentToSelectedNode } from "../../hooks/useAddParentToSelectedNode";
+import { useAddChildToSelectedNode } from "../../hooks/useAddChildToSelectedNode";
+import { useAddSpouseToSelectedNode } from "../../hooks/useAddSpouseToSelectedNode";
+import { wholeNodesState } from "../../recoil/WholeNodesState";
+import { nodesUpdatedState } from "../../recoil/nodesUpdatedState";
+import { wholeEdgesState } from "../../recoil/WholeEdgesState";
+import styled from "@emotion/styled";
 
 type SelectActionModalProps = {
-  isOpen: boolean;
-  onClose: () => void;
+  closeModal: () => void;
 };
 
 export const SelectActionModal: FC<SelectActionModalProps> = memo(props => {
-  const { isOpen, onClose } = props;
+  const { closeModal } = props;
   const selectedNode = useRecoilValue(selectedNodeState);
   const [wholeNodes, setWholeNodes] = useRecoilState(wholeNodesState);
   const [nodesUpdated, setNodesUpdated] = useRecoilState(nodesUpdatedState);
@@ -53,7 +42,7 @@ export const SelectActionModal: FC<SelectActionModalProps> = memo(props => {
 
   const handleCloseModal = () => {
     setShowProfileEditor(false);
-    onClose();
+    closeModal();
   };
 
   let hasParents = false;
@@ -63,60 +52,93 @@ export const SelectActionModal: FC<SelectActionModalProps> = memo(props => {
     hasSpouse = !!selectedNode.data.spouse.length;
   }
 
+
+  const ModalBox = styled.section`
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    width: 100%;
+    outline: transparent solid 2px;
+    outline-offset: 2px;
+    border-radius: 0.375rem;
+    color: inherit;
+    margin-top: 4rem;
+    margin-bottom: 4rem;
+    z-index: 1400;
+    background-color: #fff;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    max-width: 28rem;
+    padding: 0.75rem;
+  `;
+
+  const ModalHeader = styled.header`
+    flex: 0 1 0%;
+    padding-inline-start: 1.5rem;
+    padding-inline-end: 1.5rem;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+  `;
+
+  const ModalBody = styled.div`
+    padding-inline-start: 1.5rem;
+    padding-inline-end: 1.5rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    flex: 1 1 0%;
+  `;
+
   return (
-    <Modal isOpen={isOpen} onClose={handleCloseModal}>
-      <ModalOverlay />
-      <ModalContent p={3}>
-        <ModalHeader>Modal Title</ModalHeader>
-        <ModalCloseButton />
-        <ModalBody>
-          {showProfileEditor ? (
-            <ProfileEditor onClose={onClose} setShowProfileEditor={setShowProfileEditor} />
-          ) : (
-            <>
-              <Text>{selectedNode?.data.birthDate}</Text>
-              <Text>{selectedNode?.data.birthMonth}</Text>
-              <Text>{selectedNode?.data.birthYear}</Text>
-              <Text>{selectedNode?.id}</Text>
-              <Flex wrap="wrap" gap={5}>
-                <Button
-                  isDisabled={hasParents}
-                  onClick={() => {
-                    addParentToSelectedNode();
-                    onClose();
-                  }}
-                >
-                  親を追加
-                </Button>
-                <Button
-                  onClick={() => {
-                    addChildToSelectedNode();
-                    onClose();
-                  }}
-                >
-                  子を追加
-                </Button>
-                <Button
-                  isDisabled={hasSpouse}
-                  onClick={() => {
-                    addSpouseToSelectedNode();
-                    onClose();
-                  }}
-                >
-                  配偶者を追加
-                </Button>
-                <Button
-                  onClick={() => {
-                    displayProfileEditor();
-                  }}
-                >
-                  情報を編集
-                </Button>
-              </Flex>
-            </>
-          )}
-        </ModalBody>
-      </ModalContent>
-    </Modal>
+        <>
+          <ModalHeader>Modal Title</ModalHeader>
+          <ModalBody>
+            {showProfileEditor ? (
+              <ProfileEditor onClose={closeModal} setShowProfileEditor={setShowProfileEditor} />
+            ) : (
+              <>
+                <Text>{selectedNode?.data.birthDate}</Text>
+                <Text>{selectedNode?.data.birthMonth}</Text>
+                <Text>{selectedNode?.data.birthYear}</Text>
+                <Text>{selectedNode?.id}</Text>
+                <Flex wrap="wrap" gap={5}>
+                  <Button
+                    isDisabled={hasParents}
+                    onClick={() => {
+                      addParentToSelectedNode();
+                      closeModal();
+                    }}
+                  >
+                    親を追加
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      addChildToSelectedNode();
+                      closeModal();
+                    }}
+                  >
+                    子を追加
+                  </Button>
+                  <Button
+                    isDisabled={hasSpouse}
+                    onClick={() => {
+                      addSpouseToSelectedNode();
+                      closeModal();
+                    }}
+                  >
+                    配偶者を追加
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      displayProfileEditor();
+                    }}
+                  >
+                    情報を編集
+                  </Button>
+                </Flex>
+              </>
+            )}
+          </ModalBody>
+        </>
   );
 });
