@@ -5,8 +5,7 @@ import { AnimatePresence, Variants, easeOut, motion } from "framer-motion";
 import { useRecoilValue } from "recoil";
 import { selectedNodeState } from "../../recoil/selectedNodeState";
 import { BiSolidUser } from "react-icons/bi";
-import styled from "@emotion/styled";
-import { css, keyframes } from "@emotion/react";
+import styled, { css, keyframes } from "styled-components";
 
 interface StyledBoxProps {
   isSelected: boolean;
@@ -27,10 +26,10 @@ const variants: Variants = {
 };
 
 const StyledHandle = styled(Handle)`
-opacity: 0;
-border: none;
-pointer-events: none;
-background: #ccc;
+  opacity: 0;
+  border: none;
+  pointer-events: none;
+  background: #ccc;
 `;
 
 const selectedAnimation = keyframes`
@@ -45,75 +44,75 @@ opacity: 0;
 `;
 
 const selectedStyle = css`
-&::before {
-  content: "";
-  animation: ${selectedAnimation} 1.5s linear infinite;
-}
+  &::before {
+    content: "";
+    animation: ${selectedAnimation} 1.5s linear infinite;
+  }
 `;
 
 const StyledBox = styled.div<StyledBoxProps>`
-position: relative;
-width: ${BASE_PERSON_NODE_WIDTH}px;
-${({ isSelected }) => isSelected && selectedStyle};
-border-radius: 50%;
-aspect-ratio: 1;
-box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-background-color: #fff;
-&::before {
-  display: block;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 100%;
-  height: 100%;
+  position: relative;
+  width: ${BASE_PERSON_NODE_WIDTH}px;
+  ${({ isSelected }) => isSelected && selectedStyle};
   border-radius: 50%;
-  transition: opacity linear 0.4s;
-  z-index: -1;
-  border: 1px solid #90cdf4;
-}
+  aspect-ratio: 1;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  background-color: #fff;
+  &::before {
+    display: block;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    transition: opacity linear 0.4s;
+    z-index: -1;
+    border: 1px solid #90cdf4;
+  }
 `;
 
 const IconBox = styled.div<StyledBoxProps>`
-display: flex;
-align-items: center;
-justify-content: center;
-width: 100%;
-height: 100%;
-overflow: hidden;
-border-radius: 50%;
-position: relative;
-background-color: ${({ isSelected }) => (isSelected ? "#3182ce" : "#EB912E")};
-transform: scale(1.1)
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 50%;
+  position: relative;
+  background-color: ${({ isSelected }) => (isSelected ? "#3182ce" : "#EB912E")};
+  transform: scale(1.1);
 `;
 
 const IconInner = styled.div`
-position: absolute;
-inset: 0;
-border-radius: 50%;
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
 `;
 
 const DefaultProfileIcon = styled.div`
-margin-top: 14px;
+  margin-top: 14px;
 `;
 
 const CustomProfileIcon = styled.img`
-width: 100%;
-height: 100%;
-object-fit: cover;
-`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+`;
 
 const InformationBox = styled.div`
-position: absolute;
-top: calc(100% + 10px);
-left: 0;
-right: 0;
-text-align: center;
-`
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 0;
+  right: 0;
+  text-align: center;
+`;
 
 const Text = styled.p`
-font-size: 16px;
-`
+  font-size: 16px;
+`;
 
 export const personNode = (props: NodeProps<PersonData>) => {
   const { id, data } = props;
@@ -125,8 +124,8 @@ export const personNode = (props: NodeProps<PersonData>) => {
   return (
     <>
       <StyledHandle type="source" position={Position.Right} id="personSourceRight" />
-        <StyledHandle type="source" position={Position.Left} id="personSourceLeft" />
-        <StyledHandle type="source" position={Position.Top} id="personSourceTop" />
+      <StyledHandle type="source" position={Position.Left} id="personSourceLeft" />
+      <StyledHandle type="source" position={Position.Top} id="personSourceTop" />
       <AnimatePresence>
         <motion.div
           key={data.label}
@@ -139,7 +138,13 @@ export const personNode = (props: NodeProps<PersonData>) => {
           <StyledBox isSelected={isSelected}>
             <IconBox isSelected={isSelected}>
               <IconInner>
-                {imageURL ? <CustomProfileIcon src={imageURL} /> : <DefaultProfileIcon><BiSolidUser size={100} color="#ffffff" /></DefaultProfileIcon>}
+                {imageURL ? (
+                  <CustomProfileIcon src={imageURL} />
+                ) : (
+                  <DefaultProfileIcon>
+                    <BiSolidUser size={100} color="#ffffff" />
+                  </DefaultProfileIcon>
+                )}
               </IconInner>
             </IconBox>
 

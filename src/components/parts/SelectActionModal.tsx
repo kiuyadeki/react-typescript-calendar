@@ -1,4 +1,3 @@
-import { Button, Flex, Text } from "@chakra-ui/react";
 import { Dispatch, FC, SetStateAction, memo, useEffect, useState } from "react";
 import { ProfileEditor } from "./ProfileEditor";
 import { useRecoilState, useRecoilValue } from "recoil";
@@ -10,7 +9,7 @@ import { wholeNodesState } from "../../recoil/WholeNodesState";
 import { nodesUpdatedState } from "../../recoil/nodesUpdatedState";
 import { wholeEdgesState } from "../../recoil/WholeEdgesState";
 import { IoCloseOutline } from "react-icons/io5";
-import styled from "@emotion/styled";
+import styled from "styled-components";
 
 type SelectActionModalProps = {
   closeModal: () => void;
@@ -86,19 +85,19 @@ export const SelectActionModal: FC<SelectActionModalProps> = memo(props => {
     line-height: 1.2;
     border-radius: 0.375rem;
     font-weight: 600;
-    transition-property: background-color,border-color,color,fill,stroke,opacity,box-shadow,transform;
+    transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform;
     transition-duration: 200ms;
     height: 2.5rem;
     min-width: 2.5rem;
     font-size: 1rem;
     padding-inline: 1rem;
-    background: #EDF2F7;
-    color: #1A202C;
+    background: #edf2f7;
+    color: #1a202c;
     cursor: pointer;
 
     @media (hover) {
       &:hover {
-        background-color: #E2E8F0;
+        background-color: #e2e8f0;
       }
     }
   `;
@@ -123,7 +122,7 @@ export const SelectActionModal: FC<SelectActionModalProps> = memo(props => {
     cursor: pointer;
     line-height: 0;
     transition: background-color 300ms;
-    @media(hover) {
+    @media (hover) {
       &:hover {
         background-color: rgba(0, 0, 0, 0.06);
       }
@@ -134,7 +133,7 @@ export const SelectActionModal: FC<SelectActionModalProps> = memo(props => {
     <>
       <ModalBody>
         <CloseButton onClick={closeModal}>
-          <IoCloseOutline size={25} color='currentColor' />
+          <IoCloseOutline size={25} color="currentColor" />
         </CloseButton>
         {showProfileEditor ? (
           <ProfileEditor onClose={closeModal} setShowProfileEditor={setShowProfileEditor} />
@@ -142,7 +141,7 @@ export const SelectActionModal: FC<SelectActionModalProps> = memo(props => {
           <>
             <ButtonList>
               <StyledButton
-                disabled = {hasParents}
+                disabled={hasParents}
                 // isDisabled={hasParents}
                 onClick={() => {
                   addParentToSelectedNode();
@@ -160,7 +159,7 @@ export const SelectActionModal: FC<SelectActionModalProps> = memo(props => {
                 子を追加
               </StyledButton>
               <StyledButton
-              disabled = {hasSpouse}
+                disabled={hasSpouse}
                 // isDisabled={hasSpouse}
                 onClick={() => {
                   addSpouseToSelectedNode();
