@@ -147,17 +147,34 @@ export const ProfileEditor: FC<ProfileEditorProps> = memo(props => {
     opacity: 1;
   `;
 
+  const TextInput = styled.input`
+    width: 100%;
+    height: 2.5rem;
+    font-size: 1rem;
+    padding-inline: 1rem;
+    padding-block: 0;
+    border-radius: 0.375rem;
+    min-width: 0px;
+    position: relative;
+    appearance: none;
+    transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform;
+    transition-duration: 200ms;
+    border: 1px solid #E2E8F0;
+    margin: 0;
+    box-sizing: border-box;
+  `;
+
   return (
     <form onSubmit={onSubmit}>
       <HorizontalBox>
         <FormControl>
           <FormLabel htmlFor="lastName">姓</FormLabel>
-          <Input id="lastName" placeholder="姓" {...register("lastName")} />
+          <TextInput type='text' id="lastName" placeholder="姓" {...register("lastName")} />
           <FormErrorMessage>{errors.lastName && errors.lastName.message}</FormErrorMessage>
         </FormControl>
         <FormControl>
           <FormLabel htmlFor="firstName">名</FormLabel>
-          <Input id="firstName" placeholder="名" {...register("firstName")} />
+          <TextInput type='text' id="firstName" placeholder="名" {...register("firstName")} />
           <FormErrorMessage>{errors.firstName && errors.firstName.message}</FormErrorMessage>
         </FormControl>
       </HorizontalBox>
