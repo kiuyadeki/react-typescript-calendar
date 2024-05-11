@@ -1,4 +1,4 @@
-import { Box, Button, FormErrorMessage, Image, Input, Radio, RadioGroup, Select, Stack } from "@chakra-ui/react";
+import { FormErrorMessage } from "@chakra-ui/react";
 import { ChangeEvent, FC, memo, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useProfilePictureUpload } from "../../hooks/useProfilePictureChange";
@@ -7,6 +7,7 @@ import { wholeNodesState } from "../../recoil/WholeNodesState";
 import { nodesUpdatedState } from "../../recoil/nodesUpdatedState";
 import { selectedNodeState } from "../../recoil/selectedNodeState";
 import styled from "styled-components";
+import { IoChevronDown } from "react-icons/io5";
 
 type Inputs = {
   lastName: string;
@@ -133,6 +134,7 @@ export const ProfileEditor: FC<ProfileEditorProps> = memo(props => {
 
   interface FormLabelProps {
     mt?: number;
+    isLoading?: () => void;
   }
   const FormLabel = styled.label<FormLabelProps>`
     margin-top: ${props => props.mt || 0}px;
@@ -159,9 +161,150 @@ export const ProfileEditor: FC<ProfileEditorProps> = memo(props => {
     appearance: none;
     transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform;
     transition-duration: 200ms;
-    border: 1px solid #E2E8F0;
+    border: 1px solid #e2e8f0;
     margin: 0;
     box-sizing: border-box;
+  `;
+
+  const RadioBox = styled.label`
+    display: inline-flex;
+    align-items: center;
+    vertical-align: top;
+    cursor: pointer;
+    position: relative;
+  `;
+
+  const RadioInput = styled.input.attrs({ type: "radio" })`
+    border: 0px;
+    clip: rect(0px, 0px, 0px, 0px);
+    height: 1px;
+    width: 1px;
+    margin: -1px;
+    padding: 0px;
+    overflow: hidden;
+    white-space: nowrap;
+    opacity: 0;
+  `;
+
+  const RadioText = styled.span`
+    user-select: none;
+    margin-inline-start: 0.5rem;
+    font-size: 1rem;
+  `;
+
+  const RadioControl = styled.span`
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 1rem;
+    height: 1rem;
+    transition-property: box-shadow;
+    transition-duration: 200ms;
+    border-width: 2px;
+    border-style: solid;
+    border-radius: 50%;
+    border-color: #e2e8f0;
+    color: #fff;
+
+    ${RadioInput}:checked + & {
+      background-color: #3182ce;
+      border-color: #3182ce;
+      color: #fff;
+
+      &::before {
+        content: "";
+        display: inline-block;
+        position: relative;
+        width: 50%;
+        height: 50%;
+        border-radius: 50%;
+        background: currentcolor;
+      }
+    }
+  `;
+
+  const SelectWrapper = styled.div`
+    width: 100%;
+    height: fit-content;
+    position: relative;
+  `;
+
+  const SelectInput = styled.select`
+    padding-inline: 1rem 2rem;
+    width: 100%;
+    height: 2.5rem;
+    font-size: 1rem;
+    border-radius: 0.375rem;
+    min-width: 0px;
+    position: relative;
+    appearance: none;
+    transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform;
+    transition-duration: 200ms;
+    padding-bottom: 1px;
+    line-height: normal;
+    background: inherit;
+    border-width: 1px;
+    border-style: solid;
+    border-image: initial;
+    border-color: #e2e8f0;
+  `;
+
+  const SelectIcon = styled(IoChevronDown)`
+    position: absolute;
+    right: 0.7rem;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    pointer-events: none;
+  `;
+
+  const HiddenInput = styled.input.attrs({ type: "file" })`
+    display: none;
+    visibility: hidden;
+    appearance: none;
+  `;
+
+  interface StyledButtonProps {
+    marginTop?: string;
+  }
+  const StyledButton = styled.button<StyledButtonProps>`
+    display: flex;
+    appearance: none;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    white-space: nowrap;
+    line-height: 1.2;
+    border-radius: 0.375rem;
+    font-weight: 600;
+    border: none;
+    transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform;
+    transition-duration: 200ms;
+    height: 2.5rem;
+    min-width: 2.5rem;
+    font-size: 1rem;
+    padding-inline: 1rem;
+    background: #edf2f7;
+    color: #1a202c;
+    cursor: pointer;
+    margin-top: ${props => props.marginTop || "0"};
+  `;
+
+  const ImageFrame = styled.figure`
+    max-width: 10rem;
+    width: 100%;
+    aspect-ratio: 1;
+    margin-block: 20px;
+    margin-inline: 0;
+    `;
+
+const Image = styled.img`
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 1px solid rgb(237, 242, 247);
   `;
 
   return (
@@ -169,82 +312,95 @@ export const ProfileEditor: FC<ProfileEditorProps> = memo(props => {
       <HorizontalBox>
         <FormControl>
           <FormLabel htmlFor="lastName">姓</FormLabel>
-          <TextInput type='text' id="lastName" placeholder="姓" {...register("lastName")} />
+          <TextInput type="text" id="lastName" placeholder="姓" {...register("lastName")} />
           <FormErrorMessage>{errors.lastName && errors.lastName.message}</FormErrorMessage>
         </FormControl>
         <FormControl>
           <FormLabel htmlFor="firstName">名</FormLabel>
-          <TextInput type='text' id="firstName" placeholder="名" {...register("firstName")} />
+          <TextInput type="text" id="firstName" placeholder="名" {...register("firstName")} />
           <FormErrorMessage>{errors.firstName && errors.firstName.message}</FormErrorMessage>
         </FormControl>
       </HorizontalBox>
-      <FormLabel mt={6}>性別</FormLabel>
+      <FormLabel mt={24}>性別</FormLabel>
       <HorizontalBox>
-        <RadioGroup onChange={setSelectedGender} value={selectedGender}>
-          <HorizontalBox>
-            <Radio value="male" {...register("gender")}>
-              男性
-            </Radio>
-            <Radio value="female" {...register("gender")}>
-              女性
-            </Radio>
-          </HorizontalBox>
-        </RadioGroup>
+        <RadioBox>
+          <RadioInput value="男性" {...register("gender")} />
+          <RadioControl></RadioControl>
+          <RadioText>男性</RadioText>
+        </RadioBox>
+        <RadioBox>
+          <RadioInput value="女性" {...register("gender")} />
+          <RadioControl></RadioControl>
+          <RadioText>女性</RadioText>
+        </RadioBox>
       </HorizontalBox>
-      <FormLabel mt={6}>生年月日</FormLabel>
+      <FormLabel mt={24}>生年月日</FormLabel>
       <HorizontalBox>
         <FormControl>
-          <Select placeholder="年" {...register("birthYear")}>
-            {years.map(year => (
-              <option key={year} value={year}>
-                {year}
-              </option>
-            ))}
-          </Select>
+          <SelectWrapper>
+            <SelectInput {...register("birthYear")}>
+              {years.map(year => (
+                <option key={year} value={year}>
+                  {year}
+                </option>
+              ))}
+            </SelectInput>
+            <SelectIcon size={16} color="#1a202c" />
+          </SelectWrapper>
         </FormControl>
         <FormControl>
-          <Select placeholder="月" {...register("birthMonth")}>
-            {months.map(month => (
-              <option key={month} value={month}>
-                {month}
-              </option>
-            ))}
-          </Select>
+          <SelectWrapper>
+            <SelectInput placeholder="月" {...register("birthMonth")}>
+              {months.map(month => (
+                <option key={month} value={month}>
+                  {month}
+                </option>
+              ))}
+            </SelectInput>
+            <SelectIcon size={16} color="#1a202c" />
+          </SelectWrapper>
         </FormControl>
         <FormControl>
-          <Select placeholder="日" {...register("birthDate")}>
-            {dates.map(date => (
-              <option key={date} value={date}>
-                {date}
-              </option>
-            ))}
-          </Select>
+          <SelectWrapper>
+            <SelectInput placeholder="日" {...register("birthDate")}>
+              {dates.map(date => (
+                <option key={date} value={date}>
+                  {date}
+                </option>
+              ))}
+            </SelectInput>
+            <SelectIcon size={16} color="#1a202c" />
+          </SelectWrapper>
         </FormControl>
       </HorizontalBox>
       <FormControl>
-        <FormLabel mt={6}>写真</FormLabel>
-        <Input
-          id="profilePictureInput"
-          type="file"
+        <FormLabel mt={24}>写真</FormLabel>
+        <HiddenInput
           accept="image/*"
           {...register("profilePicture", {
             onChange: onFileInputChange,
           })}
-          hidden
           ref={inputRef}
         />
-        <Button onClick={handleButtonClick}>Upload File</Button>
-        {previewImageURL && <Image src={previewImageURL} />}
-        {uploadedImage && (
-          <Box>
+        <StyledButton type="button" onClick={handleButtonClick}>
+          {previewImageURL ? '写真を変更' : '写真を選択' }
+        </StyledButton>
+        {previewImageURL && (
+          <ImageFrame>
+            <Image src={previewImageURL} />
+          </ImageFrame>
+        )
+        }
+        {uploadedImage && !previewImageURL && (
+          <ImageFrame>
             <Image src={uploadedImage} />
-          </Box>
+          </ImageFrame>
         )}
       </FormControl>
 
-      <Button mt={4} isLoading={isSubmitting} type="submit">
+      <StyledButton marginTop="20px" type="submit">
         保存する
-      </Button>
+      </StyledButton>
     </form>
   );
 });
