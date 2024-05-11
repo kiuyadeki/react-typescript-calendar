@@ -101,6 +101,10 @@ export const ProfileEditor: FC<ProfileEditorProps> = memo(props => {
       label: "女性",
       value: "female",
     },
+    {
+      label: "選択しない",
+      value: "",
+    },
   ];
 
   useEffect(() => {
@@ -297,9 +301,9 @@ export const ProfileEditor: FC<ProfileEditorProps> = memo(props => {
     aspect-ratio: 1;
     margin-block: 20px;
     margin-inline: 0;
-    `;
+  `;
 
-const Image = styled.img`
+  const Image = styled.img`
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -310,7 +314,7 @@ const Image = styled.img`
   const ErrorMessage = styled.div`
     display: flex;
     align-items: center;
-    color: #E53E3E;
+    color: #e53e3e;
     margin-top: 0.5rem;
     font-size: 0.875rem;
   `;
@@ -331,7 +335,14 @@ const Image = styled.img`
       </HorizontalBox>
       <FormLabel mt={24}>性別</FormLabel>
       <HorizontalBox>
-        <RadioBox>
+        {genders.map(gender => (
+          <RadioBox>
+            <RadioInput value={gender.value} {...register("gender")} />
+            <RadioControl></RadioControl>
+            <RadioText>{gender.label}</RadioText>
+          </RadioBox>
+        ))}
+        {/* <RadioBox>
           <RadioInput value="男性" {...register("gender")} />
           <RadioControl></RadioControl>
           <RadioText>男性</RadioText>
@@ -340,7 +351,7 @@ const Image = styled.img`
           <RadioInput value="女性" {...register("gender")} />
           <RadioControl></RadioControl>
           <RadioText>女性</RadioText>
-        </RadioBox>
+        </RadioBox> */}
       </HorizontalBox>
       <FormLabel mt={24}>生年月日</FormLabel>
       <HorizontalBox>
@@ -391,14 +402,13 @@ const Image = styled.img`
           ref={inputRef}
         />
         <StyledButton type="button" onClick={handleButtonClick}>
-          {previewImageURL ? '写真を変更' : '写真を選択' }
+          {previewImageURL ? "写真を変更" : "写真を選択"}
         </StyledButton>
         {previewImageURL && (
           <ImageFrame>
             <Image src={previewImageURL} />
           </ImageFrame>
-        )
-        }
+        )}
         {uploadedImage && !previewImageURL && (
           <ImageFrame>
             <Image src={uploadedImage} />

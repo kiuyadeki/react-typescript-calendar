@@ -6,6 +6,8 @@ import { useRecoilValue } from "recoil";
 import { selectedNodeState } from "../../recoil/selectedNodeState";
 import { BiSolidUser } from "react-icons/bi";
 import styled, { css, keyframes } from "styled-components";
+import { formatBirthDay } from '../../utils/formatBirthDay';
+import { formatFullName } from '../../utils/formatFullName';
 
 interface StyledBoxProps {
   isSelected: boolean;
@@ -116,11 +118,13 @@ const Text = styled.p`
 
 export const personNode = (props: NodeProps<PersonData>) => {
   const { id, data } = props;
+  const {birthYear, birthMonth, birthDate, firstName, lastName, profilePictureURL} = data;
   const selectedNode = useRecoilValue(selectedNodeState);
-  const imageFile = data.profilePicture;
   const isSelected = id === selectedNode?.id;
-  // const imageURL = imageFile instanceof File ? URL.createObjectURL(imageFile) : undefined;
-  const imageURL = data.profilePictureURL;
+  const fullName = formatFullName({firstName, lastName});
+  const birthDay = formatBirthDay({birthYear, birthMonth, birthDate});
+
+
   return (
     <>
       <StyledHandle type="source" position={Position.Right} id="personSourceRight" />
@@ -138,8 +142,8 @@ export const personNode = (props: NodeProps<PersonData>) => {
           <StyledBox isSelected={isSelected}>
             <IconBox isSelected={isSelected}>
               <IconInner>
-                {imageURL ? (
-                  <CustomProfileIcon src={imageURL} />
+                {profilePictureURL ? (
+                  <CustomProfileIcon src={profilePictureURL} />
                 ) : (
                   <DefaultProfileIcon>
                     <BiSolidUser size={100} color="#ffffff" />
@@ -150,11 +154,8 @@ export const personNode = (props: NodeProps<PersonData>) => {
 
             <InformationBox>
               <Text>{id}</Text>
-              <Text>{data.lastName}</Text>
-              <Text>{data.firstName}</Text>
-              <Text>{data.birthYear}</Text>
-              <Text>{data.birthMonth}</Text>
-              <Text>{data.birthDate}</Text>
+              <Text>{fullName}</Text>
+              <Text>{birthDay}</Text>
               <Text>{data.gender}</Text>
             </InformationBox>
           </StyledBox>

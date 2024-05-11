@@ -100,6 +100,12 @@ export const SelectActionModal: FC<SelectActionModalProps> = memo(props => {
         background-color: #e2e8f0;
       }
     }
+
+    &[disabled] {
+      opacity: 0.4;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
   `;
 
   const ModalBody = styled.div`

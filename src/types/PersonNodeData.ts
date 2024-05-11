@@ -1,15 +1,20 @@
 import { Node } from "reactflow";
 
-export interface PersonData {
-  label: string;
-  firstName?: string | null | undefined;
+export interface BasicPersonInfo {
+  firstName?: string | null;
   lastName?: string | null | undefined;
-  birthYear?: number | null | undefined;
-  birthMonth?: number | null | undefined;
-  birthDate?: number | null | undefined;
   gender?: string | undefined;
   profilePicture?: File | null | undefined;
   profilePictureURL?: string | null;
+}
+
+export interface BirthData {
+  birthYear?: number | null | undefined;
+  birthMonth?: number | null | undefined;
+  birthDate?: number | null | undefined;
+}
+
+export interface FamilyData {
   parents: string[];
   children: string[];
   spouse: string[];
@@ -20,6 +25,10 @@ export interface PersonData {
   maritalPosition: 'right' | 'left' | null;
   maritalNodeId?: string;
   isDivorced: boolean;
+}
+
+export interface PersonData extends BasicPersonInfo, BirthData, FamilyData {
+  label: string;
   selected: boolean;
 }
 
