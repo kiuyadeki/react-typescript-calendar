@@ -1,5 +1,4 @@
-import { FormErrorMessage } from "@chakra-ui/react";
-import { ChangeEvent, FC, memo, useEffect, useRef, useState } from "react";
+import { FC, memo, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useProfilePictureUpload } from "../../hooks/useProfilePictureChange";
 import { useRecoilState, useRecoilValue } from "recoil";
@@ -124,7 +123,7 @@ export const ProfileEditor: FC<ProfileEditorProps> = memo(props => {
   const HorizontalBox = styled.div`
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 1.5rem;
   `;
 
   const FormControl = styled.div`
@@ -248,6 +247,7 @@ export const ProfileEditor: FC<ProfileEditorProps> = memo(props => {
     border-style: solid;
     border-image: initial;
     border-color: #e2e8f0;
+    cursor: pointer;
   `;
 
   const SelectIcon = styled(IoChevronDown)`
@@ -307,18 +307,26 @@ const Image = styled.img`
     border: 1px solid rgb(237, 242, 247);
   `;
 
+  const ErrorMessage = styled.div`
+    display: flex;
+    align-items: center;
+    color: #E53E3E;
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+  `;
+
   return (
     <form onSubmit={onSubmit}>
       <HorizontalBox>
         <FormControl>
           <FormLabel htmlFor="lastName">姓</FormLabel>
           <TextInput type="text" id="lastName" placeholder="姓" {...register("lastName")} />
-          <FormErrorMessage>{errors.lastName && errors.lastName.message}</FormErrorMessage>
+          <ErrorMessage>{errors.lastName && errors.lastName.message}</ErrorMessage>
         </FormControl>
         <FormControl>
           <FormLabel htmlFor="firstName">名</FormLabel>
           <TextInput type="text" id="firstName" placeholder="名" {...register("firstName")} />
-          <FormErrorMessage>{errors.firstName && errors.firstName.message}</FormErrorMessage>
+          <ErrorMessage>{errors.firstName && errors.firstName.message}</ErrorMessage>
         </FormControl>
       </HorizontalBox>
       <FormLabel mt={24}>性別</FormLabel>
