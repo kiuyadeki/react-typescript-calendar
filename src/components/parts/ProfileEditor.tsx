@@ -102,7 +102,7 @@ export const ProfileEditor: FC<ProfileEditorProps> = memo(props => {
       value: "female",
     },
     {
-      label: "選択しない",
+      label: "その他",
       value: "",
     },
   ];
@@ -342,16 +342,6 @@ export const ProfileEditor: FC<ProfileEditorProps> = memo(props => {
             <RadioText>{gender.label}</RadioText>
           </RadioBox>
         ))}
-        {/* <RadioBox>
-          <RadioInput value="男性" {...register("gender")} />
-          <RadioControl></RadioControl>
-          <RadioText>男性</RadioText>
-        </RadioBox>
-        <RadioBox>
-          <RadioInput value="女性" {...register("gender")} />
-          <RadioControl></RadioControl>
-          <RadioText>女性</RadioText>
-        </RadioBox> */}
       </HorizontalBox>
       <FormLabel mt={24}>生年月日</FormLabel>
       <HorizontalBox>
